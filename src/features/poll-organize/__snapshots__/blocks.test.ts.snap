@@ -1,0 +1,135 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`pickTimeModal > matches the snapshot 1`] = `
+{
+  "blocks": [
+    {
+      "elements": [
+        {
+          "text": "Times in *America/Los_Angeles*. Counts are people free out of 4 responded.",
+          "type": "mrkdwn",
+        },
+      ],
+      "type": "context",
+    },
+    {
+      "block_id": "slot_block",
+      "element": {
+        "action_id": "slot",
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 9:00 AM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791302400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 9:30 AM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791304200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 10:00 AM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791306000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 11:00 AM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791309600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 11:30 AM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791311400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 12:00 PM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791313200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 12:30 PM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791315000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 1:30 PM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791318600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 2:00 PM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791320400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6 2:30 PM — 2/4",
+              "type": "plain_text",
+            },
+            "value": "1791322200",
+          },
+        ],
+        "placeholder": {
+          "emoji": true,
+          "text": "Choose a slot",
+          "type": "plain_text",
+        },
+        "type": "static_select",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Final time",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+  ],
+  "callback_id": "pick_time_modal",
+  "close": {
+    "emoji": true,
+    "text": "Cancel",
+    "type": "plain_text",
+  },
+  "private_metadata": "{"pollId":"00000000-0000-4000-8000-000000000001"}",
+  "submit": {
+    "emoji": true,
+    "text": "Schedule",
+    "type": "plain_text",
+  },
+  "title": {
+    "emoji": true,
+    "text": "Pick the final time",
+    "type": "plain_text",
+  },
+  "type": "modal",
+}
+`;

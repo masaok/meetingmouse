@@ -1,0 +1,16 @@
+{
+  "semi": true,
+  "singleQuote": false,
+  "trailingComma": "all",
+  "printWidth": 90,
+  "plugins": ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+  "importOrder": [
+    "<BUILTIN_MODULES>",
+    "",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^@/(.*)$",
+    "",
+    "^[./]"
+  ]
+}

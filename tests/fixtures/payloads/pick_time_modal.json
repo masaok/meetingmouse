@@ -1,0 +1,28 @@
+{
+  "type": "view_submission",
+  "team": { "id": "T0000TEST", "domain": "test" },
+  "user": { "id": "U0000ORG", "username": "organizer", "team_id": "T0000TEST" },
+  "api_app_id": "A0000TEST",
+  "trigger_id": "1700000000.1.deadbeef",
+  "view": {
+    "id": "V0000TEST",
+    "team_id": "T0000TEST",
+    "type": "modal",
+    "callback_id": "pick_time_modal",
+    "private_metadata": "{\"pollId\":\"00000000-0000-4000-8000-000000000001\"}",
+    "hash": "1700000000.abcdef",
+    "state": {
+      "values": {
+        "slot_block": {
+          "slot": {
+            "type": "static_select",
+            "selected_option": {
+              "text": { "type": "plain_text", "text": "Tue, Oct 6 9:00 AM — 3/4" },
+              "value": "1791302400"
+            }
+          }
+        }
+      }
+    }
+  }
+}

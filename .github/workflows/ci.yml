@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# No workflow-level env on purpose: the production build must succeed with no variables at
+# all, the way a fresh Vercel project builds it. Only the migrations job gets a DATABASE_URL.
+
+jobs:
+  types-lint-format:
+    name: Types, lint, format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pnpm test
+
+  migrations:
+    name: Migrations apply from empty
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: meetmouse
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - name: Generated SQL matches schema.ts
+        run: pnpm db:generate && git diff --exit-code -- drizzle
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/meetmouse
+      - run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/meetmouse
+      - name: Migrations are idempotent
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/meetmouse
+
+  build:
+    name: Production build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pnpm build
+
+  smoke:
+    name: Smoke imports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pnpm smoke
+
+  docs:
+    name: Docs links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pnpm docs:check
+      - run: pnpm featuremap:check
+      - run: pnpm prose:check

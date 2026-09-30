@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# env files (only the example is committed)
+!.env.example
+
+# agent worktrees
+.claude/worktrees/
+

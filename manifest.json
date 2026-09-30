@@ -1,0 +1,50 @@
+{
+  "_metadata": { "major_version": 1, "minor_version": 1 },
+  "display_information": {
+    "name": "Meet Mouse",
+    "description": "Find a meeting time without leaving Slack.",
+    "long_description": "Start an availability poll in a channel with /when. Everyone marks when they're free in their own time zone, the message updates live with a heatmap and the best times, and the organizer locks in a final time with an Add to Google Calendar link.",
+    "background_color": "#4a154b"
+  },
+  "features": {
+    "app_home": {
+      "home_tab_enabled": true,
+      "messages_tab_enabled": false,
+      "messages_tab_read_only_enabled": true
+    },
+    "bot_user": { "display_name": "Meet Mouse", "always_online": true },
+    "shortcuts": [
+      {
+        "name": "Find a meeting time",
+        "type": "global",
+        "callback_id": "create_poll",
+        "description": "Start an availability poll in a channel"
+      }
+    ],
+    "slash_commands": [
+      {
+        "command": "/when",
+        "description": "Start an availability poll in this channel",
+        "usage_hint": "[title]",
+        "should_escape": false,
+        "url": "https://www.meetmouse.net/api/slack/events"
+      }
+    ]
+  },
+  "oauth_config": {
+    "scopes": { "bot": ["commands", "chat:write", "chat:write.public", "users:read"] }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "https://www.meetmouse.net/api/slack/events",
+      "bot_events": ["app_home_opened"]
+    },
+    "interactivity": {
+      "is_enabled": true,
+      "request_url": "https://www.meetmouse.net/api/slack/events"
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}

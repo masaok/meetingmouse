@@ -1,0 +1,74 @@
+{
+  "type": "view_submission",
+  "team": { "id": "T0000TEST", "domain": "test" },
+  "user": { "id": "U0000TEST", "username": "tester", "team_id": "T0000TEST" },
+  "api_app_id": "A0000TEST",
+  "trigger_id": "1700000000.1.deadbeef",
+  "response_urls": [
+    {
+      "block_id": "channel_block",
+      "action_id": "channel",
+      "channel_id": "C0000TEST",
+      "response_url": "https://hooks.slack.com/app/T0000TEST/1/xxx"
+    }
+  ],
+  "view": {
+    "id": "V0000TEST",
+    "team_id": "T0000TEST",
+    "type": "modal",
+    "callback_id": "create_poll_modal",
+    "private_metadata": "{\"channelId\":\"C0000TEST\"}",
+    "hash": "1700000000.abcdef",
+    "state": {
+      "values": {
+        "title_block": {
+          "title": { "type": "plain_text_input", "value": "Sprint planning" }
+        },
+        "dates_block": {
+          "dates": {
+            "type": "multi_static_select",
+            "selected_options": [
+              {
+                "text": { "type": "plain_text", "text": "Wed, Oct 7" },
+                "value": "2026-10-07"
+              }
+            ]
+          }
+        },
+        "from_block": {
+          "from": {
+            "type": "static_select",
+            "selected_option": {
+              "text": { "type": "plain_text", "text": "9:00 AM" },
+              "value": "540"
+            }
+          }
+        },
+        "to_block": {
+          "to": {
+            "type": "static_select",
+            "selected_option": {
+              "text": { "type": "plain_text", "text": "5:00 PM" },
+              "value": "1020"
+            }
+          }
+        },
+        "slot_block": {
+          "slot": {
+            "type": "radio_buttons",
+            "selected_option": {
+              "text": { "type": "plain_text", "text": "30 min" },
+              "value": "30"
+            }
+          }
+        },
+        "channel_block": {
+          "channel": {
+            "type": "conversations_select",
+            "selected_conversation": "C0000TEST"
+          }
+        }
+      }
+    }
+  }
+}

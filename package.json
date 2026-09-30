@@ -2,26 +2,77 @@
   "name": "meetmouse",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.8.1",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "dev": "next dev",
+    "dev:tunnel": "tsx scripts/dev.tunnel.ts",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm docs:check && pnpm featuremap:check && pnpm prose:check && pnpm smoke && pnpm build",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "slack:sign": "tsx scripts/slack-sign.ts",
+    "render:fixture": "tsx --conditions=react-server scripts/render-fixture.ts",
+    "prepare": "husky",
+    "lint:fix": "eslint --fix",
+    "smoke": "tsx --conditions=react-server scripts/smoke-imports.ts",
+    "docs:check": "tsx scripts/check-docs.ts",
+    "featuremap:check": "tsx scripts/check-feature-map.ts",
+    "predev": "tsx scripts/check-dev-env.ts",
+    "doctor": "tsx scripts/doctor.ts",
+    "prose:check": "tsx scripts/check-prose.ts"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,mjs,json,md,yml,yaml,css}": "prettier --write"
   },
   "dependencies": {
-    "next": "16.3.8",
+    "@neondatabase/serverless": "^1.1.0",
+    "@slack/bolt": "^5.1.0",
+    "@slack/types": "^3.1.0",
+    "@slack/web-api": "^8.1.1",
+    "@vercel/slack-bolt": "^1.7.1",
+    "date-fns": "^4.4.0",
+    "date-fns-tz": "^3.2.0",
+    "drizzle-orm": "^0.45.3",
+    "next": "16.3.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "@ngrok/ngrok": "^1.7.0",
+    "@slack/cli-hooks": "^2.0.0",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^24.19.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^18.0.4",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
-    "eslint-config-next": "16.3.8",
+    "eslint-config-next": "16.3.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
+    "pg": "^8.23.0",
+    "prettier": "^3.9.9",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
-  },
-  "packageManager": "pnpm@12.4.1"
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^5.0.2"
+  }
 }
