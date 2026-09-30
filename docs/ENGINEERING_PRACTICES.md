@@ -27,6 +27,8 @@ items keep their reasoning so the same proposal does not return in six months.
 | 5.2 | Language-neutral migration format             | Plain SQL files; `drizzle-kit push` has no script on purpose                                                                                                                                                                                                        |
 | 5.4 | One writer                                    | `pnpm db:migrate` only; nothing runs DDL at startup                                                                                                                                                                                                                 |
 | 6.1 | Name the invariant before the vendor          | This table names the invariant; the file column names the tool                                                                                                                                                                                                      |
+| 6.2 | Evaluate tools by failure mode                | The "Why not here" column in the rejected table names what would break here, not a missing feature                                                                                                                                                                  |
+| 6.3 | Score bundled benefits one at a time          | The `vercel-slack build` row lists its three bundled costs separately instead of as one verdict                                                                                                                                                                     |
 | 6.4 | Rejected items recorded                       | Below                                                                                                                                                                                                                                                               |
 | 7.1 | Infra-dependent suites off the gate           | No live-Slack or live-Neon job is required; migrations use a disposable container                                                                                                                                                                                   |
 | 7.3 | Env preflight at every entry point            | `src/lib/env.ts` `assertEnv`, called in the route and `scripts/check-dev-env.ts`                                                                                                                                                                                    |
@@ -46,17 +48,17 @@ items keep their reasoning so the same proposal does not return in six months.
 
 ## Suggested order (as applied, 2026-09-29)
 
-| Order | Item                                                       | Effort | Status                          |
-| ----- | ---------------------------------------------------------- | ------ | ------------------------------- |
-| 1     | Prettier installed and run                                 | 10 min | done                            |
-| 2     | `.nvmrc`, engines, `@types/node` aligned                   | 5 min  | done                            |
-| 3     | Read-only `lint`, `format:check`, `typecheck` with typegen | 5 min  | done                            |
-| 4     | husky + lint-staged hooks                                  | 10 min | done                            |
-| 5     | CI workflow with composite setup                           | 30 min | done                            |
-| 6     | `server-only` + ESLint boundaries                          | 20 min | done                            |
-| 7     | Required status checks on `main`                           | 5 min  | done via `gh api`; verify in UI |
-| 8     | Env preflight                                              | 15 min | done                            |
-| 9     | Docs link check + feature-map check + fixtures             | 1 h    | done                            |
-| 10    | Migrations job with Postgres service                       | 30 min | done                            |
-| 11    | Smoke imports                                              | 20 min | done                            |
-| 12    | Dependabot                                                 | 5 min  | done                            |
+| Order | Item                                                       | Effort | Status                                                            |
+| ----- | ---------------------------------------------------------- | ------ | ----------------------------------------------------------------- |
+| 1     | Prettier installed and run                                 | 10 min | done                                                              |
+| 2     | `.nvmrc`, engines, `@types/node` aligned                   | 5 min  | done                                                              |
+| 3     | Read-only `lint`, `format:check`, `typecheck` with typegen | 5 min  | done                                                              |
+| 4     | husky + lint-staged hooks                                  | 10 min | done                                                              |
+| 5     | CI workflow with composite setup                           | 30 min | done                                                              |
+| 6     | `server-only` + ESLint boundaries                          | 20 min | done                                                              |
+| 7     | Required status checks on `main`                           | 5 min  | re-applied via `gh api` on 2026-09-30 for this repo; verify in UI |
+| 8     | Env preflight                                              | 15 min | done                                                              |
+| 9     | Docs link check + feature-map check + fixtures             | 1 h    | done                                                              |
+| 10    | Migrations job with Postgres service                       | 30 min | done                                                              |
+| 11    | Smoke imports                                              | 20 min | done                                                              |
+| 12    | Dependabot                                                 | 5 min  | done                                                              |
