@@ -4,6 +4,23 @@ Meet Mouse is a Slack app: an availability poll that lives in one channel messag
 updates in place. Nobody leaves Slack. The web app at meetmouse.net is a static homepage
 plus a single route handler that receives every Slack request.
 
+## Request path
+
+```mermaid
+flowchart LR
+  Slack([Slack]) -- signed POST --> Route["src/app/api/slack/events/route.ts"]
+  Route --> Receiver["VercelReceiver: verify signature, ack within 3 s"]
+  Receiver -- waitUntil --> Listener["src/features/*/listener.ts"]
+  Listener --> Schema["schema.ts: zod parses view.state.values"]
+  Listener --> Domain["src/domain: slots, tally, gcal (pure)"]
+  Listener --> Queries["src/db/queries.ts: Neon over HTTP"]
+  Listener --> Blocks["blocks.ts + src/slack: Block Kit (pure)"]
+  Blocks -- chat.update, views.open --> Slack
+```
+
+Arrows into `src/domain` and the block builders only ever carry data; ESLint rejects an import
+of the database, Bolt or env from either. The rules are in [Dependency rules](#dependency-rules).
+
 ## Stack
 
 | Concern       | Choice                                                                                                   |
