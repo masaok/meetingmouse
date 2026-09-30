@@ -1,0 +1,584 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`respondModal > matches the snapshot for a three-day poll viewed from Tokyo with a prior answer 1`] = `
+{
+  "blocks": [
+    {
+      "elements": [
+        {
+          "text": "Times in *Asia/Tokyo*. Tick every slot that works for you. Your previous answer is pre-filled.",
+          "type": "mrkdwn",
+        },
+      ],
+      "type": "context",
+    },
+    {
+      "text": {
+        "emoji": true,
+        "text": "Wednesday, Oct 7",
+        "type": "plain_text",
+      },
+      "type": "header",
+    },
+    {
+      "block_id": "day_2026-10-07_0",
+      "element": {
+        "action_id": "slots",
+        "initial_options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:00 AM – 1:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791302400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:30 AM – 3:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791307800",
+          },
+        ],
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:00 AM – 1:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791302400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:30 AM – 2:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791304200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:00 AM – 2:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791306000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:30 AM – 3:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791307800",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:00 AM – 3:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791309600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:30 AM – 4:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791311400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:00 AM – 4:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791313200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:30 AM – 5:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791315000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:00 AM – 5:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791316800",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:30 AM – 6:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791318600",
+          },
+        ],
+        "type": "checkboxes",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Times",
+        "type": "plain_text",
+      },
+      "optional": true,
+      "type": "input",
+    },
+    {
+      "block_id": "day_2026-10-07_1",
+      "element": {
+        "action_id": "slots",
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:00 AM – 6:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791320400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:30 AM – 7:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791322200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:00 AM – 7:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791324000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:30 AM – 8:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791325800",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:00 AM – 8:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791327600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:30 AM – 9:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791329400",
+          },
+        ],
+        "type": "checkboxes",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Times (continued)",
+        "type": "plain_text",
+      },
+      "optional": true,
+      "type": "input",
+    },
+    {
+      "text": {
+        "emoji": true,
+        "text": "Thursday, Oct 8",
+        "type": "plain_text",
+      },
+      "type": "header",
+    },
+    {
+      "block_id": "day_2026-10-08_0",
+      "element": {
+        "action_id": "slots",
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:00 AM – 1:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791388800",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:30 AM – 2:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791390600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:00 AM – 2:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791392400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:30 AM – 3:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791394200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:00 AM – 3:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791396000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:30 AM – 4:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791397800",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:00 AM – 4:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791399600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:30 AM – 5:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791401400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:00 AM – 5:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791403200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:30 AM – 6:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791405000",
+          },
+        ],
+        "type": "checkboxes",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Times",
+        "type": "plain_text",
+      },
+      "optional": true,
+      "type": "input",
+    },
+    {
+      "block_id": "day_2026-10-08_1",
+      "element": {
+        "action_id": "slots",
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:00 AM – 6:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791406800",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:30 AM – 7:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791408600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:00 AM – 7:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791410400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:30 AM – 8:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791412200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:00 AM – 8:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791414000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:30 AM – 9:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791415800",
+          },
+        ],
+        "type": "checkboxes",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Times (continued)",
+        "type": "plain_text",
+      },
+      "optional": true,
+      "type": "input",
+    },
+    {
+      "text": {
+        "emoji": true,
+        "text": "Friday, Oct 9",
+        "type": "plain_text",
+      },
+      "type": "header",
+    },
+    {
+      "block_id": "day_2026-10-09_0",
+      "element": {
+        "action_id": "slots",
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:00 AM – 1:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791475200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:30 AM – 2:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791477000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:00 AM – 2:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791478800",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:30 AM – 3:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791480600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:00 AM – 3:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791482400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:30 AM – 4:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791484200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:00 AM – 4:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791486000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:30 AM – 5:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791487800",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:00 AM – 5:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791489600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:30 AM – 6:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791491400",
+          },
+        ],
+        "type": "checkboxes",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Times",
+        "type": "plain_text",
+      },
+      "optional": true,
+      "type": "input",
+    },
+    {
+      "block_id": "day_2026-10-09_1",
+      "element": {
+        "action_id": "slots",
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:00 AM – 6:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791493200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:30 AM – 7:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791495000",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:00 AM – 7:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791496800",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:30 AM – 8:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791498600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:00 AM – 8:30 AM",
+              "type": "plain_text",
+            },
+            "value": "1791500400",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:30 AM – 9:00 AM",
+              "type": "plain_text",
+            },
+            "value": "1791502200",
+          },
+        ],
+        "type": "checkboxes",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Times (continued)",
+        "type": "plain_text",
+      },
+      "optional": true,
+      "type": "input",
+    },
+    {
+      "type": "divider",
+    },
+    {
+      "block_id": "none_block",
+      "element": {
+        "action_id": "none",
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "I can't make any of these",
+              "type": "plain_text",
+            },
+            "value": "none",
+          },
+        ],
+        "type": "checkboxes",
+      },
+      "label": {
+        "emoji": true,
+        "text": "None of these work?",
+        "type": "plain_text",
+      },
+      "optional": true,
+      "type": "input",
+    },
+  ],
+  "callback_id": "respond_modal",
+  "close": {
+    "emoji": true,
+    "text": "Cancel",
+    "type": "plain_text",
+  },
+  "private_metadata": "{"pollId":"00000000-0000-4000-8000-000000000001"}",
+  "submit": {
+    "emoji": true,
+    "text": "Save",
+    "type": "plain_text",
+  },
+  "title": {
+    "emoji": true,
+    "text": "Add my availability",
+    "type": "plain_text",
+  },
+  "type": "modal",
+}
+`;

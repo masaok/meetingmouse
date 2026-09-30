@@ -1,0 +1,15 @@
+{
+  "token": "deprecated",
+  "team_id": "T0000TEST",
+  "api_app_id": "A0000TEST",
+  "type": "event_callback",
+  "event_id": "Ev0000TEST",
+  "event_time": 1700000000,
+  "event": {
+    "type": "app_home_opened",
+    "user": "U0000TEST",
+    "channel": "D0000TEST",
+    "tab": "home",
+    "event_ts": "1700000000.000100"
+  }
+}

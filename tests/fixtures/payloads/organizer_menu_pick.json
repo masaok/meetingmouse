@@ -1,0 +1,27 @@
+{
+  "type": "block_actions",
+  "team": { "id": "T0000TEST", "domain": "test" },
+  "user": { "id": "U0000ORG", "username": "organizer", "team_id": "T0000TEST" },
+  "api_app_id": "A0000TEST",
+  "container": {
+    "type": "message",
+    "message_ts": "1700000000.000100",
+    "channel_id": "C0000TEST",
+    "is_ephemeral": false
+  },
+  "trigger_id": "1700000000.1.deadbeef",
+  "channel": { "id": "C0000TEST", "name": "test" },
+  "response_url": "https://hooks.slack.com/actions/T0000TEST/1/xxx",
+  "actions": [
+    {
+      "type": "overflow",
+      "block_id": "poll_actions_00000000-0000-4000-8000-000000000001",
+      "action_id": "organizer_menu",
+      "selected_option": {
+        "text": { "type": "plain_text", "text": "Pick final time" },
+        "value": "pick_time"
+      },
+      "action_ts": "1700000000.000200"
+    }
+  ]
+}

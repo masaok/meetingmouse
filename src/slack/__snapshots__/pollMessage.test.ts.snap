@@ -1,0 +1,179 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderPollMessage > matches the snapshot for a three-day poll with responses 1`] = `
+{
+  "blocks": [
+    {
+      "text": {
+        "emoji": true,
+        "text": "📅 Sprint planning",
+        "type": "plain_text",
+      },
+      "type": "header",
+    },
+    {
+      "elements": [
+        {
+          "text": "Organized by <@U0000ORG> · 4 responded · times shown in your time zone",
+          "type": "mrkdwn",
+        },
+      ],
+      "type": "context",
+    },
+    {
+      "text": {
+        "text": "*Best times*
+1. <!date^1791302400^{date_short_pretty} {time}|Tue Oct 6 9:00 AM> — 2/4
+2. <!date^1791304200^{date_short_pretty} {time}|Tue Oct 6 9:30 AM> — 2/4
+3. <!date^1791306000^{date_short_pretty} {time}|Tue Oct 6 10:00 AM> — 2/4",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "type": "divider",
+    },
+    {
+      "text": {
+        "text": "*<!date^1791302400^{date_short_pretty}|Tue, Oct 6>*
+<!date^1791302400^{time}|9:00 AM> 🟩🟩⬜⬜ 2
+<!date^1791304200^{time}|9:30 AM> 🟩🟩⬜⬜ 2
+<!date^1791306000^{time}|10:00 AM> 🟩🟩⬜⬜ 2
+<!date^1791307800^{time}|10:30 AM> 🟩⬜⬜⬜ 1
+<!date^1791309600^{time}|11:00 AM> 🟩🟩⬜⬜ 2
+<!date^1791311400^{time}|11:30 AM> 🟩🟩⬜⬜ 2
+<!date^1791313200^{time}|12:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791315000^{time}|12:30 PM> 🟩🟩⬜⬜ 2
+<!date^1791316800^{time}|1:00 PM> 🟩⬜⬜⬜ 1
+<!date^1791318600^{time}|1:30 PM> 🟩🟩⬜⬜ 2
+<!date^1791320400^{time}|2:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791322200^{time}|2:30 PM> 🟩🟩⬜⬜ 2
+<!date^1791324000^{time}|3:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791325800^{time}|3:30 PM> 🟩⬜⬜⬜ 1
+<!date^1791327600^{time}|4:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791329400^{time}|4:30 PM> 🟩🟩⬜⬜ 2",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "text": {
+        "text": "*<!date^1791388800^{date_short_pretty}|Wed, Oct 7>*
+<!date^1791388800^{time}|9:00 AM> 🟩🟩⬜⬜ 2
+<!date^1791390600^{time}|9:30 AM> 🟩🟩⬜⬜ 2
+<!date^1791392400^{time}|10:00 AM> 🟩⬜⬜⬜ 1
+<!date^1791394200^{time}|10:30 AM> 🟩🟩⬜⬜ 2
+<!date^1791396000^{time}|11:00 AM> 🟩🟩⬜⬜ 2
+<!date^1791397800^{time}|11:30 AM> 🟩🟩⬜⬜ 2
+<!date^1791399600^{time}|12:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791401400^{time}|12:30 PM> 🟩⬜⬜⬜ 1
+<!date^1791403200^{time}|1:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791405000^{time}|1:30 PM> 🟩🟩⬜⬜ 2
+<!date^1791406800^{time}|2:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791408600^{time}|2:30 PM> 🟩🟩⬜⬜ 2
+<!date^1791410400^{time}|3:00 PM> 🟩⬜⬜⬜ 1
+<!date^1791412200^{time}|3:30 PM> 🟩🟩⬜⬜ 2
+<!date^1791414000^{time}|4:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791415800^{time}|4:30 PM> 🟩🟩⬜⬜ 2",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "text": {
+        "text": "*<!date^1791475200^{date_short_pretty}|Thu, Oct 8>*
+<!date^1791475200^{time}|9:00 AM> 🟩🟩⬜⬜ 2
+<!date^1791477000^{time}|9:30 AM> 🟩⬜⬜⬜ 1
+<!date^1791478800^{time}|10:00 AM> 🟩🟩⬜⬜ 2
+<!date^1791480600^{time}|10:30 AM> 🟩🟩⬜⬜ 2
+<!date^1791482400^{time}|11:00 AM> 🟩🟩⬜⬜ 2
+<!date^1791484200^{time}|11:30 AM> 🟩🟩⬜⬜ 2
+<!date^1791486000^{time}|12:00 PM> 🟩⬜⬜⬜ 1
+<!date^1791487800^{time}|12:30 PM> 🟩🟩⬜⬜ 2
+<!date^1791489600^{time}|1:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791491400^{time}|1:30 PM> 🟩🟩⬜⬜ 2
+<!date^1791493200^{time}|2:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791495000^{time}|2:30 PM> 🟩⬜⬜⬜ 1
+<!date^1791496800^{time}|3:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791498600^{time}|3:30 PM> 🟩🟩⬜⬜ 2
+<!date^1791500400^{time}|4:00 PM> 🟩🟩⬜⬜ 2
+<!date^1791502200^{time}|4:30 PM> 🟩🟩⬜⬜ 2",
+        "type": "mrkdwn",
+      },
+      "type": "section",
+    },
+    {
+      "elements": [
+        {
+          "text": "Responded: <@U0001>, <@U0002>, <@U0003>, <@U0004>",
+          "type": "mrkdwn",
+        },
+      ],
+      "type": "context",
+    },
+    {
+      "block_id": "poll_actions_00000000-0000-4000-8000-000000000001",
+      "elements": [
+        {
+          "action_id": "respond_button",
+          "style": "primary",
+          "text": {
+            "emoji": true,
+            "text": "Add my availability",
+            "type": "plain_text",
+          },
+          "type": "button",
+          "value": "00000000-0000-4000-8000-000000000001",
+        },
+        {
+          "action_id": "organizer_menu",
+          "confirm": {
+            "confirm": {
+              "text": "Continue",
+              "type": "plain_text",
+            },
+            "deny": {
+              "text": "Cancel",
+              "type": "plain_text",
+            },
+            "text": {
+              "text": "Only the organizer can do this. Continue?",
+              "type": "mrkdwn",
+            },
+            "title": {
+              "text": "Organizer action",
+              "type": "plain_text",
+            },
+          },
+          "options": [
+            {
+              "text": {
+                "text": "Pick final time",
+                "type": "plain_text",
+              },
+              "value": "pick_time",
+            },
+            {
+              "text": {
+                "text": "Close poll",
+                "type": "plain_text",
+              },
+              "value": "close_poll",
+            },
+            {
+              "text": {
+                "text": "Delete poll",
+                "type": "plain_text",
+              },
+              "value": "delete_poll",
+            },
+          ],
+          "type": "overflow",
+        },
+      ],
+      "type": "actions",
+    },
+  ],
+  "text": "📅 Sprint planning — availability poll",
+}
+`;

@@ -1,0 +1,10 @@
+{
+  "type": "shortcut",
+  "token": "deprecated",
+  "action_ts": "1700000000.000100",
+  "team": { "id": "T0000TEST", "domain": "test" },
+  "user": { "id": "U0000TEST", "username": "tester", "team_id": "T0000TEST" },
+  "is_enterprise_install": false,
+  "callback_id": "create_poll",
+  "trigger_id": "1700000000.1.deadbeef"
+}

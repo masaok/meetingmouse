@@ -1,0 +1,55 @@
+name: Bug report
+description: Something in Slack did not do what the docs say it does
+labels: [bug]
+body:
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      description: Where did it happen? The feature map (docs/FEATURE_MAP.md) lists every surface.
+      options:
+        - /when command or global shortcut
+        - Create poll modal
+        - Poll message in the channel
+        - Respond modal
+        - Organizer menu (pick, close, delete)
+        - App Home
+        - Homepage / other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, including any error text or ephemeral message.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: A `pnpm slack:sign …` command, a payload fixture, or the exact clicks. Include time zone and poll dates when they matter.
+      render: shell
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Where it ran
+      options:
+        - Hosted instance (meetmouse.net)
+        - Self-hosted
+        - Local dev, offline mode (fake token)
+        - Local dev, live workspace
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log lines
+      description: Structured log output from the request, if you have it. Redact tokens and workspace ids.
+      render: text

@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in \"$CLAUDE_PROJECT_DIR\"/*.md) ;; *) exit 0;; esac; case \"$f\" in */node_modules/*) exit 0;; esac; cd \"$CLAUDE_PROJECT_DIR\" && out=$(pnpm -s exec tsx scripts/check-prose.ts \"$f\" 2>&1) && exit 0; echo \"prose check failed (long dash or curly quote): $out\" >&2; exit 2"
+          }
+        ]
+      }
+    ]
+  }
+}

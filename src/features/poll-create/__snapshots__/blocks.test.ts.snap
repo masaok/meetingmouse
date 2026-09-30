@@ -1,0 +1,916 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createPollModal > matches the snapshot 1`] = `
+{
+  "blocks": [
+    {
+      "block_id": "title_block",
+      "element": {
+        "action_id": "title",
+        "initial_value": "Sprint planning",
+        "max_length": 150,
+        "placeholder": {
+          "emoji": true,
+          "text": "Sprint planning",
+          "type": "plain_text",
+        },
+        "type": "plain_text_input",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Title",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+    {
+      "block_id": "dates_block",
+      "element": {
+        "action_id": "dates",
+        "max_selected_items": 14,
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 6",
+              "type": "plain_text",
+            },
+            "value": "2026-10-06",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Wed, Oct 7",
+              "type": "plain_text",
+            },
+            "value": "2026-10-07",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Thu, Oct 8",
+              "type": "plain_text",
+            },
+            "value": "2026-10-08",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Fri, Oct 9",
+              "type": "plain_text",
+            },
+            "value": "2026-10-09",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Sat, Oct 10",
+              "type": "plain_text",
+            },
+            "value": "2026-10-10",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Sun, Oct 11",
+              "type": "plain_text",
+            },
+            "value": "2026-10-11",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Mon, Oct 12",
+              "type": "plain_text",
+            },
+            "value": "2026-10-12",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 13",
+              "type": "plain_text",
+            },
+            "value": "2026-10-13",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Wed, Oct 14",
+              "type": "plain_text",
+            },
+            "value": "2026-10-14",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Thu, Oct 15",
+              "type": "plain_text",
+            },
+            "value": "2026-10-15",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Fri, Oct 16",
+              "type": "plain_text",
+            },
+            "value": "2026-10-16",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Sat, Oct 17",
+              "type": "plain_text",
+            },
+            "value": "2026-10-17",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Sun, Oct 18",
+              "type": "plain_text",
+            },
+            "value": "2026-10-18",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Mon, Oct 19",
+              "type": "plain_text",
+            },
+            "value": "2026-10-19",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Tue, Oct 20",
+              "type": "plain_text",
+            },
+            "value": "2026-10-20",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Wed, Oct 21",
+              "type": "plain_text",
+            },
+            "value": "2026-10-21",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Thu, Oct 22",
+              "type": "plain_text",
+            },
+            "value": "2026-10-22",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Fri, Oct 23",
+              "type": "plain_text",
+            },
+            "value": "2026-10-23",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Sat, Oct 24",
+              "type": "plain_text",
+            },
+            "value": "2026-10-24",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Sun, Oct 25",
+              "type": "plain_text",
+            },
+            "value": "2026-10-25",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "Mon, Oct 26",
+              "type": "plain_text",
+            },
+            "value": "2026-10-26",
+          },
+        ],
+        "placeholder": {
+          "emoji": true,
+          "text": "Pick dates",
+          "type": "plain_text",
+        },
+        "type": "multi_static_select",
+      },
+      "hint": {
+        "emoji": true,
+        "text": "Up to 14 dates, shown in America/Los_Angeles.",
+        "type": "plain_text",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Dates",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+    {
+      "block_id": "from_block",
+      "element": {
+        "action_id": "from",
+        "initial_option": {
+          "text": {
+            "emoji": true,
+            "text": "9:00 AM",
+            "type": "plain_text",
+          },
+          "value": "540",
+        },
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:00 AM",
+              "type": "plain_text",
+            },
+            "value": "360",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:30 AM",
+              "type": "plain_text",
+            },
+            "value": "390",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:00 AM",
+              "type": "plain_text",
+            },
+            "value": "420",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:30 AM",
+              "type": "plain_text",
+            },
+            "value": "450",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:00 AM",
+              "type": "plain_text",
+            },
+            "value": "480",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:30 AM",
+              "type": "plain_text",
+            },
+            "value": "510",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "9:00 AM",
+              "type": "plain_text",
+            },
+            "value": "540",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "9:30 AM",
+              "type": "plain_text",
+            },
+            "value": "570",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "10:00 AM",
+              "type": "plain_text",
+            },
+            "value": "600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "10:30 AM",
+              "type": "plain_text",
+            },
+            "value": "630",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "11:00 AM",
+              "type": "plain_text",
+            },
+            "value": "660",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "11:30 AM",
+              "type": "plain_text",
+            },
+            "value": "690",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "12:00 PM",
+              "type": "plain_text",
+            },
+            "value": "720",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "12:30 PM",
+              "type": "plain_text",
+            },
+            "value": "750",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:00 PM",
+              "type": "plain_text",
+            },
+            "value": "780",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:30 PM",
+              "type": "plain_text",
+            },
+            "value": "810",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:00 PM",
+              "type": "plain_text",
+            },
+            "value": "840",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:30 PM",
+              "type": "plain_text",
+            },
+            "value": "870",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:00 PM",
+              "type": "plain_text",
+            },
+            "value": "900",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:30 PM",
+              "type": "plain_text",
+            },
+            "value": "930",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:00 PM",
+              "type": "plain_text",
+            },
+            "value": "960",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:30 PM",
+              "type": "plain_text",
+            },
+            "value": "990",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1020",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1050",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1080",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1110",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1140",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1170",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1230",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "9:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1260",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "9:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1290",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "10:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1320",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "10:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1350",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "11:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1380",
+          },
+        ],
+        "type": "static_select",
+      },
+      "label": {
+        "emoji": true,
+        "text": "From",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+    {
+      "block_id": "to_block",
+      "element": {
+        "action_id": "to",
+        "initial_option": {
+          "text": {
+            "emoji": true,
+            "text": "5:00 PM",
+            "type": "plain_text",
+          },
+          "value": "1020",
+        },
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:00 AM",
+              "type": "plain_text",
+            },
+            "value": "360",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:30 AM",
+              "type": "plain_text",
+            },
+            "value": "390",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:00 AM",
+              "type": "plain_text",
+            },
+            "value": "420",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:30 AM",
+              "type": "plain_text",
+            },
+            "value": "450",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:00 AM",
+              "type": "plain_text",
+            },
+            "value": "480",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:30 AM",
+              "type": "plain_text",
+            },
+            "value": "510",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "9:00 AM",
+              "type": "plain_text",
+            },
+            "value": "540",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "9:30 AM",
+              "type": "plain_text",
+            },
+            "value": "570",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "10:00 AM",
+              "type": "plain_text",
+            },
+            "value": "600",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "10:30 AM",
+              "type": "plain_text",
+            },
+            "value": "630",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "11:00 AM",
+              "type": "plain_text",
+            },
+            "value": "660",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "11:30 AM",
+              "type": "plain_text",
+            },
+            "value": "690",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "12:00 PM",
+              "type": "plain_text",
+            },
+            "value": "720",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "12:30 PM",
+              "type": "plain_text",
+            },
+            "value": "750",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:00 PM",
+              "type": "plain_text",
+            },
+            "value": "780",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "1:30 PM",
+              "type": "plain_text",
+            },
+            "value": "810",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:00 PM",
+              "type": "plain_text",
+            },
+            "value": "840",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "2:30 PM",
+              "type": "plain_text",
+            },
+            "value": "870",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:00 PM",
+              "type": "plain_text",
+            },
+            "value": "900",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "3:30 PM",
+              "type": "plain_text",
+            },
+            "value": "930",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:00 PM",
+              "type": "plain_text",
+            },
+            "value": "960",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "4:30 PM",
+              "type": "plain_text",
+            },
+            "value": "990",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1020",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "5:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1050",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1080",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "6:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1110",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1140",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "7:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1170",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1200",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "8:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1230",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "9:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1260",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "9:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1290",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "10:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1320",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "10:30 PM",
+              "type": "plain_text",
+            },
+            "value": "1350",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "11:00 PM",
+              "type": "plain_text",
+            },
+            "value": "1380",
+          },
+        ],
+        "type": "static_select",
+      },
+      "label": {
+        "emoji": true,
+        "text": "To",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+    {
+      "block_id": "slot_block",
+      "element": {
+        "action_id": "slot",
+        "initial_option": {
+          "text": {
+            "emoji": true,
+            "text": "30 min",
+            "type": "plain_text",
+          },
+          "value": "30",
+        },
+        "options": [
+          {
+            "text": {
+              "emoji": true,
+              "text": "15 min",
+              "type": "plain_text",
+            },
+            "value": "15",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "30 min",
+              "type": "plain_text",
+            },
+            "value": "30",
+          },
+          {
+            "text": {
+              "emoji": true,
+              "text": "60 min",
+              "type": "plain_text",
+            },
+            "value": "60",
+          },
+        ],
+        "type": "radio_buttons",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Slot length",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+    {
+      "block_id": "channel_block",
+      "element": {
+        "action_id": "channel",
+        "default_to_current_conversation": true,
+        "filter": {
+          "exclude_bot_users": true,
+          "include": [
+            "public",
+            "private",
+          ],
+        },
+        "initial_conversation": "C123",
+        "response_url_enabled": true,
+        "type": "conversations_select",
+      },
+      "label": {
+        "emoji": true,
+        "text": "Post to",
+        "type": "plain_text",
+      },
+      "type": "input",
+    },
+  ],
+  "callback_id": "create_poll_modal",
+  "close": {
+    "emoji": true,
+    "text": "Cancel",
+    "type": "plain_text",
+  },
+  "private_metadata": "{"channelId":"C123"}",
+  "submit": {
+    "emoji": true,
+    "text": "Post poll",
+    "type": "plain_text",
+  },
+  "title": {
+    "emoji": true,
+    "text": "New availability poll",
+    "type": "plain_text",
+  },
+  "type": "modal",
+}
+`;
