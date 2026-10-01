@@ -4,7 +4,8 @@ import { LogLevel } from "@slack/bolt";
 
 import { createMeetingMouse, type Bolt } from "@/bolt/create";
 import { coreFeatures } from "@/features";
-import { env } from "@/lib/env";
+import { appBaseUrl, env } from "@/lib/env";
+import { deriveGridSecret } from "@/web/link";
 
 export type { Bolt } from "@/bolt/create";
 
@@ -23,6 +24,7 @@ export function getBolt(): Bolt {
   if (bolt) return bolt;
   const { SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET } = env();
   const offline = process.env.SLACK_TOKEN_VERIFICATION === "off";
+  const baseUrl = appBaseUrl();
   bolt = createMeetingMouse({
     features: coreFeatures,
     signingSecret: SLACK_SIGNING_SECRET,
@@ -35,6 +37,11 @@ export function getBolt(): Bolt {
           }),
         }
       : { token: SLACK_BOT_TOKEN },
+    // The grid's links are signed with a key derived from the signing secret, so self-hosting
+    // stays a three-variable setup. src/app/grid/[token]/route.ts derives the same key.
+    grid: baseUrl
+      ? { baseUrl, secret: deriveGridSecret(SLACK_SIGNING_SECRET) }
+      : undefined,
     logLevel: process.env.NODE_ENV === "production" ? LogLevel.INFO : LogLevel.DEBUG,
   });
   return bolt;

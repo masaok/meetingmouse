@@ -1,12 +1,20 @@
-import type { ActionsBlockElement, KnownBlock, PlainTextOption } from "@slack/types";
+import type {
+  ActionsBlockElement,
+  KnownBlock,
+  PlainTextOption,
+  RichTextBlock,
+  RichTextElement,
+  TableBlock,
+} from "@slack/types";
 
 import { POLL_LIMITS } from "@/domain/constants";
 import { gcalUrl } from "@/domain/gcal";
-import { formatInTz, groupByLocalDate, slotEnd } from "@/domain/slots";
+import { gridModel } from "@/domain/grid";
+import { formatInTz, slotEnd } from "@/domain/slots";
 import { bestTimes, fullOverlapRanges, tally } from "@/domain/tally";
 import type { PollSnapshot, SlotTally } from "@/domain/types";
 
-import { dateToken, truncate, userMention } from "./format";
+import { dateToken, epochSeconds, truncate, userMention } from "./format";
 import {
   ACTION_GCAL_LINK,
   ACTION_ORGANIZER_MENU,
@@ -15,10 +23,20 @@ import {
 } from "./ids";
 import { SLACK_LIMITS } from "./limits";
 
-const FULL = "🟩";
-const EMPTY = "⬜";
-const MAX_SQUARES = 10;
 const MAX_NAMED_RESPONDENTS = 20;
+
+/** How much of the group is free in a slot. One colored square per level. */
+const HEAT = {
+  none: { emoji: "white_large_square", glyph: "⬜", label: "nobody" },
+  few: { emoji: "large_orange_square", glyph: "🟧", label: "a few" },
+  most: { emoji: "large_yellow_square", glyph: "🟨", label: "half or more" },
+  all: { emoji: "large_green_square", glyph: "🟩", label: "everyone" },
+} as const;
+type HeatLevel = keyof typeof HEAT;
+
+const LEGEND = (["all", "most", "few", "none"] as const)
+  .map((level) => `${HEAT[level].glyph} ${HEAT[level].label}`)
+  .join(" · ");
 
 export interface PollMessage {
   /** Notification / fallback text. */
@@ -104,17 +122,9 @@ export function renderPollMessage(snapshot: PollSnapshot): PollMessage {
 
   blocks.push({ type: "divider" });
 
-  const byDay = groupByLocalDate(slots, poll.creatorTz);
-  const tallyBySlot = new Map(tallies.map((t) => [t.slot.getTime(), t]));
-  for (const [, daySlots] of byDay) {
-    blocks.push({
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: dayText(daySlots, tallyBySlot, total, poll.creatorTz),
-      },
-    });
-  }
+  blocks.push(gridTable(slots, tallies, total, poll.creatorTz));
+  if (total > 0)
+    blocks.push({ type: "context", elements: [{ type: "mrkdwn", text: LEGEND }] });
 
   if (total > 0) {
     const named = participants
@@ -159,71 +169,69 @@ function bestTimesText(tallies: SlotTally[], total: number, tz: string): string 
   return `*Best times*\n${lines.join("\n")}`;
 }
 
-interface Row {
-  start: Date;
-  count: number;
+export function heatLevel(count: number, total: number): HeatLevel {
+  if (count <= 0 || total <= 0) return "none";
+  if (count >= total) return "all";
+  return count * 2 >= total ? "most" : "few";
 }
+
+const cell = (...elements: RichTextElement[]): RichTextBlock => ({
+  type: "rich_text",
+  elements: [{ type: "rich_text_section", elements }],
+});
 
 /**
- * One section per day. Rows with zero availability are collapsed into ranges. If the text would
- * exceed the section limit, only rows with availability are kept, plus a note.
+ * The group's availability as one table: a column per day, a row per time of day, and in each
+ * cell a square for how much of the group is free plus the headcount. Days and times are
+ * grouped in the organizer's zone; the labels are date elements, so each viewer reads them in
+ * their own. A day that lacks a time (a daylight-saving change) gets a blank cell.
  */
-function dayText(
-  daySlots: Date[],
-  tallyBySlot: Map<number, SlotTally>,
+function gridTable(
+  slots: Date[],
+  tallies: SlotTally[],
   total: number,
   tz: string,
-): string {
-  const first = daySlots[0];
-  const header = `*${dateToken(first, "{date_short_pretty}", formatInTz(first, tz, "EEE, MMM d"))}*`;
-  const rows: Row[] = daySlots.map((s) => ({
-    start: s,
-    count: tallyBySlot.get(s.getTime())?.count ?? 0,
-  }));
+): TableBlock {
+  const countBySlot = new Map(tallies.map((t) => [t.slot.getTime(), t.count]));
+  const { days, rows, cells } = gridModel(slots, tz);
+  const blank = cell({ type: "text", text: " " });
 
-  const full = `${header}\n${collapseRows(rows, total, tz).join("\n")}`;
-  if (full.length <= SLACK_LIMITS.SECTION_TEXT_CHARS) return full;
+  const header = days.map(({ first }) =>
+    cell({
+      type: "date",
+      timestamp: epochSeconds(first),
+      format: "{date_short}",
+      fallback: formatInTz(first, tz, "EEE, MMM d"),
+      style: { bold: true },
+    }),
+  );
+  const body = rows.map(({ sample }, r) => {
+    const label = cell({
+      type: "date",
+      timestamp: epochSeconds(sample),
+      format: "{time}",
+      fallback: formatInTz(sample, tz, "h:mm a"),
+    });
+    const heat = cells[r].map((slot) => {
+      if (!slot) return blank;
+      const count = countBySlot.get(slot.getTime()) ?? 0;
+      const square: RichTextElement = {
+        type: "emoji",
+        name: HEAT[heatLevel(count, total)].emoji,
+      };
+      return count > 0 ? cell(square, { type: "text", text: ` ${count}` }) : cell(square);
+    });
+    return [label, ...heat];
+  });
 
-  const withVotes = rows.filter((r) => r.count > 0);
-  const omitted = rows.length - withVotes.length;
-  const compact = `${header}\n${collapseRows(withVotes, total, tz).join("\n")}\n_${omitted} slots with no availability hidden_`;
-  return compact.length <= SLACK_LIMITS.SECTION_TEXT_CHARS
-    ? compact
-    : truncate(compact, SLACK_LIMITS.SECTION_TEXT_CHARS);
-}
-
-function collapseRows(rows: Row[], total: number, tz: string): string[] {
-  const out: string[] = [];
-  let i = 0;
-  while (i < rows.length) {
-    if (rows[i].count === 0) {
-      let j = i;
-      while (j + 1 < rows.length && rows[j + 1].count === 0) j++;
-      if (j > i) {
-        out.push(`${timeToken(rows[i].start, tz)}–${timeToken(rows[j].start, tz)} —`);
-      } else {
-        out.push(`${timeToken(rows[i].start, tz)} —`);
-      }
-      i = j + 1;
-      continue;
-    }
-    out.push(
-      `${timeToken(rows[i].start, tz)} ${bar(rows[i].count, total)} ${rows[i].count}`,
-    );
-    i++;
-  }
-  return out;
-}
-
-const timeToken = (d: Date, tz: string) =>
-  dateToken(d, "{time}", formatInTz(d, tz, "h:mm a"));
-
-/** N squares where N = participants (cap 10; beyond 10 the bar is scaled to the fraction). */
-export function bar(count: number, total: number): string {
-  if (total <= 0) return "";
-  const width = Math.min(total, MAX_SQUARES);
-  const filled = total <= MAX_SQUARES ? count : Math.round((count / total) * MAX_SQUARES);
-  return FULL.repeat(filled) + EMPTY.repeat(Math.max(0, width - filled));
+  return {
+    type: "table",
+    column_settings: [
+      { align: "right" },
+      ...days.map(() => ({ align: "center" as const })),
+    ],
+    rows: [[blank, ...header], ...body],
+  };
 }
 
 function actionElements(
@@ -275,11 +283,43 @@ function actionElements(
 export function messageStats(message: PollMessage): {
   blocks: number;
   longestSection: number;
+  tableRows: number;
+  tableColumns: number;
+  tableChars: number;
 } {
   let longest = 0;
+  let tableRows = 0;
+  let tableColumns = 0;
+  let tableChars = 0;
   for (const b of message.blocks) {
     if (b.type === "section" && b.text?.text)
       longest = Math.max(longest, b.text.text.length);
+    if (b.type === "table") {
+      tableRows = b.rows.length;
+      tableColumns = Math.max(...b.rows.map((row) => row.length));
+      tableChars = b.rows.flat().reduce((sum, c) => sum + cellChars(c), 0);
+    }
   }
-  return { blocks: message.blocks.length, longestSection: longest };
+  return {
+    blocks: message.blocks.length,
+    longestSection: longest,
+    tableRows,
+    tableColumns,
+    tableChars,
+  };
+}
+
+/** The visible text of a table cell: its text, emoji names and date fallbacks. */
+function cellChars(c: TableBlock["rows"][number][number]): number {
+  if (c.type !== "rich_text") return c.text.length;
+  let chars = 0;
+  for (const section of c.elements) {
+    if (section.type !== "rich_text_section") continue;
+    for (const e of section.elements) {
+      if (e.type === "text") chars += e.text.length;
+      else if (e.type === "emoji") chars += e.name.length;
+      else if (e.type === "date") chars += (e.fallback ?? "").length;
+    }
+  }
+  return chars;
 }

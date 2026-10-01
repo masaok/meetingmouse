@@ -18,6 +18,7 @@ import { coreFeatures, createMeetingMouse } from "meetingmouse";
 import { CORE_MIGRATIONS, schema } from "meetingmouse/db";
 import { COMMAND_WHEN } from "meetingmouse/slack";
 import { SLOT_MINUTES } from "meetingmouse/domain";
+import { createGridHandlers, deriveGridSecret, signGridLink } from "meetingmouse/web";
 
 process.env.SLACK_BOT_TOKEN = "xoxb-scratch";
 process.env.SLACK_SIGNING_SECRET = "scratch";
@@ -33,8 +34,14 @@ const handler = createHandler(app, receiver);
 const res = await handler(
   new Request("http://host/api/slack/events", { method: "POST", body: "command=%2Fwhen" }),
 );
+const gridSecret = deriveGridSecret("scratch");
+const grid = createGridHandlers({ secret: gridSecret, clientFor: async () => { throw new Error("unreachable"); } });
+const badLink = await grid.GET(new Request("http://host/grid/not-a-token"));
+const goodLink = signGridLink(gridSecret, { pollId: "p", teamId: "T", userId: "U" });
 const facts = {
   status: res.status,
+  gridBadLink: badLink.status,
+  gridLinkParts: goodLink.split(".").length,
   features: coreFeatures.map((f) => f.name),
   command: COMMAND_WHEN,
   slotMinutes: SLOT_MINUTES,
@@ -42,6 +49,7 @@ const facts = {
   tables: Object.keys(schema).length,
 };
 console.log(JSON.stringify(facts));
+if (badLink.status !== 404) throw new Error(`expected 404 for a bad grid link, got ${badLink.status}`);
 if (res.status !== 401) throw new Error(`expected 401 for an unsigned request, got ${res.status}`);
 JS
 node --conditions=react-server host.mjs

@@ -130,6 +130,7 @@ describe("check-pack", () => {
     "dist/db/index.js",
     "dist/slack/index.js",
     "dist/domain/index.js",
+    "dist/web/index.js",
     "drizzle/0000_x.sql",
     "drizzle/meta/_journal.json",
   ];

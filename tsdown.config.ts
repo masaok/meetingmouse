@@ -7,6 +7,7 @@ export default defineConfig({
     "db/index": "src/db/index.ts",
     "slack/index": "src/slack/index.ts",
     "domain/index": "src/domain/index.ts",
+    "web/index": "src/web/index.ts",
   },
   format: "esm",
   platform: "node",

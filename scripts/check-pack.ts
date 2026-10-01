@@ -20,6 +20,7 @@ const REQUIRED = [
   "dist/db/index.js",
   "dist/slack/index.js",
   "dist/domain/index.js",
+  "dist/web/index.js",
   "drizzle/meta/_journal.json",
 ];
 

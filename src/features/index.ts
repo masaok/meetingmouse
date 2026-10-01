@@ -4,7 +4,7 @@ import { feature as pollOrganize } from "./poll-organize/listener";
 import { feature as pollRespond } from "./poll-respond/listener";
 import type { Feature } from "./types";
 
-export type { Feature } from "./types";
+export type { Feature, FeatureContext } from "./types";
 
 /**
  * Features are colocated: each directory owns its listener, its block builders, its

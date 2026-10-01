@@ -1,6 +1,6 @@
 {
   "name": "meetingmouse",
-  "version": "0.5.2",
+  "version": "0.7.0",
   "description": "Slack availability polls that live in one channel message. The app, and the library a host embeds.",
   "license": "MIT",
   "repository": {
@@ -30,6 +30,10 @@
     "./domain": {
       "types": "./dist/domain/index.d.ts",
       "default": "./dist/domain/index.js"
+    },
+    "./web": {
+      "types": "./dist/web/index.d.ts",
+      "default": "./dist/web/index.js"
     }
   },
   "publishConfig": {
@@ -53,6 +57,7 @@
     "db:migrate": "drizzle-kit migrate",
     "slack:sign": "tsx scripts/slack-sign.ts",
     "render:fixture": "tsx --conditions=react-server scripts/render-fixture.ts",
+    "grid:preview": "tsx --conditions=react-server scripts/grid-preview.ts",
     "prepare": "husky",
     "lint:fix": "eslint --fix",
     "smoke": "tsx --conditions=react-server scripts/smoke-imports.ts",

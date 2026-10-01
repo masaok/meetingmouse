@@ -9,6 +9,7 @@ time zone (or "I can't make any of these"), save, and see the channel message up
 - `respond-local` slots are grouped by the responder's local date with ≤10 checkboxes per input.
 - `respond-prefill` a previous answer is pre-ticked; "none" is pre-ticked when it was chosen before.
 - `respond-save` submit replaces the user's availability in one statement and refreshes the message.
+- `respond-grid` when the host serves the web grid, the modal leads with **Open the grid** (a signed link for that person) and **Use checkboxes instead**; see `docs/WEB_GRID.md`.
 - `respond-closed` a closed/scheduled poll shows an explanation instead of the form, on open and on submit.
 
 ## How to get to it (user POV)
@@ -26,6 +27,8 @@ Preconditions:
 - **Worst case fits the modal.** Same test file, "14-day × 24-slot" case: ≤100 blocks, every checkbox ≤10 options, 336 options total.
 - **Submit saves and refreshes.** Run `pnpm slack:sign --payload tests/fixtures/payloads/respond_modal.json`. Status `200`; live log `action: 'response_saved'` with `slots`, `refresh: 'updated'`; cross-check `select user_id, count(*) from availability where poll_id = '<id>' group by 1`.
 - **Replace-all semantics.** Run `pnpm test src/db/queries.test.ts -t saveResponse`. Add 3, replace with 2 (1 overlapping) → exactly 2 rows; `[]` keeps the participant and removes rows; a foreign slot throws and leaves prior rows intact.
+- **Grid chooser.** `pnpm test src/features/poll-respond/listener.test.ts -t "web grid"` → the link button carries the viewer's own URL, the second button swaps in the checkbox form.
+- **The grid page.** `pnpm grid:preview`, open two of the printed links, drag on the left grid: "Saved" appears, the right grid darkens, the other window follows within 5 s, and the terminal prints `chat.update`.
 - **Closed mid-flight.** `pnpm test src/features/poll-respond/listener.test.ts -t "closed meanwhile"` → `response_action: update`, no save.
 
 ## Gotchas

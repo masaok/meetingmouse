@@ -4,7 +4,12 @@ import { getPollSnapshot, getUserAvailability, saveResponse } from "@/db/queries
 import { refreshPollMessage } from "@/lib/refresh";
 import { fixture } from "@/slack/fixtures";
 import { epochSeconds } from "@/slack/format";
-import { ACTION_RESPOND_BUTTON, CALLBACK_RESPOND_MODAL } from "@/slack/ids";
+import {
+  ACTION_GRID_LINK,
+  ACTION_RESPOND_BUTTON,
+  ACTION_RESPOND_CHECKBOXES,
+  CALLBACK_RESPOND_MODAL,
+} from "@/slack/ids";
 
 import { fakeApp, fakeClient } from "../../../tests/helpers/fakeApp";
 import { register } from "./listener";
@@ -173,5 +178,66 @@ describe("poll-respond listener", () => {
       }),
     );
     expect(refreshPollMessage).not.toHaveBeenCalled();
+  });
+});
+
+describe("poll-respond listener with the web grid", () => {
+  const { app, invoke } = fakeApp();
+  register(app, {
+    grid: { urlFor: (c) => `https://host.test/grid/${c.pollId}.${c.teamId}.${c.userId}` },
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(getPollSnapshot).mockResolvedValue(snapshot);
+    vi.mocked(getUserAvailability).mockResolvedValue([]);
+  });
+
+  it("leads with the viewer's own grid link, and offers the checkboxes", async () => {
+    const client = fakeClient();
+    await invoke("action", ACTION_RESPOND_BUTTON, buttonArgs(client));
+
+    const view = client.views.update.mock.calls[0][0].view;
+    const buttons = view.blocks.find(
+      (b: { type: string }) => b.type === "actions",
+    ).elements;
+    expect(buttons.map((b: { action_id: string }) => b.action_id)).toEqual([
+      ACTION_GRID_LINK,
+      ACTION_RESPOND_CHECKBOXES,
+    ]);
+    expect(buttons[0].url).toBe(`https://host.test/grid/${POLL_ID}.T1.U0002`);
+    expect(buttons[1].value).toBe(POLL_ID);
+    expect(view.submit).toBeUndefined();
+  });
+
+  it("swaps the chooser for the checkbox form on request", async () => {
+    const client = fakeClient();
+    await invoke("action", ACTION_RESPOND_CHECKBOXES, {
+      ack: vi.fn(),
+      client,
+      action: { type: "button", action_id: ACTION_RESPOND_CHECKBOXES, value: POLL_ID },
+      body: { user: { id: "U0002" }, team: { id: "T1" }, view: { id: "V9" } },
+    });
+
+    const call = client.views.update.mock.calls[0][0];
+    expect(call.view_id).toBe("V9");
+    expect(call.view.submit.text).toBe("Save");
+    expect(JSON.stringify(call.view.blocks)).toContain("Tick every slot");
+  });
+
+  it("still refuses a closed poll before offering the grid", async () => {
+    vi.mocked(getPollSnapshot).mockResolvedValue(fixture("closed"));
+    const client = fakeClient();
+    await invoke("action", ACTION_RESPOND_BUTTON, buttonArgs(client));
+
+    expect(JSON.stringify(client.views.update.mock.calls[0][0].view)).toContain(
+      "This poll is closed",
+    );
+  });
+
+  it("acks the link button, which Slack reports like any other action", async () => {
+    const ack = vi.fn();
+    await invoke("action", ACTION_GRID_LINK, { ack });
+    expect(ack).toHaveBeenCalledTimes(1);
   });
 });

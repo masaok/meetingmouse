@@ -1,8 +1,9 @@
 # Architecture
 
 Meeting Mouse is a Slack app: an availability poll that lives in one channel message and
-updates in place. Nobody leaves Slack. The web app at meetingmouse.net is a static homepage
-plus a single route handler that receives every Slack request.
+updates in place. The web app at meetingmouse.net is a static homepage, a route handler that
+receives every Slack request, and one optional page outside Slack, the
+[web grid](./WEB_GRID.md), where a person paints their availability by dragging.
 
 ## Request path
 
@@ -63,7 +64,7 @@ owns its route handler, its env preflight and its migrations. The core's databas
 environment for `DATABASE_URL` and nothing else, so a host with no bot token in its environment
 works.
 
-The library build (`pnpm build:lib`, tsdown) ships four entry points:
+The library build (`pnpm build:lib`, tsdown) ships five entry points:
 
 | Import                | Holds                                                                 |
 | --------------------- | --------------------------------------------------------------------- |
@@ -71,6 +72,7 @@ The library build (`pnpm build:lib`, tsdown) ships four entry points:
 | `meetingmouse/db`     | `CORE_MIGRATIONS`, the Drizzle `schema`, the queries, the lazy client |
 | `meetingmouse/slack`  | Surface ids, Slack limits, formatting helpers                         |
 | `meetingmouse/domain` | Slots, tally, calendar links, constants, types (pure)                 |
+| `meetingmouse/web`    | `createGridHandlers`, `deriveGridSecret`, the grid link helpers       |
 
 The tarball holds `dist/`, `drizzle/`, the README and the license, checked by
 `scripts/check-pack.ts`. `pnpm smoke:pack` installs the tarball into a scratch project, imports
@@ -84,7 +86,7 @@ Modules that import `server-only` (`createMeetingMouse`, the db client) need a h
 
 ```
 src/
-  app/                      Next.js routes: homepage + api/slack/events/route.ts
+  app/                      Next.js routes: homepage + api/slack/events/route.ts + grid/[token]/route.ts
   components/brand.tsx      Logo, mark and mascot for the homepage and the icon
   bolt/create.ts            createMeetingMouse(features, credentials): App + receiver for any host. server-only.
   bolt/app.ts               Reference wiring: env in, coreFeatures, built on first request. server-only.
@@ -97,6 +99,7 @@ src/
     types.ts                Feature: a name and a register(app) function
   domain/                   Pure logic: constants, types, slots, tally, gcal. No I/O.
   slack/                    Shared Slack knowledge: limits.ts, format.ts, block helpers.
+  web/                      The web grid: signed links, page state, the HTML page, its handlers.
   db/                       schema.ts (Drizzle), client.ts (server-only), queries.ts
   lib/                      env.ts (preflight), users.ts (users.info cache), log.ts,
                             refresh.ts (re-render the poll message from fresh reads),
@@ -139,13 +142,14 @@ client import is a build error, not a review comment.
 Constants in `src/slack/limits.ts`; poll limits in `src/domain/constants.ts`; the derivation is
 asserted in `src/slack/limits.test.ts`.
 
-| Limit                      | Value | Consequence                                                 |
-| -------------------------- | ----- | ----------------------------------------------------------- |
-| Checkbox options / element | 10    | Each day's slots split into ≤10-option inputs               |
-| Blocks / modal             | 100   | Polls capped at 14 days × 24 slots                          |
-| Blocks / message           | 50    | Heatmap is one section per day, not one block per slot      |
-| Section text               | 3000  | Compact rows; fall back to top rows plus a note if exceeded |
-| `trigger_id` lifetime      | ~3 s  | `views.open` a loading view first, DB work after            |
+| Limit                      | Value                                    | Consequence                                              |
+| -------------------------- | ---------------------------------------- | -------------------------------------------------------- |
+| Checkbox options / element | 10                                       | Each day's slots split into ≤10-option inputs            |
+| Blocks / modal             | 100                                      | Polls capped at 14 days × 24 slots                       |
+| Blocks / message           | 50                                       | Heatmap is one table block, not one block per slot       |
+| Table block                | 100 rows, 20 cells per row, 10,000 chars | 14 days of 24 slots is 25 rows by 15 columns             |
+| Section text               | 3000                                     | Only the best-times and everyone-free lines are sections |
+| `trigger_id` lifetime      | ~3 s                                     | `views.open` a loading view first, DB work after         |
 
 ## Tradeoffs a reviewer will ask about
 
@@ -171,6 +175,7 @@ The homepage and the webhook deploy as one project with one set of env vars, and
 types the route. A bare function would drop the page and the typegen to save one framework.
 
 **Where the in-Slack design stops.** The 100-block modal caps a poll at 14 days of 24 slots and
-the 50-block message caps the heatmap at one section per day; see
+the heatmap table holds at most 20 columns and squares, not shades, for intensity; see
 [Slack limits that shape the design](#slack-limits-that-shape-the-design). Past that, the exits
-are a rendered heatmap image and a web grid, tracked as issues rather than built ahead of need.
+are the [web grid](./WEB_GRID.md), which is built, and a rendered heatmap image, which is an
+issue rather than built ahead of need.
