@@ -2,7 +2,7 @@ import "server-only";
 
 import { LogLevel } from "@slack/bolt";
 
-import { createMeetMouse, type Bolt } from "@/bolt/create";
+import { createMeetingMouse, type Bolt } from "@/bolt/create";
 import { coreFeatures } from "@/features";
 import { env } from "@/lib/env";
 
@@ -23,7 +23,7 @@ export function getBolt(): Bolt {
   if (bolt) return bolt;
   const { SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET } = env();
   const offline = process.env.SLACK_TOKEN_VERIFICATION === "off";
-  bolt = createMeetMouse({
+  bolt = createMeetingMouse({
     features: coreFeatures,
     signingSecret: SLACK_SIGNING_SECRET,
     auth: offline

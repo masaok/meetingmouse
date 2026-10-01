@@ -36,7 +36,7 @@ export interface OAuthOptions {
   installerOptions?: VercelReceiverOptions["installerOptions"];
 }
 
-export interface CreateMeetMouseOptions {
+export interface CreateMeetingMouseOptions {
   /** Registered in order. A host passes `coreFeatures` plus its own. Names must be unique. */
   features: readonly Feature[];
   signingSecret: string;
@@ -60,7 +60,7 @@ function installerOf(receiver: VercelReceiver) {
   return receiver.installer;
 }
 
-export function createMeetMouse(options: CreateMeetMouseOptions): Bolt {
+export function createMeetingMouse(options: CreateMeetingMouseOptions): Bolt {
   const { features, signingSecret, auth, logLevel = LogLevel.INFO } = options;
   const names = new Set<string>();
   for (const { name } of features) {

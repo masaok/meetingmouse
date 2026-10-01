@@ -1,8 +1,8 @@
-export { CORE_BOT_SCOPES, createMeetMouse } from "./bolt/create";
+export { CORE_BOT_SCOPES, createMeetingMouse } from "./bolt/create";
 export type {
   Authorize,
   Bolt,
-  CreateMeetMouseOptions,
+  CreateMeetingMouseOptions,
   OAuthOptions,
 } from "./bolt/create";
 export { coreFeatures } from "./features";

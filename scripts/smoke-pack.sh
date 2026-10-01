@@ -14,7 +14,7 @@ printf '{ "name": "scratch-host", "private": true, "type": "module" }\n' > packa
 pnpm add --silent "$tgz" "$receiver" >/dev/null
 cat > host.mjs <<'JS'
 import { createHandler } from "@vercel/slack-bolt";
-import { coreFeatures, createMeetMouse } from "meetingmouse";
+import { coreFeatures, createMeetingMouse } from "meetingmouse";
 import { CORE_MIGRATIONS, schema } from "meetingmouse/db";
 import { COMMAND_WHEN } from "meetingmouse/slack";
 import { SLOT_MINUTES } from "meetingmouse/domain";
@@ -23,7 +23,7 @@ process.env.SLACK_BOT_TOKEN = "xoxb-scratch";
 process.env.SLACK_SIGNING_SECRET = "scratch";
 process.env.DATABASE_URL = "postgres://scratch:scratch@localhost:5432/scratch";
 
-const { app, receiver } = createMeetMouse({
+const { app, receiver } = createMeetingMouse({
   features: coreFeatures,
   signingSecret: "scratch",
   // the offline form, as in the repo's own dev mode: no auth.test against Slack on first request
