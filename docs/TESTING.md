@@ -11,7 +11,8 @@
 | Migrations apply from empty | `pnpm db:generate && git diff --exit-code` `pnpm db:migrate` ×2 | SQL matches `schema.ts`; applies to empty Postgres 17; idempotent    |
 | Production build            | `pnpm build`                                                    | Prerender, bundling, server/client boundaries                        |
 | Smoke imports               | `pnpm smoke`                                                    | Real entry points import under production conditions                 |
-| Docs links                  | `pnpm docs:check` `pnpm featuremap:check`                       | No broken links or anchors; every surface id documented              |
+| Docs links                  | `pnpm docs:check` `pnpm featuremap:check` `pnpm prose:check`    | No broken links or anchors; every surface id documented; prose rules |
+| Package                     | `pnpm pack:check` `pnpm smoke:pack`                             | Tarball holds only the library; a scratch host installs and runs it  |
 
 Hooks are deliberately small: pre-commit formats staged files (~1 s); pre-push typechecks.
 Read-only variants only in automation (`lint`, `format:check`); `lint:fix` and `format` are for humans.

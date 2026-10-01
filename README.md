@@ -62,6 +62,9 @@ for every Slack surface and how to reproduce it.
 
 Stack: Next.js 16 · `@slack/bolt` + `@vercel/slack-bolt` · Neon Postgres + Drizzle · Vercel.
 
+The same code builds as a library (`pnpm build:lib`) for a host that embeds the poll in its own
+app; see [Embedding in another app](./docs/ARCHITECTURE.md#embedding-in-another-app).
+
 ## Development
 
 | Command                           | What it does                                                                             |
@@ -72,6 +75,7 @@ Stack: Next.js 16 · `@slack/bolt` + `@vercel/slack-bolt` · Neon Postgres + Dri
 | `pnpm render:fixture <name>`      | Print Block Kit JSON for a fixture poll                                                  |
 | `pnpm health`                     | Check whether a running instance is worth driving                                        |
 | `pnpm db:generate`                | Regenerate SQL migrations from `src/db/schema.ts`                                        |
+| `pnpm pack:check`                 | Build the library and check the tarball holds only what a host needs                     |
 
 ## Contributing
 

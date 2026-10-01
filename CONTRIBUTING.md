@@ -13,7 +13,7 @@ described in [docs/](./docs/README.md) and the agent guardrails in [AGENTS.md](.
 - One branch per issue: `issue-N-short-name`. Never commit to `main`.
 - Conventional Commits: `feat(respond): …`, `fix(create): …`, `docs: …`. Imperative subject, 72 characters or fewer.
 - One issue per PR where possible, with `Closes #N`. The template asks Why / Scope / Blast radius / Verification; say how you verified and whether the evidence came from offline or live mode.
-- Run `pnpm verify` before pushing. Hooks format staged files and typecheck on push; they are the preview, CI is the gate. All six required checks must be green.
+- Run `pnpm verify` before pushing. Hooks format staged files and typecheck on push; they are the preview, CI is the gate. All seven required checks must be green.
 
 ## Changes with an extra step
 
