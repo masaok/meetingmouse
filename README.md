@@ -4,15 +4,15 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 Find the time everyone is free, right from Slack. `/when Sprint planning` posts an availability
-poll in the channel. Everyone marks when they're free, in their own time zone, in a form in
-Slack or by dragging across a grid. The message updates in place with a grid of who is free when and the best times,
+poll in the channel. Everyone clicks the times they're free, in their own time zone, without
+leaving Slack. The message updates in place with a grid of who is free when and the best times,
 and the organizer locks one in with an Add to Google Calendar link.
 
 ## How it works
 
 1. **Start a poll.** `/when <title>` or the global shortcut opens a modal: date range, working hours, slot length.
 2. **One message.** The app posts a single poll message in the channel.
-3. **Everyone responds.** Each person clicks Add my availability and ticks their free slots in a form in Slack, in their own time zone, with a count beside each time of who is free so far. A host can also serve the [web grid](./docs/WEB_GRID.md), a page for dragging across the same slots.
+3. **Everyone responds.** Each person clicks Add my availability and clicks the times that work in a form in Slack, in their own time zone. Each click saves. A host can also serve the [web grid](./docs/WEB_GRID.md), a page for dragging across the same slots.
 4. **Live results.** The channel message re-renders after every response: a grid of who is free when, and the best times.
 5. **Lock it in.** The organizer picks a time and the thread gets an Add to Google Calendar link.
 

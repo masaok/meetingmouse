@@ -50,7 +50,7 @@ The difference between the grid and the vote is covered in [When 2 Meet vs Doodl
 Meeting Mouse is the first row of that table. It is a Slack app, and against the checklist it looks like this.
 
 - **Accounts.** None. People answer as their Slack user.
-- **One gesture.** Partly. The form in Slack is one tick per slot. It links to a page where each person drags across a grid of the same slots.
+- **One gesture.** Partly. The form in Slack is one click per time, and each click saves. It links to a page where each person drags across a grid of the same slots.
 - **Time zones.** Every time is shown in the viewer's local zone.
 - **Overlap.** The channel message shows a grid of who is free when, with the top three slots by headcount above it.
 - **Changing an answer.** Click Add my availability again and your earlier answer is already filled in.

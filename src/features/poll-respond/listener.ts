@@ -3,22 +3,24 @@ import type { ModalView } from "@slack/types";
 import type { WebClient } from "@slack/web-api";
 
 import { db } from "@/db/client";
-import { getPollSnapshot, getUserAvailability, saveResponse } from "@/db/queries";
-import { tally } from "@/domain/tally";
+import {
+  getPollSnapshot,
+  getUserAvailability,
+  removeResponse,
+  saveResponse,
+  toggleSlot,
+} from "@/db/queries";
+import type { PollSnapshot } from "@/domain/types";
 import type { Feature, FeatureContext } from "@/features/types";
 import { log } from "@/lib/log";
 import { refreshPollMessage } from "@/lib/refresh";
 import { slackErrorCode } from "@/lib/respond";
-import { getUserProfile } from "@/lib/users";
+import { getUserProfile, type UserProfile } from "@/lib/users";
 import { epochSeconds } from "@/slack/format";
-import {
-  ACTION_GRID_LINK,
-  ACTION_RESPOND_BUTTON,
-  CALLBACK_RESPOND_MODAL,
-} from "@/slack/ids";
+import { ACTION_GRID_LINK, ACTION_RESPOND_BUTTON, ACTION_TOGGLE_NONE } from "@/slack/ids";
 
 import { loadingView, respondModal, unavailableReason, unavailableView } from "./blocks";
-import { parsePrivateMetadata, parseRespondSubmission, RESPOND } from "./schema";
+import { parsePrivateMetadata, parseSlotValue, SLOT_ACTION } from "./schema";
 
 type ViewUpdate = (view: ModalView) => Promise<unknown>;
 type Respond = (message: {
@@ -38,7 +40,7 @@ interface Opening {
   gridUrl?: string;
 }
 
-/** Fetch, then swap the loading view for the checkbox form. */
+/** Fetch, then swap the loading view for the form. */
 async function showRespondView(opening: Opening): Promise<void> {
   const { pollId, userId, teamId, client, update, respond, gridUrl } = opening;
   try {
@@ -64,13 +66,6 @@ async function showRespondView(opening: Opening): Promise<void> {
         tz: profile.tz,
         selected,
         noneSelected,
-        counts: new Map(
-          tally(snapshot.slots, snapshot.availability).map((t) => [
-            epochSeconds(t.slot),
-            t.count,
-          ]),
-        ),
-        responded: snapshot.participants.length,
         gridUrl,
       }),
     );
@@ -96,6 +91,18 @@ async function showRespondView(opening: Opening): Promise<void> {
     }).catch(() => undefined);
   }
 }
+
+/** A click inside the open form, as Bolt hands it to an action listener. */
+interface FormClick {
+  body: { user: { id: string }; team?: { id: string } | null; view?: unknown };
+  client: WebClient;
+}
+
+/** What a click did to the responder's answer. `answered` is false once it is withdrawn. */
+type Change = (
+  snapshot: PollSnapshot,
+  who: { userId: string; profile: UserProfile },
+) => Promise<{ answered: boolean; what: string } | null>;
 
 export function register(app: App, context: FeatureContext = {}): void {
   const { grid } = context;
@@ -131,74 +138,91 @@ export function register(app: App, context: FeatureContext = {}): void {
     await ack();
   });
 
-  // The form's checkboxes sit in actions blocks, so every tick is reported. The answer is read
-  // from the view's state on Save; a tick only needs the ack.
-  for (const actionId of [RESPOND.SLOTS_ACTION, RESPOND.NONE_ACTION])
-    app.action(actionId, async ({ ack }) => {
-      await ack();
-    });
-
-  app.view(CALLBACK_RESPOND_MODAL, async ({ ack, view, body, client }) => {
-    const meta = parsePrivateMetadata(view.private_metadata);
-    if (!meta) {
-      await ack({ response_action: "update", view: unavailableView("missing") });
-      return;
-    }
+  /**
+   * Every click in the form is its own save: apply the change, redraw the view from what the
+   * database now holds, then re-render the channel message. Slack has already been acked.
+   */
+  async function applyClick({ body, client }: FormClick, change: Change): Promise<void> {
+    const view = body.view as { id?: string; private_metadata?: string } | undefined;
+    const meta = parsePrivateMetadata(view?.private_metadata);
+    const viewId = view?.id;
+    if (!meta || !viewId) return;
+    const { pollId } = meta;
     const userId = body.user.id;
-    const teamId = body.team?.id ?? view.team_id;
-    // Before ack on purpose: a closed poll must answer as the ack itself (rule 6's one exception).
-    const snapshot = await getPollSnapshot(db, meta.pollId);
-    if (!snapshot) {
-      await ack({ response_action: "update", view: unavailableView("missing") });
-      return;
-    }
-    if (snapshot.poll.status !== "open") {
-      await ack({
-        response_action: "update",
-        view: unavailableView(unavailableReason(snapshot.poll.status)),
-      });
-      return;
-    }
-    await ack();
-
-    const submission = parseRespondSubmission(view.state.values);
-    const known = new Set(snapshot.slots.map(epochSeconds));
-    const slots = submission.slots.filter((s) => known.has(epochSeconds(s)));
-
+    const teamId = body.team?.id ?? "";
+    const update: ViewUpdate = (next) =>
+      client.views.update({ view_id: viewId, view: next });
     try {
+      const snapshot = await getPollSnapshot(db, pollId);
+      if (!snapshot) {
+        await update(unavailableView("missing"));
+        return;
+      }
+      if (snapshot.poll.status !== "open") {
+        await update(unavailableView(unavailableReason(snapshot.poll.status)));
+        return;
+      }
       const profile = await getUserProfile(db, client, teamId, userId);
-      await saveResponse(db, {
-        pollId: meta.pollId,
-        userId,
-        tz: profile.tz,
-        displayName: profile.displayName,
-        slots,
-      });
-      const result = await refreshPollMessage(db, client, meta.pollId);
+      const done = await change(snapshot, { userId, profile });
+      if (!done) return;
+      const selected = await getUserAvailability(db, pollId, userId);
+      await update(
+        respondModal({
+          poll: snapshot.poll,
+          slots: snapshot.slots,
+          tz: profile.tz,
+          selected,
+          noneSelected: done.answered && selected.length === 0,
+          gridUrl: grid?.urlFor({ pollId, teamId, userId }),
+        }),
+      );
+      const refresh = await refreshPollMessage(db, client, pollId);
       log.info({
         action: "response_saved",
-        poll_id: meta.pollId,
+        poll_id: pollId,
         user_id: userId,
-        slots: slots.length,
-        none: submission.none,
-        refresh: result,
+        change: done.what,
+        slots: selected.length,
+        refresh,
       });
     } catch (error) {
       const code = slackErrorCode(error);
       log.error({
         action: "response_save_failed",
-        poll_id: meta.pollId,
+        poll_id: pollId,
         user_id: userId,
         code,
       });
-      await client.chat
-        .postEphemeral({
-          channel: snapshot.poll.channelId,
-          user: userId,
-          text: `Your availability was not saved (\`${code}\`). Please try again.`,
-        })
-        .catch(() => undefined);
+      await update(unavailableView("error")).catch(() => undefined);
     }
+  }
+
+  app.action(SLOT_ACTION, async ({ ack, action, body, client }) => {
+    await ack();
+    const slot = parseSlotValue(action.type === "button" ? action.value : undefined);
+    await applyClick({ body, client }, async (snapshot, { userId, profile }) => {
+      // A button from a form opened before the poll was recreated names a slot that is gone.
+      if (!slot || !snapshot.slots.some((s) => epochSeconds(s) === epochSeconds(slot)))
+        return null;
+      await toggleSlot(db, { pollId: snapshot.poll.id, userId, ...profile, slot });
+      return { answered: true, what: "toggle_slot" };
+    });
+  });
+
+  app.action(ACTION_TOGGLE_NONE, async ({ ack, body, client }) => {
+    await ack();
+    await applyClick({ body, client }, async (snapshot, { userId, profile }) => {
+      const pollId = snapshot.poll.id;
+      const none =
+        snapshot.participants.some((p) => p.userId === userId) &&
+        !snapshot.availability.some((a) => a.userId === userId);
+      if (none) {
+        await removeResponse(db, pollId, userId);
+        return { answered: false, what: "withdraw" };
+      }
+      await saveResponse(db, { pollId, userId, ...profile, slots: [] });
+      return { answered: true, what: "none" };
+    });
   });
 }
 

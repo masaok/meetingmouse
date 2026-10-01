@@ -47,7 +47,7 @@ Meeting Mouse is a Slack app that uses the grid model.
 
 1. Run `/when Sprint planning` in a channel. A form asks for the dates, a daily window and a slot length of 15, 30 or 60 minutes.
 2. The app posts one poll message.
-3. Each person clicks Add my availability and ticks their free slots in a form in Slack, shown in their own time zone. A link in the form opens a page for dragging across the same slots.
+3. Each person clicks Add my availability and clicks the times that work in a form in Slack, shown in their own time zone. Each click saves. A link in the form opens a page for dragging across the same slots.
 4. The message updates after every answer with a grid of who is free when and the three best times by headcount.
 5. The organizer picks the final time from a menu on the message. A thread reply announces it with an Add to Google Calendar link.
 

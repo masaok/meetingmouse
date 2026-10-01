@@ -10,13 +10,13 @@ const steps = [
   },
   {
     n: "2",
-    title: "Everyone marks their time",
-    body: "Each person clicks Add my availability and ticks their free slots in a form in Slack, shown in their own time zone. A link opens a grid for dragging instead.",
+    title: "Everyone clicks their times",
+    body: "Each person clicks Add my availability, then the times that work, shown in their own time zone. Each click saves.",
   },
   {
     n: "3",
     title: "Watch the grid fill in",
-    body: "The channel message updates after every answer with a grid of who is free when and the best times.",
+    body: "The group's availability darkens where more people are free, and the channel message updates with the best times.",
   },
   {
     n: "4",
@@ -39,8 +39,8 @@ const features = [
     body: "The top three slots by headcount sit at the top of the message, above a grid of who is free when.",
   },
   {
-    title: "Tick or drag",
-    body: "Answer in a form without leaving Slack, with a count beside each time of who is free so far. Or open the grid and sweep across the hours. Come back later and your answer is already filled in.",
+    title: "Answer in a few clicks",
+    body: "A row of time buttons per day. Click the ones that work and they turn green, with nothing to save. Prefer to drag? Open the grid page instead.",
   },
   {
     title: "Organizer controls",
@@ -52,91 +52,96 @@ const features = [
   },
 ];
 
-const DAYS = ["Mon", "Tue", "Wed", "Thu"];
-const TIMES = ["9 AM", "", "10 AM", "", "11 AM", "", "12 PM", ""];
 const TOTAL = 4;
+const DAYS = ["Mon", "Tue", "Wed"];
 
-/** `MINE[row][day]`: the half-hours the viewer painted. */
-const MINE = [
-  [0, 0, 0, 0],
-  [0, 0, 0, 0],
-  [1, 0, 0, 1],
-  [1, 1, 0, 1],
-  [1, 1, 0, 1],
-  [1, 1, 1, 0],
-  [0, 1, 1, 0],
-  [0, 0, 1, 0],
+const TIMES = ["9am", "9:30am", "10am", "10:30am"];
+
+/** The form's buttons: a row per day, and which times the viewer chose. */
+const CHIPS = [
+  { day: "Tuesday, September 30", chosen: [true, true, false, false] },
+  { day: "Wednesday, October 1", chosen: [false, false, true, true] },
 ];
 
-/** `GROUP[row][day]`: how many of the four people are free. */
+/** `GROUP[row][day]`: how many of the four people are free. Rows are TIMES. */
 const GROUP = [
-  [0, 1, 0, 0],
-  [1, 1, 0, 1],
-  [2, 1, 1, 2],
-  [3, 3, 1, 2],
-  [3, 4, 2, 3],
-  [2, 4, 3, 1],
-  [1, 3, 3, 1],
-  [0, 1, 2, 0],
+  [2, 4, 1],
+  [3, 3, 0],
+  [3, 3, 2],
+  [0, 1, 4],
 ];
 
-const SHADE = ["opacity-0", "opacity-25", "opacity-50", "opacity-75", "opacity-100"];
+/** The poll message's squares: everyone, half or more, a few, nobody. */
+function squareClass(count: number): string {
+  if (count === 0) return "bg-stone-200 dark:bg-stone-700";
+  if (count === TOTAL) return "bg-emerald-500";
+  return count * 2 >= TOTAL ? "bg-yellow-400" : "bg-orange-400";
+}
 
-function MiniGrid({
-  title,
-  cells,
-  kind,
-}: {
-  title: string;
-  cells: number[][];
-  kind: "mine" | "group";
-}) {
+function MockForm() {
+  return (
+    <div aria-hidden="true">
+      <p className="text-xs font-semibold">Click your times</p>
+      {CHIPS.map((row) => (
+        <div key={row.day} className="mt-2">
+          <p className="text-[11px] font-bold">{row.day}</p>
+          <div className="mt-1 flex flex-wrap gap-1.5">
+            {TIMES.map((time, i) => (
+              <span
+                key={time}
+                className={`rounded-md border px-2 py-1 text-[11px] leading-none font-semibold ${
+                  row.chosen[i]
+                    ? "border-emerald-700 bg-emerald-700 text-white"
+                    : "border-stone-300 dark:border-stone-700"
+                }`}
+              >
+                {row.chosen[i] ? "✓ " : ""}
+                {time}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MockSquares() {
   return (
     <div>
-      <p className="text-center text-xs font-semibold">{title}</p>
+      <p className="text-xs font-semibold">Who is free when</p>
       <div
-        className="mt-2 grid grid-cols-[2.25rem_repeat(4,1.5rem)] text-[10px] text-stone-500 dark:text-stone-400"
+        className="mt-2 grid w-max grid-cols-[3rem_repeat(3,2.25rem)] items-center gap-y-1.5 text-[10px] text-stone-500 dark:text-stone-400"
         aria-hidden="true"
       >
         <span />
         {DAYS.map((d) => (
-          <span key={d} className="pb-1 text-center">
+          <span key={d} className="font-semibold">
             {d}
           </span>
         ))}
-        {cells.map((row, r) => (
+        {GROUP.map((row, r) => (
           <div key={r} className="contents">
-            <span className="-mt-1.5 pr-1.5 text-right leading-3">{TIMES[r]}</span>
-            {row.map((value, c) => (
-              <span
-                key={c}
-                className={`relative h-3.5 border-l border-stone-400 dark:border-stone-600 ${
-                  r % 2 === 0
-                    ? "border-t"
-                    : "border-t border-t-stone-300 dark:border-t-stone-700"
-                } ${c === row.length - 1 ? "border-r" : ""} ${
-                  r === cells.length - 1 ? "border-b" : ""
-                } ${
-                  kind === "mine" && !value
-                    ? "bg-rose-100 dark:bg-rose-950/50"
-                    : "bg-white dark:bg-stone-900"
-                }`}
-              >
-                <span
-                  className={`absolute inset-0 bg-emerald-600 dark:bg-emerald-500 ${
-                    kind === "mine" ? (value ? "opacity-100" : "opacity-0") : SHADE[value]
-                  }`}
-                />
+            <span className="pr-1.5 text-right">{TIMES[r]}</span>
+            {row.map((count, c) => (
+              <span key={c} className="flex items-center gap-1">
+                <span className={`h-3.5 w-3.5 rounded-[3px] ${squareClass(count)}`} />
+                {count > 0 ? count : ""}
               </span>
             ))}
           </div>
         ))}
       </div>
+      <p className="mt-3 flex items-center gap-1 text-[10px] whitespace-nowrap text-stone-500 dark:text-stone-400">
+        <span className="h-2.5 w-2.5 rounded-[2px] bg-emerald-500" /> all
+        <span className="ml-1 h-2.5 w-2.5 rounded-[2px] bg-yellow-400" /> most
+        <span className="ml-1 h-2.5 w-2.5 rounded-[2px] bg-orange-400" /> a few
+      </p>
     </div>
   );
 }
 
-function MockGrid() {
+function MockPoll() {
   return (
     <div className="w-full max-w-sm rounded-2xl border border-stone-200 bg-white p-4 shadow-xl shadow-stone-900/5 dark:border-stone-800 dark:bg-stone-950 dark:shadow-black/40">
       <div className="flex items-center gap-2">
@@ -157,38 +162,23 @@ function MockGrid() {
       </p>
 
       <p className="mt-2 text-sm">
-        <span className="font-semibold">Best time</span> · Tue 11:00 AM · {TOTAL}/{TOTAL}{" "}
+        <span className="font-semibold">Best time</span> · Tue 9:00 AM · {TOTAL}/{TOTAL}{" "}
         <span aria-label="everyone free">✅</span>
       </p>
 
-      <div className="mt-4 flex justify-between gap-3">
-        <MiniGrid title="Your availability" cells={MINE} kind="mine" />
-        <MiniGrid title="Group's availability" cells={GROUP} kind="group" />
+      <div className="mt-4 space-y-4">
+        <MockForm />
+        <MockSquares />
       </div>
       <p className="sr-only">
-        Two grids of days by times. On the left, the hours you painted as free. On the
-        right, the group&apos;s availability, darker green where more of the {TOTAL}{" "}
-        people are free.
+        First, the form: a row of time buttons per day, the chosen ones green with a tick.
+        Below it, the poll message&apos;s grid: a colored square per day and time, green
+        where all {TOTAL} people are free.
       </p>
 
-      <div className="mt-4 flex items-center justify-between gap-2">
-        <span className="rounded-md bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white">
-          Add my availability
-        </span>
-        <span className="flex items-center gap-1 text-[10px] text-stone-500 dark:text-stone-400">
-          0/{TOTAL}
-          <span className="flex border border-stone-400 dark:border-stone-600">
-            {SHADE.map((shade) => (
-              <span key={shade} className="relative h-3 w-3 bg-white dark:bg-stone-900">
-                <span
-                  className={`absolute inset-0 bg-emerald-600 dark:bg-emerald-500 ${shade}`}
-                />
-              </span>
-            ))}
-          </span>
-          {TOTAL}/{TOTAL} free
-        </span>
-      </div>
+      <span className="mt-4 inline-block rounded-md bg-emerald-700 px-3 py-1.5 text-sm font-semibold whitespace-nowrap text-white">
+        Add my availability
+      </span>
     </div>
   );
 }
@@ -212,8 +202,8 @@ export default function Home() {
               <code className="rounded bg-stone-200/70 px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-stone-800">
                 /when
               </code>
-              , let everyone mark when they&apos;re free without leaving Slack, and watch
-              the channel message fill in with who is free when and the best times.
+              , let everyone click the times they&apos;re free without leaving Slack, and
+              watch the channel message fill in with a grid of who can meet when.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
@@ -235,7 +225,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-end sm:justify-center md:justify-end">
             <Mascot className="w-48 shrink-0 drop-shadow-lg sm:-mr-8 sm:w-56" />
-            <MockGrid />
+            <MockPoll />
           </div>
         </section>
 

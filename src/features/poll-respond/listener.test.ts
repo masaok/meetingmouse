@@ -1,24 +1,28 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { getPollSnapshot, getUserAvailability, saveResponse } from "@/db/queries";
+import {
+  getPollSnapshot,
+  getUserAvailability,
+  removeResponse,
+  saveResponse,
+  toggleSlot,
+} from "@/db/queries";
 import { refreshPollMessage } from "@/lib/refresh";
 import { fixture } from "@/slack/fixtures";
 import { epochSeconds } from "@/slack/format";
-import {
-  ACTION_GRID_LINK,
-  ACTION_RESPOND_BUTTON,
-  CALLBACK_RESPOND_MODAL,
-} from "@/slack/ids";
+import { ACTION_GRID_LINK, ACTION_RESPOND_BUTTON, ACTION_TOGGLE_NONE } from "@/slack/ids";
 
 import { fakeApp, fakeClient } from "../../../tests/helpers/fakeApp";
 import { register } from "./listener";
-import { dayBlockId, RESPOND } from "./schema";
+import { SLOT_ACTION, slotActionId } from "./schema";
 
 vi.mock("@/db/client", () => ({ db: {} }));
 vi.mock("@/db/queries", () => ({
   getPollSnapshot: vi.fn(),
   getUserAvailability: vi.fn().mockResolvedValue([]),
+  removeResponse: vi.fn().mockResolvedValue(undefined),
   saveResponse: vi.fn().mockResolvedValue(undefined),
+  toggleSlot: vi.fn().mockResolvedValue(undefined),
 }));
 vi.mock("@/lib/users", () => ({
   getUserProfile: vi.fn().mockResolvedValue({ tz: "Asia/Tokyo", displayName: "taro" }),
@@ -29,6 +33,8 @@ vi.mock("@/lib/refresh", () => ({
 
 const snapshot = fixture("three-day");
 const POLL_ID = snapshot.poll.id;
+const SLOT = snapshot.slots[1];
+const profile = { tz: "Asia/Tokyo", displayName: "taro" };
 
 const buttonArgs = (client: ReturnType<typeof fakeClient>) => ({
   ack: vi.fn(),
@@ -43,19 +49,34 @@ const buttonArgs = (client: ReturnType<typeof fakeClient>) => ({
   },
 });
 
-const submitArgs = (
+/** A click on a button inside the open form. */
+const clickArgs = (
   client: ReturnType<typeof fakeClient>,
-  values: Record<string, unknown>,
+  action: { action_id: string; value?: string },
+  userId = "U0002",
 ) => ({
   ack: vi.fn(),
   client,
-  view: {
-    private_metadata: JSON.stringify({ pollId: POLL_ID }),
-    team_id: "T1",
-    state: { values },
+  action: { type: "button", ...action },
+  body: {
+    user: { id: userId },
+    team: { id: "T1" },
+    view: { id: "V7", private_metadata: JSON.stringify({ pollId: POLL_ID }) },
   },
-  body: { user: { id: "U0002" }, team: { id: "T1" } },
 });
+const slotClick = (client: ReturnType<typeof fakeClient>, slot: Date) =>
+  clickArgs(client, {
+    action_id: slotActionId(epochSeconds(slot)),
+    value: String(epochSeconds(slot)),
+  });
+const SLOT_KEY = String(SLOT_ACTION);
+const buttonsOf = (view: { blocks: { type: string; elements?: unknown[] }[] }) =>
+  view.blocks.flatMap((b) => (b.type === "actions" ? (b.elements ?? []) : [])) as {
+    action_id: string;
+    text: { text: string };
+    style?: string;
+    value: string;
+  }[];
 
 describe("poll-respond listener", () => {
   const { app, invoke } = fakeApp();
@@ -67,7 +88,7 @@ describe("poll-respond listener", () => {
     vi.mocked(getUserAvailability).mockResolvedValue([]);
   });
 
-  it("opens the loading view before touching the database, then swaps in the real modal", async () => {
+  it("opens the loading view before touching the database, then swaps in the form", async () => {
     const order: string[] = [];
     const client = fakeClient();
     client.views.open.mockImplementation(async () => {
@@ -84,13 +105,12 @@ describe("poll-respond listener", () => {
 
     expect(order).toEqual(["views.open", "getPollSnapshot"]);
     expect(client.views.update).toHaveBeenCalledOnce();
-    const view = client.views.update.mock.calls[0][0].view;
-    expect(client.views.update.mock.calls[0][0].view_id).toBe("V1");
-    expect(JSON.stringify(view.blocks[0])).toContain("Asia/Tokyo");
-    expect(JSON.stringify(view)).toContain(
-      `"value":"${epochSeconds(snapshot.slots[2])}"`,
-    );
-    expect(JSON.stringify(view)).toContain("your previous answer is ticked");
+    const call = client.views.update.mock.calls[0][0];
+    expect(call.view_id).toBe("V1");
+    expect(JSON.stringify(call.view.blocks[0])).toContain("Asia/Tokyo");
+    const chosen = buttonsOf(call.view).filter((b) => b.style === "primary");
+    expect(chosen.map((b) => b.value)).toEqual([String(epochSeconds(snapshot.slots[2]))]);
+    expect(call.view.submit).toBeUndefined();
   });
 
   it("shows the closed view instead of the form when the poll is not open", async () => {
@@ -116,67 +136,117 @@ describe("poll-respond listener", () => {
     );
   });
 
-  it("saves only known slots, replace-all, then refreshes the message", async () => {
+  it("a click on a time flips that slot, redraws the form, then refreshes the message", async () => {
+    const order: string[] = [];
     const client = fakeClient();
-    const args = submitArgs(client, {
-      [dayBlockId("2026-10-07", 0)]: {
-        [RESPOND.SLOTS_ACTION]: {
-          selected_options: [
-            { value: String(epochSeconds(snapshot.slots[1])) },
-            { value: "1234567890" },
-          ],
-        },
-      },
-      [RESPOND.NONE_BLOCK]: { [RESPOND.NONE_ACTION]: { selected_options: [] } },
+    vi.mocked(toggleSlot).mockImplementation(async () => {
+      order.push("toggleSlot");
     });
-    await invoke("view", CALLBACK_RESPOND_MODAL, args);
+    vi.mocked(getUserAvailability).mockImplementation(async () => {
+      order.push("getUserAvailability");
+      return [SLOT];
+    });
+    client.views.update.mockImplementation(async () => {
+      order.push("views.update");
+      return { ok: true };
+    });
+    vi.mocked(refreshPollMessage).mockImplementation(async () => {
+      order.push("refreshPollMessage");
+      return "updated";
+    });
+    const args = slotClick(client, SLOT);
+
+    await invoke("action", SLOT_KEY, args);
+
     expect(args.ack).toHaveBeenCalledWith();
-    expect(saveResponse).toHaveBeenCalledWith(
+    expect(toggleSlot).toHaveBeenCalledWith(
       {},
-      {
-        pollId: POLL_ID,
-        userId: "U0002",
-        tz: "Asia/Tokyo",
-        displayName: "taro",
-        slots: [snapshot.slots[1]],
-      },
+      { pollId: POLL_ID, userId: "U0002", ...profile, slot: SLOT },
     );
+    expect(order).toEqual([
+      "toggleSlot",
+      "getUserAvailability",
+      "views.update",
+      "refreshPollMessage",
+    ]);
+    const call = client.views.update.mock.calls[0][0];
+    expect(call.view_id).toBe("V7");
+    const chip = buttonsOf(call.view).find((b) => b.value === String(epochSeconds(SLOT)));
+    expect(chip?.style).toBe("primary");
+    expect(chip?.text.text.startsWith("✓ ")).toBe(true);
     expect(refreshPollMessage).toHaveBeenCalledWith({}, client, POLL_ID);
   });
 
-  it("records 'none of these' as a participant with zero slots", async () => {
+  it("ignores a time that is not in the poll", async () => {
     const client = fakeClient();
-    const args = submitArgs(client, {
-      [RESPOND.NONE_BLOCK]: {
-        [RESPOND.NONE_ACTION]: { selected_options: [{ value: RESPOND.NONE_VALUE }] },
-      },
-    });
-    await invoke("view", CALLBACK_RESPOND_MODAL, args);
-    expect(vi.mocked(saveResponse).mock.calls[0][1].slots).toEqual([]);
+    await invoke(
+      "action",
+      SLOT_KEY,
+      clickArgs(client, { action_id: slotActionId(1234567890), value: "1234567890" }),
+    );
+    expect(toggleSlot).not.toHaveBeenCalled();
+    expect(client.views.update).not.toHaveBeenCalled();
+    expect(refreshPollMessage).not.toHaveBeenCalled();
   });
 
-  it("refuses a submission to a poll that closed meanwhile", async () => {
+  it("'I can't make any of these' records an answer with no times", async () => {
+    const client = fakeClient();
+    await invoke(
+      "action",
+      ACTION_TOGGLE_NONE,
+      clickArgs(client, { action_id: ACTION_TOGGLE_NONE, value: POLL_ID }),
+    );
+    expect(saveResponse).toHaveBeenCalledWith(
+      {},
+      { pollId: POLL_ID, userId: "U0002", ...profile, slots: [] },
+    );
+    const view = client.views.update.mock.calls[0][0].view;
+    const none = buttonsOf(view).find((b) => b.action_id === ACTION_TOGGLE_NONE);
+    expect(none?.style).toBe("danger");
+    expect(JSON.stringify(view)).toContain("none of these times work");
+    expect(refreshPollMessage).toHaveBeenCalledWith({}, client, POLL_ID);
+  });
+
+  it("clicking it again withdraws the answer", async () => {
+    // U0004 is the fixture's participant who answered that none of the times work.
+    const client = fakeClient();
+    await invoke(
+      "action",
+      ACTION_TOGGLE_NONE,
+      clickArgs(client, { action_id: ACTION_TOGGLE_NONE, value: POLL_ID }, "U0004"),
+    );
+    expect(removeResponse).toHaveBeenCalledWith({}, POLL_ID, "U0004");
+    expect(saveResponse).not.toHaveBeenCalled();
+    const view = client.views.update.mock.calls[0][0].view;
+    expect(JSON.stringify(view)).toContain("You have not answered yet");
+  });
+
+  it("refuses a click on a poll that closed meanwhile", async () => {
     vi.mocked(getPollSnapshot).mockResolvedValue(fixture("scheduled"));
     const client = fakeClient();
-    const args = submitArgs(client, {});
-    await invoke("view", CALLBACK_RESPOND_MODAL, args);
-    expect(args.ack).toHaveBeenCalledWith(
-      expect.objectContaining({ response_action: "update" }),
+    await invoke("action", SLOT_KEY, slotClick(client, SLOT));
+    expect(toggleSlot).not.toHaveBeenCalled();
+    expect(JSON.stringify(client.views.update.mock.calls[0][0].view)).toContain(
+      "scheduled",
     );
-    expect(saveResponse).not.toHaveBeenCalled();
   });
 
-  it("tells the user ephemerally when saving fails", async () => {
-    vi.mocked(saveResponse).mockRejectedValueOnce(new Error("Failed query"));
+  it("shows the error view when a save fails, and leaves the message alone", async () => {
+    vi.mocked(toggleSlot).mockRejectedValueOnce(new Error("Failed query"));
     const client = fakeClient();
-    await invoke("view", CALLBACK_RESPOND_MODAL, submitArgs(client, {}));
-    expect(client.chat.postEphemeral).toHaveBeenCalledWith(
-      expect.objectContaining({
-        user: "U0002",
-        text: expect.stringContaining("not saved"),
-      }),
+    await invoke("action", SLOT_KEY, slotClick(client, SLOT));
+    expect(JSON.stringify(client.views.update.mock.calls[0][0].view)).toContain(
+      "went wrong",
     );
     expect(refreshPollMessage).not.toHaveBeenCalled();
+  });
+
+  it("does nothing for a click that carries no form", async () => {
+    const client = fakeClient();
+    const args = slotClick(client, SLOT);
+    await invoke("action", SLOT_KEY, { ...args, body: { user: { id: "U0002" } } });
+    expect(args.ack).toHaveBeenCalledWith();
+    expect(getPollSnapshot).not.toHaveBeenCalled();
   });
 });
 
@@ -185,6 +255,10 @@ describe("poll-respond listener with the web grid", () => {
   register(app, {
     grid: { urlFor: (c) => `https://host.test/grid/${c.pollId}.${c.teamId}.${c.userId}` },
   });
+  const linkOf = (view: {
+    blocks: { accessory?: { action_id?: string; url?: string } }[];
+  }) =>
+    view.blocks.find((b) => b.accessory?.action_id === ACTION_GRID_LINK)?.accessory?.url;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -192,17 +266,20 @@ describe("poll-respond listener with the web grid", () => {
     vi.mocked(getUserAvailability).mockResolvedValue([]);
   });
 
-  it("opens the checkbox form with the viewer's own grid link above it", async () => {
+  it("opens the form with the viewer's own grid link above it", async () => {
     const client = fakeClient();
     await invoke("action", ACTION_RESPOND_BUTTON, buttonArgs(client));
-
-    const view = client.views.update.mock.calls[0][0].view;
-    const link = view.blocks.find(
-      (b: { accessory?: { action_id?: string } }) =>
-        b.accessory?.action_id === ACTION_GRID_LINK,
+    expect(linkOf(client.views.update.mock.calls[0][0].view)).toBe(
+      `https://host.test/grid/${POLL_ID}.T1.U0002`,
     );
-    expect(link.accessory.url).toBe(`https://host.test/grid/${POLL_ID}.T1.U0002`);
-    expect(view.submit.text).toBe("Save");
+  });
+
+  it("keeps the grid link when a click redraws the form", async () => {
+    const client = fakeClient();
+    await invoke("action", SLOT_KEY, slotClick(client, SLOT));
+    expect(linkOf(client.views.update.mock.calls[0][0].view)).toBe(
+      `https://host.test/grid/${POLL_ID}.T1.U0002`,
+    );
   });
 
   it("still refuses a closed poll before offering the grid", async () => {
@@ -219,13 +296,5 @@ describe("poll-respond listener with the web grid", () => {
     const ack = vi.fn();
     await invoke("action", ACTION_GRID_LINK, { ack });
     expect(ack).toHaveBeenCalledTimes(1);
-  });
-
-  it("acks a tick in the form, which Slack reports because the checkboxes are in actions blocks", async () => {
-    for (const actionId of [RESPOND.SLOTS_ACTION, RESPOND.NONE_ACTION]) {
-      const ack = vi.fn();
-      await invoke("action", actionId, { ack });
-      expect(ack).toHaveBeenCalledTimes(1);
-    }
   });
 });
