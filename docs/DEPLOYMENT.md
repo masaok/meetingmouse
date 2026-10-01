@@ -16,6 +16,9 @@ vercel env add SLACK_SIGNING_SECRET production
 vercel env add DATABASE_URL production      # or provision Neon: vercel integration add neon
 ```
 
+The web grid needs no secret of its own. It turns on when the app knows its origin: Vercel's
+production domain, or `APP_BASE_URL` to name another one. See [Web grid](./WEB_GRID.md).
+
 3. The production build must succeed with no variables at all; the CI build job runs with none
    on purpose. Env is read lazily at request time, never at import time.
 

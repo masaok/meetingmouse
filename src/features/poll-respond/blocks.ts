@@ -4,7 +4,11 @@ import type { PollStatus } from "@/domain/constants";
 import { formatInTz, groupByLocalDate, slotEnd } from "@/domain/slots";
 import type { Poll } from "@/domain/types";
 import { epochSeconds } from "@/slack/format";
-import { CALLBACK_RESPOND_MODAL } from "@/slack/ids";
+import {
+  ACTION_GRID_LINK,
+  ACTION_RESPOND_CHECKBOXES,
+  CALLBACK_RESPOND_MODAL,
+} from "@/slack/ids";
 import { SLACK_LIMITS } from "@/slack/limits";
 
 import { dayBlockId, RESPOND } from "./schema";
@@ -45,6 +49,46 @@ export function unavailableView(
 
 export const unavailableReason = (status: PollStatus): "closed" | "scheduled" =>
   status === "scheduled" ? "scheduled" : "closed";
+
+/**
+ * Shown first when the host serves the web grid: one button to the viewer's own grid page,
+ * and one that swaps this view for the checkbox form.
+ */
+export function gridChooserView(input: { pollId: string; gridUrl: string }): ModalView {
+  return {
+    type: "modal",
+    callback_id: CALLBACK_RESPOND_MODAL,
+    title: plain(TITLE),
+    close: plain("Done"),
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "*Paint your availability on a grid.* It opens in your browser, shows the group's availability next to yours, and saves as you go. The link is yours alone, so do not share it.",
+        },
+      },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            action_id: ACTION_GRID_LINK,
+            style: "primary",
+            text: plain("Open the grid"),
+            url: input.gridUrl,
+          },
+          {
+            type: "button",
+            action_id: ACTION_RESPOND_CHECKBOXES,
+            text: plain("Use checkboxes instead"),
+            value: input.pollId,
+          },
+        ],
+      },
+    ],
+  };
+}
 
 export interface RespondModalInput {
   poll: Poll;

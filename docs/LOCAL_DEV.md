@@ -10,12 +10,13 @@ pnpm dev              # warns about missing env, serves http://localhost:3000
 
 `src/lib/env.ts` validates these at every entry point and names what is missing.
 
-| Variable               | Where to get it                                                                  |
-| ---------------------- | -------------------------------------------------------------------------------- |
-| `SLACK_BOT_TOKEN`      | api.slack.com/apps → your app → OAuth & Permissions → Bot User OAuth Token       |
-| `SLACK_SIGNING_SECRET` | api.slack.com/apps → your app → Basic Information → Signing Secret               |
-| `DATABASE_URL`         | Vercel → Storage → Neon (or console.neon.tech), the **pooled** connection string |
-| `NGROK_AUTH_TOKEN`     | Optional. dashboard.ngrok.com, for `pnpm dev:tunnel`                             |
+| Variable               | Where to get it                                                                                                                          |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `SLACK_BOT_TOKEN`      | api.slack.com/apps → your app → OAuth & Permissions → Bot User OAuth Token                                                               |
+| `SLACK_SIGNING_SECRET` | api.slack.com/apps → your app → Basic Information → Signing Secret                                                                       |
+| `DATABASE_URL`         | Vercel → Storage → Neon (or console.neon.tech), the **pooled** connection string                                                         |
+| `APP_BASE_URL`         | Optional. The origin people reach the app at. Turns on the [web grid](./WEB_GRID.md); on Vercel the production domain is used when unset |
+| `NGROK_AUTH_TOKEN`     | Optional. dashboard.ngrok.com, for `pnpm dev:tunnel`                                                                                     |
 
 After linking (`vercel link`), `vercel env pull .env.local` fills the first three.
 

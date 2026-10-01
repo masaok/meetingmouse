@@ -1,19 +1,110 @@
 import type { App } from "@slack/bolt";
+import type { ModalView } from "@slack/types";
+import type { WebClient } from "@slack/web-api";
 
 import { db } from "@/db/client";
 import { getPollSnapshot, getUserAvailability, saveResponse } from "@/db/queries";
-import type { Feature } from "@/features/types";
+import type { Feature, FeatureContext } from "@/features/types";
 import { log } from "@/lib/log";
 import { refreshPollMessage } from "@/lib/refresh";
 import { slackErrorCode } from "@/lib/respond";
 import { getUserProfile } from "@/lib/users";
 import { epochSeconds } from "@/slack/format";
-import { ACTION_RESPOND_BUTTON, CALLBACK_RESPOND_MODAL } from "@/slack/ids";
+import {
+  ACTION_GRID_LINK,
+  ACTION_RESPOND_BUTTON,
+  ACTION_RESPOND_CHECKBOXES,
+  CALLBACK_RESPOND_MODAL,
+} from "@/slack/ids";
 
-import { loadingView, respondModal, unavailableReason, unavailableView } from "./blocks";
+import {
+  gridChooserView,
+  loadingView,
+  respondModal,
+  unavailableReason,
+  unavailableView,
+} from "./blocks";
 import { parsePrivateMetadata, parseRespondSubmission } from "./schema";
 
-export function register(app: App): void {
+type ViewUpdate = (view: ModalView) => Promise<unknown>;
+type Respond = (message: {
+  response_type: "ephemeral";
+  replace_original: false;
+  text: string;
+}) => Promise<unknown>;
+
+interface Opening {
+  pollId: string;
+  userId: string;
+  teamId: string;
+  client: WebClient;
+  update: ViewUpdate;
+  respond?: Respond;
+  /** The viewer's link to the web grid, when the host serves one and they have not declined it. */
+  gridUrl?: (pollId: string) => string;
+}
+
+/** Fetch, then swap the loading view for the real one: the grid chooser or the checkbox form. */
+async function showRespondView(opening: Opening): Promise<void> {
+  const { pollId, userId, teamId, client, update, respond, gridUrl } = opening;
+  try {
+    const snapshot = await getPollSnapshot(db, pollId);
+    if (!snapshot) {
+      await update(unavailableView("missing"));
+      return;
+    }
+    if (snapshot.poll.status !== "open") {
+      await update(unavailableView(unavailableReason(snapshot.poll.status)));
+      return;
+    }
+    if (gridUrl) {
+      // Warm the profile cache: the grid page labels its times in the viewer's Slack zone.
+      await getUserProfile(db, client, teamId, userId);
+      await update(gridChooserView({ pollId, gridUrl: gridUrl(pollId) }));
+      log.info({ action: "grid_link_offered", poll_id: pollId, user_id: userId });
+      return;
+    }
+    const [profile, selected] = await Promise.all([
+      getUserProfile(db, client, teamId, userId),
+      getUserAvailability(db, pollId, userId),
+    ]);
+    const noneSelected =
+      selected.length === 0 && snapshot.participants.some((p) => p.userId === userId);
+    await update(
+      respondModal({
+        poll: snapshot.poll,
+        slots: snapshot.slots,
+        tz: profile.tz,
+        selected,
+        noneSelected,
+      }),
+    );
+    log.info({
+      action: "respond_modal_opened",
+      poll_id: pollId,
+      user_id: userId,
+      tz: profile.tz,
+    });
+  } catch (error) {
+    const code = slackErrorCode(error);
+    log.error({
+      action: "respond_modal_failed",
+      poll_id: pollId,
+      user_id: userId,
+      code,
+    });
+    await update(unavailableView("error")).catch(() => undefined);
+    await respond?.({
+      response_type: "ephemeral",
+      replace_original: false,
+      text: `Something went wrong opening the poll (\`${code}\`).`,
+    }).catch(() => undefined);
+  }
+}
+
+export function register(app: App, context: FeatureContext = {}): void {
+  const { grid } = context;
+
   app.action(ACTION_RESPOND_BUTTON, async ({ ack, action, body, client, respond }) => {
     await ack();
     const pollId = action.type === "button" ? action.value : undefined;
@@ -22,63 +113,42 @@ export function register(app: App): void {
     const triggerId = "trigger_id" in body ? body.trigger_id : undefined;
     if (!pollId || !triggerId) return;
 
-    // 1. Consume the trigger_id immediately; everything below can take longer than 3 s.
+    // Consume the trigger_id immediately; everything after can take longer than 3 s.
     const opened = await client.views.open({
       trigger_id: triggerId,
       view: loadingView(),
     });
     const viewId = opened.view?.id;
     if (!viewId) return;
-    const update = (view: ReturnType<typeof loadingView>) =>
-      client.views.update({ view_id: viewId, view });
+    await showRespondView({
+      pollId,
+      userId,
+      teamId,
+      client,
+      respond,
+      update: (view) => client.views.update({ view_id: viewId, view }),
+      gridUrl: grid && ((id) => grid.urlFor({ pollId: id, teamId, userId })),
+    });
+  });
 
-    try {
-      // 2. Fetch, then 3. swap in the real view.
-      const snapshot = await getPollSnapshot(db, pollId);
-      if (!snapshot) {
-        await update(unavailableView("missing"));
-        return;
-      }
-      if (snapshot.poll.status !== "open") {
-        await update(unavailableView(unavailableReason(snapshot.poll.status)));
-        return;
-      }
-      const [profile, selected] = await Promise.all([
-        getUserProfile(db, client, teamId, userId),
-        getUserAvailability(db, pollId, userId),
-      ]);
-      const noneSelected =
-        selected.length === 0 && snapshot.participants.some((p) => p.userId === userId);
-      await update(
-        respondModal({
-          poll: snapshot.poll,
-          slots: snapshot.slots,
-          tz: profile.tz,
-          selected,
-          noneSelected,
-        }),
-      );
-      log.info({
-        action: "respond_modal_opened",
-        poll_id: pollId,
-        user_id: userId,
-        tz: profile.tz,
-      });
-    } catch (error) {
-      const code = slackErrorCode(error);
-      log.error({
-        action: "respond_modal_failed",
-        poll_id: pollId,
-        user_id: userId,
-        code,
-      });
-      await update(unavailableView("error")).catch(() => undefined);
-      await respond({
-        response_type: "ephemeral",
-        replace_original: false,
-        text: `Something went wrong opening the poll (\`${code}\`).`,
-      }).catch(() => undefined);
-    }
+  // "Use checkboxes instead" on the grid chooser: the same view, swapped for the form.
+  app.action(ACTION_RESPOND_CHECKBOXES, async ({ ack, action, body, client }) => {
+    await ack();
+    const pollId = action.type === "button" ? action.value : undefined;
+    const viewId = "view" in body ? body.view?.id : undefined;
+    if (!pollId || !viewId) return;
+    await showRespondView({
+      pollId,
+      userId: body.user.id,
+      teamId: body.team?.id ?? "",
+      client,
+      update: (view) => client.views.update({ view_id: viewId, view }),
+    });
+  });
+
+  // A URL button still sends an action; it only needs the ack.
+  app.action(ACTION_GRID_LINK, async ({ ack }) => {
+    await ack();
   });
 
   app.view(CALLBACK_RESPOND_MODAL, async ({ ack, view, body, client }) => {

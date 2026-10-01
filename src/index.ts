@@ -6,4 +6,4 @@ export type {
   OAuthOptions,
 } from "./bolt/create";
 export { coreFeatures } from "./features";
-export type { Feature } from "./features";
+export type { Feature, FeatureContext } from "./features";

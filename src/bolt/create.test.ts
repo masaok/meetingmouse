@@ -3,7 +3,8 @@ import type { Installation, InstallationStore } from "@slack/bolt";
 import { VercelReceiver } from "@vercel/slack-bolt";
 import { describe, expect, it, vi } from "vitest";
 
-import type { Feature } from "@/features/types";
+import type { Feature, FeatureContext } from "@/features/types";
+import { deriveGridSecret } from "@/web/link";
 
 import { CORE_BOT_SCOPES, createMeetingMouse, type OAuthOptions } from "./create";
 
@@ -17,6 +18,29 @@ const spy = (name: string, seen: unknown[][]): Feature => ({
 });
 
 describe("createMeetingMouse", () => {
+  it("hands every feature a grid link builder when the host serves the web grid", () => {
+    const contexts: FeatureContext[] = [];
+    const feature: Feature = {
+      name: "a",
+      register: (_app, context) => contexts.push(context),
+    };
+    createMeetingMouse({
+      features: [feature],
+      signingSecret: "secret",
+      auth: { token: "xoxb-test" },
+      grid: { baseUrl: "https://app.example.com", secret: deriveGridSecret("secret") },
+    });
+    createMeetingMouse({
+      features: [feature],
+      signingSecret: "secret",
+      auth: { token: "xoxb-test" },
+    });
+
+    const url = contexts[0].grid?.urlFor({ pollId: "p", teamId: "T", userId: "U" });
+    expect(url?.startsWith("https://app.example.com/grid/v1.")).toBe(true);
+    expect(contexts[1].grid).toBeUndefined();
+  });
+
   it("registers every feature once, in order, on the app it returns", () => {
     const seen: unknown[][] = [];
     const bolt = createMeetingMouse({

@@ -9,6 +9,8 @@ const EnvSchema = z.object({
   SLACK_BOT_TOKEN: z.string().startsWith("xoxb-", "must be a bot token (xoxb-…)"),
   SLACK_SIGNING_SECRET: z.string().min(1),
   DATABASE_URL: z.string().startsWith("postgres", "must be a Postgres connection string"),
+  /** The origin people reach this app at. Optional: without it the web grid stays off. */
+  APP_BASE_URL: z.string().url().optional(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
@@ -48,4 +50,13 @@ export function env(): Env {
     cached = EnvSchema.parse(process.env);
   }
   return cached;
+}
+
+/**
+ * Where the web grid's links point: APP_BASE_URL, or on Vercel the project's production
+ * domain. Undefined means the grid is off and Add my availability stays inside Slack.
+ */
+export function appBaseUrl(): string | undefined {
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  return env().APP_BASE_URL ?? (vercel ? `https://${vercel}` : undefined);
 }

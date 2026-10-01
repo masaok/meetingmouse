@@ -13,6 +13,8 @@ export const CALLBACK_PICK_TIME_MODAL = "pick_time_modal";
 export const ACTION_RESPOND_BUTTON = "respond_button";
 export const ACTION_ORGANIZER_MENU = "organizer_menu";
 export const ACTION_GCAL_LINK = "gcal_link";
+export const ACTION_GRID_LINK = "grid_link";
+export const ACTION_RESPOND_CHECKBOXES = "respond_checkboxes";
 
 export const EVENT_APP_HOME_OPENED = "app_home_opened";
 

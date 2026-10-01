@@ -4,6 +4,7 @@ import { App, LogLevel, type AppOptions, type InstallationStore } from "@slack/b
 import { VercelReceiver, type VercelReceiverOptions } from "@vercel/slack-bolt";
 
 import type { Feature } from "@/features/types";
+import { gridLinks, type GridOptions } from "@/web/link";
 
 export interface Bolt {
   app: App;
@@ -46,6 +47,12 @@ export interface CreateMeetingMouseOptions {
    * installation store.
    */
   auth: { token: string } | { authorize: Authorize } | { oauth: OAuthOptions };
+  /**
+   * Turns on the web grid: Add my availability then leads with a personal link to it. The host
+   * serves the page by mounting `createGridHandlers` from `meetingmouse/web` at `/grid/[token]`
+   * with the same secret.
+   */
+  grid?: GridOptions;
   logLevel?: LogLevel;
 }
 
@@ -56,7 +63,7 @@ export interface CreateMeetingMouseOptions {
  */
 
 export function createMeetingMouse(options: CreateMeetingMouseOptions): Bolt {
-  const { features, signingSecret, auth, logLevel = LogLevel.INFO } = options;
+  const { features, signingSecret, auth, grid, logLevel = LogLevel.INFO } = options;
   const names = new Set<string>();
   for (const { name } of features) {
     if (names.has(name)) throw new Error(`duplicate feature name "${name}"`);
@@ -85,6 +92,7 @@ export function createMeetingMouse(options: CreateMeetingMouseOptions): Bolt {
         ? { authorize: auth.authorize }
         : {};
   const app = new App({ ...appAuth, signingSecret, receiver, deferInitialization: true });
-  for (const feature of features) feature.register(app);
+  const context = { grid: grid && gridLinks(grid) };
+  for (const feature of features) feature.register(app, context);
   return { app, receiver };
 }
