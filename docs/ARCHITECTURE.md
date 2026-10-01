@@ -53,8 +53,11 @@ and the three env vars; a host that embeds Meet Mouse calls it with `coreFeature
 features and its own credentials. For one workspace, `auth: { token }`. For a deployment that
 serves many, `auth: { authorize }`: Bolt calls it once per incoming request with the request's
 `{ teamId, enterpriseId, userId, conversationId, isEnterpriseInstall }` and expects
-`{ botToken, botId, botUserId }` back, which is where an installation store plugs in. Self-hosting
-stays a three-variable setup because the reference app uses the token form. Feature names must be
+`{ botToken, botId, botUserId }` back. For Slack OAuth, `auth: { oauth }` with the client id and
+secret, a state secret, the scopes (`CORE_BOT_SCOPES` plus the host's own) and an installation
+store: the receiver then serves the install path (`receiver.handleInstall`) and the callback
+(`receiver.handleCallback`), and tokens come from the store per workspace. Self-hosting stays a
+three-variable setup because the reference app uses the token form. Feature names must be
 unique, and the factory throws on a duplicate. The host
 owns its route handler, its env preflight and its migrations.
 
