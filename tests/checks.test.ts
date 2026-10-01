@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { checkDocs, slug, walk } from "../scripts/check-docs";
 import { collectIds, missingFromMap, walkTs } from "../scripts/check-feature-map";
-import { problemsInPack } from "../scripts/check-pack";
+import { filesInReport, problemsInPack } from "../scripts/check-pack";
 import { externalsOf, manifestFor } from "../scripts/pack-lib";
 
 /** Proof-of-failure: each custom check must fail on the fixture built to break it. */
@@ -144,6 +144,12 @@ describe("check-pack", () => {
     expect(problemsInPack(good.filter((f) => f !== "dist/db/index.js"))).toEqual([
       "missing from the tarball: dist/db/index.js",
     ]);
+  });
+  it("reads the file list from npm 11's array and from npm 12's object", () => {
+    const entry = { files: [{ path: "LICENSE" }, { path: "dist/index.js" }] };
+    expect(filesInReport([entry])).toEqual(["LICENSE", "dist/index.js"]);
+    expect(filesInReport({ meetmouse: entry })).toEqual(["LICENSE", "dist/index.js"]);
+    expect(() => filesInReport([])).toThrow("npm pack reported no package");
   });
 });
 

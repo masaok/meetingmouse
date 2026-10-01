@@ -34,11 +34,22 @@ export function problemsInPack(files: string[]): string[] {
   return out;
 }
 
+type PackEntry = { files: { path: string }[] };
+
+/**
+ * The file paths in `npm pack --dry-run --json` output. npm up to 11 prints an array with one
+ * entry; npm 12 prints an object keyed by package name.
+ */
+export function filesInReport(report: PackEntry[] | Record<string, PackEntry>): string[] {
+  const [entry] = Array.isArray(report) ? report : Object.values(report);
+  if (!entry) throw new Error("npm pack reported no package");
+  return entry.files.map((f) => f.path);
+}
+
 const isMain =
   process.argv[1] && import.meta.url === new URL(process.argv[1], "file://").href;
 if (isMain) {
-  const report = JSON.parse(readFileSync(0, "utf8")) as { files: { path: string }[] }[];
-  const files = report[0].files.map((f) => f.path);
+  const files = filesInReport(JSON.parse(readFileSync(0, "utf8")));
   const problems = problemsInPack(files);
   for (const p of problems) console.error(p);
   console.log(`${files.length} files in the tarball, ${problems.length} problems`);
