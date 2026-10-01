@@ -4,6 +4,8 @@ import { describe, expect, it } from "vitest";
 
 import { checkDocs, slug, walk } from "../scripts/check-docs";
 import { collectIds, missingFromMap, walkTs } from "../scripts/check-feature-map";
+import { problemsInPack } from "../scripts/check-pack";
+import { externalsOf, manifestFor } from "../scripts/pack-lib";
 
 /** Proof-of-failure: each custom check must fail on the fixture built to break it. */
 describe("check-docs", () => {
@@ -115,5 +117,73 @@ describe("package scripts", () => {
 
   it("fails on a script named like a built-in", () => {
     expect(["doctor"].filter((name) => PNPM_BUILTINS.has(name))).toEqual(["doctor"]);
+  });
+});
+
+describe("check-pack", () => {
+  const good = [
+    "package.json",
+    "README.md",
+    "LICENSE",
+    "dist/index.js",
+    "dist/index.d.ts",
+    "dist/db/index.js",
+    "dist/slack/index.js",
+    "dist/domain/index.js",
+    "drizzle/0000_x.sql",
+    "drizzle/meta/_journal.json",
+  ];
+  it("passes a tarball with exactly the library, the migrations and the two files", () => {
+    expect(problemsInPack(good)).toEqual([]);
+  });
+  it("fails on app code, secrets examples or a missing entry point", () => {
+    expect(problemsInPack([...good, "src/app/page.tsx", ".env.example"])).toEqual([
+      "not for the tarball: src/app/page.tsx",
+      "not for the tarball: .env.example",
+    ]);
+    expect(problemsInPack(good.filter((f) => f !== "dist/db/index.js"))).toEqual([
+      "missing from the tarball: dist/db/index.js",
+    ]);
+  });
+});
+
+describe("pack-lib", () => {
+  it("finds the bare packages the built files import, side-effect imports included", () => {
+    const sources = [
+      'import { App } from "@slack/bolt";\nimport { neon } from "@neondatabase/serverless";\nimport x from "./chunk-abc.js";\nimport { readFileSync } from "node:fs";',
+      'export * from "drizzle-orm/pg-core";\nconst m = await import("zod");',
+      'import "server-only";\nimport "./side-effect.js";',
+    ];
+    expect(externalsOf(sources)).toEqual([
+      "@neondatabase/serverless",
+      "@slack/bolt",
+      "drizzle-orm",
+      "server-only",
+      "zod",
+    ]);
+  });
+
+  it("derives the published manifest from the root and refuses an undeclared import", () => {
+    const root = {
+      name: "meetmouse",
+      version: "0.1.0",
+      license: "MIT",
+      type: "module",
+      scripts: { prepare: "husky", preinstall: "npx only-allow pnpm" },
+      devDependencies: { vitest: "^5" },
+      dependencies: { zod: "^4", next: "16.3.6" },
+      exports: { ".": "./dist/index.js" },
+    };
+    expect(manifestFor(root, ["zod"])).toEqual({
+      name: "meetmouse",
+      version: "0.1.0",
+      license: "MIT",
+      type: "module",
+      exports: { ".": "./dist/index.js" },
+      dependencies: { zod: "^4" },
+    });
+    expect(() => manifestFor(root, ["left-pad"])).toThrow(
+      'dist imports "left-pad" but package.json has no dependency for it',
+    );
   });
 });
