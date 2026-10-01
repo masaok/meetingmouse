@@ -11,6 +11,7 @@ tags:
 author: Meeting Mouse
 createdAt: 2026-10-01
 publishedAt: 2026-10-01
+updatedAt: 2026-10-01
 draft: false
 ---
 
@@ -45,7 +46,7 @@ A Doodle poll asks people to vote on times the organizer chose. The other model 
 
 Meeting Mouse is a Slack app that uses the grid model.
 
-1. Run `/when Sprint planning` in a channel. A form asks for the dates, a daily window and a slot length of 15, 30 or 60 minutes.
+1. Run `/meet Sprint planning` in a channel. A form asks for the dates, a daily window and a slot length of 15, 30 or 60 minutes.
 2. The app posts one poll message.
 3. Each person clicks Add my availability and clicks the times that work in a form in Slack, shown in their own time zone. Each click saves. A link in the form opens a page for dragging across the same slots.
 4. The message updates after every answer with a grid of who is free when and the three best times by headcount.

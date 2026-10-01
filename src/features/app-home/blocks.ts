@@ -72,14 +72,14 @@ export function homeView(input: HomeInput): HomeView {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: "Run `/when` in any channel to start an availability poll. Everyone marks when they're free in their own time zone, and the message updates live.",
+        text: "Run `/meet` in any channel to start an availability poll. Everyone marks when they're free in their own time zone, and the message updates live.",
       },
     },
     { type: "divider" },
     ...list(
       "Polls you organized",
       input.organized,
-      "You haven't started a poll yet. Try `/when Sprint planning`.",
+      "You haven't started a poll yet. Try `/meet Sprint planning`.",
     ),
     { type: "divider" },
     ...list(

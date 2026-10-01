@@ -2,10 +2,10 @@
  * Exercise the Slack route without Slack. Signs a payload with SLACK_SIGNING_SECRET the
  * way Slack does (v0 HMAC over `v0:{timestamp}:{body}`) and POSTs it.
  *
- *   pnpm slack:sign --command /when --text "Sprint planning"
+ *   pnpm slack:sign --command /meet --text "Sprint planning"
  *   pnpm slack:sign --payload tests/fixtures/payloads/respond_button.json
  *   pnpm slack:sign --json tests/fixtures/payloads/app_home_opened.json     # Events API body
- *   pnpm slack:sign --url https://preview.example/api/slack/events --command /when
+ *   pnpm slack:sign --url https://preview.example/api/slack/events --command /meet
  *
  * Prints the HTTP status and body. Exit code 1 on non-2xx.
  */
@@ -67,7 +67,7 @@ if (values.json) {
   }).toString();
 } else {
   console.error(
-    "Pass --command /when, --payload file.json (interactivity) or --json file.json (events)",
+    "Pass --command /meet, --payload file.json (interactivity) or --json file.json (events)",
   );
   process.exit(2);
 }

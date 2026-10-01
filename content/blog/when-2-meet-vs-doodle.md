@@ -12,6 +12,7 @@ tags:
 author: Meeting Mouse
 createdAt: 2026-10-01
 publishedAt: 2026-10-01
+updatedAt: 2026-10-01
 draft: false
 ---
 
@@ -54,4 +55,4 @@ Features and prices change, so check both sites before you commit. These are the
 
 Both tools send people to another site. If everyone in the group shares a Slack channel, the poll can stay in the channel.
 
-Meeting Mouse uses the grid model. `/when` with a title posts one message, each person marks every slot they are free in their own time zone, and the message shows who is free when with the three best times on top. It needs no account and no calendar access. It only reaches people in the Slack channel, so for a group that includes people who are not in your Slack, use one of the two web tools. [See how Meeting Mouse works](/#how).
+Meeting Mouse uses the grid model. `/meet` with a title posts one message, each person marks every slot they are free in their own time zone, and the message shows who is free when with the three best times on top. It needs no account and no calendar access. It only reaches people in the Slack channel, so for a group that includes people who are not in your Slack, use one of the two web tools. [See how Meeting Mouse works](/#how).

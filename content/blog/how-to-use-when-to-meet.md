@@ -13,6 +13,7 @@ tags:
 author: Meeting Mouse
 createdAt: 2026-10-01
 publishedAt: 2026-10-01
+updatedAt: 2026-10-01
 draft: false
 ---
 
@@ -45,6 +46,6 @@ It also asks everyone to leave the conversation, open a page and remember to com
 
 ## The same flow inside Slack
 
-Meeting Mouse follows the same flow with two steps removed. Nobody shares a link and nobody types a name, because the poll is a channel message and people answer as their Slack user. Run `/when` with a title in a channel and choose the dates, the daily window and the slot length. Each person clicks Add my availability and clicks the times that work in a form, in their own time zone, and each click saves. The form links to a page for dragging across a grid, with the group's availability beside your own. The message updates with the best times, the organizer picks one, and a thread reply carries an Add to Google Calendar link. [See how Meeting Mouse works](/#how).
+Meeting Mouse follows the same flow with two steps removed. Nobody shares a link and nobody types a name, because the poll is a channel message and people answer as their Slack user. Run `/meet` with a title in a channel and choose the dates, the daily window and the slot length. Each person clicks Add my availability and clicks the times that work in a form, in their own time zone, and each click saves. The form links to a page for dragging across a grid, with the group's availability beside your own. The message updates with the best times, the organizer picks one, and a thread reply carries an Add to Google Calendar link. [See how Meeting Mouse works](/#how).
 
 For the choice between a grid and a vote on fixed options, read [When 2 Meet vs Doodle](/blog/when-2-meet-vs-doodle).

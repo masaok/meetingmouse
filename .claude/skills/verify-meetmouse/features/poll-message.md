@@ -16,7 +16,7 @@ re-rendered in place after every response and organizer action.
 
 ## How to get to it (user POV)
 
-- It is the message `/when` posts; it updates itself after each **Add my availability** save.
+- It is the message `/meet` posts; it updates itself after each **Add my availability** save.
 - Times in it render in each viewer's own time zone (Slack date tokens).
 
 ## Driving it with slack-sign
