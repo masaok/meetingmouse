@@ -93,6 +93,7 @@ src/
   components/brand.tsx      Logo, mark and mascot for the homepage and the icon
   components/site.tsx       The header and footer every page shares
   components/social-image.tsx  The social preview drawing the image routes share
+  assets/fonts/             Geist regular and semibold for the social preview, with the license
   bolt/create.ts            createMeetingMouse(features, credentials): App + receiver for any host. server-only.
   bolt/app.ts               Reference wiring: env in, coreFeatures, built on first request. server-only.
   features/                 One directory per Slack surface, colocated:

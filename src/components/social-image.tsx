@@ -1,3 +1,6 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
 import { ImageResponse } from "next/og";
 
 import { LogoMark, Mascot } from "@/components/brand";
@@ -9,17 +12,32 @@ const FOREGROUND = "#1c1917";
 const ACCENT = "#4a154b";
 const MUTED = "#57534e";
 
+const FONT_FAMILY = "Geist";
+const FONTS_DIR = path.join(process.cwd(), "src", "assets", "fonts");
+
+/** The site's typeface at the two weights the image uses. Files and license: src/assets/fonts. */
+async function fonts() {
+  const [regular, semiBold] = await Promise.all([
+    readFile(path.join(FONTS_DIR, "Geist-Regular.ttf")),
+    readFile(path.join(FONTS_DIR, "Geist-SemiBold.ttf")),
+  ]);
+  return [
+    { name: FONT_FAMILY, data: regular, weight: 400 as const, style: "normal" as const },
+    { name: FONT_FAMILY, data: semiBold, weight: 600 as const, style: "normal" as const },
+  ];
+}
+
 /** Headlines up to this long use the large size; a post title can run to 60 characters. */
 const LARGE_HEADLINE_MAX_CHARS = 50;
 
 /** The site's social preview: the logo, a headline, one line under it and the mascot. */
-export function socialImage({
+export async function socialImage({
   headline,
   footer,
 }: {
   headline: string;
   footer: string;
-}): ImageResponse {
+}): Promise<ImageResponse> {
   return new ImageResponse(
     <div
       style={{
@@ -31,6 +49,7 @@ export function socialImage({
         padding: "72px 80px",
         background: BACKGROUND,
         color: FOREGROUND,
+        fontFamily: FONT_FAMILY,
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", width: 640 }}>
@@ -56,6 +75,6 @@ export function socialImage({
       </div>
       <Mascot size={400} />
     </div>,
-    SOCIAL_IMAGE_SIZE,
+    { ...SOCIAL_IMAGE_SIZE, fonts: await fonts() },
   );
 }
