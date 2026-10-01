@@ -50,8 +50,12 @@ surface errors to the user ephemerally (see [Testing](./TESTING.md#error-surfaci
 the Bolt app and the Vercel receiver from a list of features and nothing else. It never reads
 the environment. The reference app in this repo calls it from `getBolt()` with `coreFeatures`
 and the three env vars; a host that embeds Meet Mouse calls it with `coreFeatures` plus its own
-features and its own credentials, including an `authorize` function when one deployment serves
-many workspaces. Feature names must be unique, and the factory throws on a duplicate. The host
+features and its own credentials. For one workspace, `auth: { token }`. For a deployment that
+serves many, `auth: { authorize }`: Bolt calls it once per incoming request with the request's
+`{ teamId, enterpriseId, userId, conversationId, isEnterpriseInstall }` and expects
+`{ botToken, botId, botUserId }` back, which is where an installation store plugs in. Self-hosting
+stays a three-variable setup because the reference app uses the token form. Feature names must be
+unique, and the factory throws on a duplicate. The host
 owns its route handler, its env preflight and its migrations. Publishing this as a package is
 tracked under the "Core as a package" milestone.
 
