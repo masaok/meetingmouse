@@ -2,7 +2,7 @@ import { z } from "zod";
 
 /** block_id / action_id conventions of the respond modal. Shared by blocks.ts and this parser. */
 export const RESPOND = {
-  /** `day_<yyyy-mm-dd>_<chunk>` input blocks, checkboxes with action `slots`, value = epoch seconds. */
+  /** `day_<yyyy-mm-dd>_<chunk>` actions blocks, checkboxes with action `slots`, value = epoch seconds. */
   DAY_PREFIX: "day_",
   SLOTS_ACTION: "slots",
   NONE_BLOCK: "none_block",

@@ -18,7 +18,7 @@ sequenceDiagram
   participant A as App
   P->>S: Add my availability
   S->>A: block action (who, which poll)
-  A->>S: modal with "Open the grid" (a signed link for that person)
+  A->>S: the checkbox form, with "Open the grid" above it (a signed link for that person)
   P->>A: GET /grid/{token}
   A-->>P: the page, both grids, state as JSON
   P->>A: POST /grid/{token} with the painted slots
@@ -34,8 +34,10 @@ sequenceDiagram
 
 - Creating a poll, picking the final time, closing and deleting.
 - The poll message, which is still where the group sees the result.
-- The checkbox form. The modal offers **Use checkboxes instead**, and a host with no `grid`
-  option goes straight to it, so the three-variable self-hosted setup is unchanged.
+- The checkbox form. It is what Add my availability opens, and nobody has to leave Slack to
+  answer. The grid is a link above the form for people who would rather drag. A host with no
+  `grid` option shows the form without the link, so the three-variable self-hosted setup is
+  unchanged.
 
 ## The link is the credential
 
@@ -68,7 +70,7 @@ more here: the worst a leaked link allows is editing one person's answer on one 
 | `src/web/client.ts`             | The inline browser script: paint, redraw, save, poll                             |
 | `src/web/handlers.ts`           | `createGridHandlers`: `GET` and `POST` for a host's route                        |
 | `src/app/grid/[token]/route.ts` | The reference app's mount                                                        |
-| `src/features/poll-respond/`    | The modal that leads with the link                                               |
+| `src/features/poll-respond/`    | The checkbox form, which carries the link                                        |
 | `scripts/grid-preview.ts`       | The page on a fixture poll with no Slack and no secrets                          |
 
 The page is an HTML string from a route handler, not a React page. A host installs the library

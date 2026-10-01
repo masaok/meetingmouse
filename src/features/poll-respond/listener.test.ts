@@ -7,7 +7,6 @@ import { epochSeconds } from "@/slack/format";
 import {
   ACTION_GRID_LINK,
   ACTION_RESPOND_BUTTON,
-  ACTION_RESPOND_CHECKBOXES,
   CALLBACK_RESPOND_MODAL,
 } from "@/slack/ids";
 
@@ -91,7 +90,7 @@ describe("poll-respond listener", () => {
     expect(JSON.stringify(view)).toContain(
       `"value":"${epochSeconds(snapshot.slots[2])}"`,
     );
-    expect(JSON.stringify(view)).toContain("pre-filled");
+    expect(JSON.stringify(view)).toContain("your previous answer is ticked");
   });
 
   it("shows the closed view instead of the form when the poll is not open", async () => {
@@ -193,36 +192,17 @@ describe("poll-respond listener with the web grid", () => {
     vi.mocked(getUserAvailability).mockResolvedValue([]);
   });
 
-  it("leads with the viewer's own grid link, and offers the checkboxes", async () => {
+  it("opens the checkbox form with the viewer's own grid link above it", async () => {
     const client = fakeClient();
     await invoke("action", ACTION_RESPOND_BUTTON, buttonArgs(client));
 
     const view = client.views.update.mock.calls[0][0].view;
-    const buttons = view.blocks.find(
-      (b: { type: string }) => b.type === "actions",
-    ).elements;
-    expect(buttons.map((b: { action_id: string }) => b.action_id)).toEqual([
-      ACTION_GRID_LINK,
-      ACTION_RESPOND_CHECKBOXES,
-    ]);
-    expect(buttons[0].url).toBe(`https://host.test/grid/${POLL_ID}.T1.U0002`);
-    expect(buttons[1].value).toBe(POLL_ID);
-    expect(view.submit).toBeUndefined();
-  });
-
-  it("swaps the chooser for the checkbox form on request", async () => {
-    const client = fakeClient();
-    await invoke("action", ACTION_RESPOND_CHECKBOXES, {
-      ack: vi.fn(),
-      client,
-      action: { type: "button", action_id: ACTION_RESPOND_CHECKBOXES, value: POLL_ID },
-      body: { user: { id: "U0002" }, team: { id: "T1" }, view: { id: "V9" } },
-    });
-
-    const call = client.views.update.mock.calls[0][0];
-    expect(call.view_id).toBe("V9");
-    expect(call.view.submit.text).toBe("Save");
-    expect(JSON.stringify(call.view.blocks)).toContain("Tick every slot");
+    const link = view.blocks.find(
+      (b: { accessory?: { action_id?: string } }) =>
+        b.accessory?.action_id === ACTION_GRID_LINK,
+    );
+    expect(link.accessory.url).toBe(`https://host.test/grid/${POLL_ID}.T1.U0002`);
+    expect(view.submit.text).toBe("Save");
   });
 
   it("still refuses a closed poll before offering the grid", async () => {
@@ -239,5 +219,13 @@ describe("poll-respond listener with the web grid", () => {
     const ack = vi.fn();
     await invoke("action", ACTION_GRID_LINK, { ack });
     expect(ack).toHaveBeenCalledTimes(1);
+  });
+
+  it("acks a tick in the form, which Slack reports because the checkboxes are in actions blocks", async () => {
+    for (const actionId of [RESPOND.SLOTS_ACTION, RESPOND.NONE_ACTION]) {
+      const ack = vi.fn();
+      await invoke("action", actionId, { ack });
+      expect(ack).toHaveBeenCalledTimes(1);
+    }
   });
 });
