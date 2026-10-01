@@ -46,7 +46,7 @@ surface errors to the user ephemerally (see [Testing](./TESTING.md#error-surfaci
 
 ## Embedding in another app
 
-`createMeetMouse({ features, signingSecret, auth, logLevel })` in `src/bolt/create.ts` builds
+`createMeetingMouse({ features, signingSecret, auth, logLevel })` in `src/bolt/create.ts` builds
 the Bolt app and the Vercel receiver from a list of features and nothing else. It never reads
 the environment. The reference app in this repo calls it from `getBolt()` with `coreFeatures`
 and the three env vars; a host that embeds Meeting Mouse calls it with `coreFeatures` plus its own
@@ -65,7 +65,7 @@ The library build (`pnpm build:lib`, tsdown) ships four entry points:
 
 | Import                | Holds                                                                 |
 | --------------------- | --------------------------------------------------------------------- |
-| `meetingmouse`        | `createMeetMouse`, `coreFeatures`, the `Feature` and option types     |
+| `meetingmouse`        | `createMeetingMouse`, `coreFeatures`, the `Feature` and option types  |
 | `meetingmouse/db`     | `CORE_MIGRATIONS`, the Drizzle `schema`, the queries, the lazy client |
 | `meetingmouse/slack`  | Surface ids, Slack limits, formatting helpers                         |
 | `meetingmouse/domain` | Slots, tally, calendar links, constants, types (pure)                 |
@@ -75,7 +75,7 @@ The tarball holds `dist/`, `drizzle/`, the README and the license, checked by
 every entry point under the `react-server` condition a Next.js route handler runs under, and
 proves the handler answers an unsigned request with 401. Every version tag attaches the tarball
 to its GitHub release; publishing to npm is a separate switch (`.github/workflows/release.yml`).
-Modules that import `server-only` (`createMeetMouse`, the db client) need a host that honors the
+Modules that import `server-only` (`createMeetingMouse`, the db client) need a host that honors the
 `react-server` condition, which a Next.js route handler does.
 
 ## Directory layout
@@ -84,14 +84,14 @@ Modules that import `server-only` (`createMeetMouse`, the db client) need a host
 src/
   app/                      Next.js routes: homepage + api/slack/events/route.ts
   components/brand.tsx      Logo, mark and mascot for the homepage and the icon
-  bolt/create.ts            createMeetMouse(features, credentials): App + receiver for any host. server-only.
+  bolt/create.ts            createMeetingMouse(features, credentials): App + receiver for any host. server-only.
   bolt/app.ts               Reference wiring: env in, coreFeatures, built on first request. server-only.
   features/                 One directory per Slack surface, colocated:
     poll-create/            listener.ts · blocks.ts · schema.ts · *.test.ts
     poll-respond/
     poll-organize/
     app-home/
-    index.ts                coreFeatures, the list a host passes to createMeetMouse
+    index.ts                coreFeatures, the list a host passes to createMeetingMouse
     types.ts                Feature: a name and a register(app) function
   domain/                   Pure logic: constants, types, slots, tally, gcal. No I/O.
   slack/                    Shared Slack knowledge: limits.ts, format.ts, block helpers.

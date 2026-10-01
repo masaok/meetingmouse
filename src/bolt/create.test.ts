@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { Feature } from "@/features/types";
 
-import { CORE_BOT_SCOPES, createMeetMouse, type OAuthOptions } from "./create";
+import { CORE_BOT_SCOPES, createMeetingMouse, type OAuthOptions } from "./create";
 
 vi.mock("server-only", () => ({}));
 
@@ -16,10 +16,10 @@ const spy = (name: string, seen: unknown[][]): Feature => ({
   },
 });
 
-describe("createMeetMouse", () => {
+describe("createMeetingMouse", () => {
   it("registers every feature once, in order, on the app it returns", () => {
     const seen: unknown[][] = [];
-    const bolt = createMeetMouse({
+    const bolt = createMeetingMouse({
       features: [spy("a", seen), spy("b", seen)],
       signingSecret: "secret",
       auth: { token: "xoxb-test" },
@@ -32,7 +32,7 @@ describe("createMeetMouse", () => {
   });
 
   it("gives the Web API client the single token when one is supplied", () => {
-    const bolt = createMeetMouse({
+    const bolt = createMeetingMouse({
       features: [],
       signingSecret: "secret",
       auth: { token: "xoxb-test" },
@@ -44,7 +44,7 @@ describe("createMeetMouse", () => {
     const authorize = vi
       .fn()
       .mockResolvedValue({ botToken: "xoxb-from-store", botId: "B1", botUserId: "U1" });
-    const bolt = createMeetMouse({
+    const bolt = createMeetingMouse({
       features: [],
       signingSecret: "secret",
       auth: { authorize },
@@ -56,7 +56,7 @@ describe("createMeetMouse", () => {
     const authorize = vi
       .fn()
       .mockResolvedValue({ botToken: "xoxb-T123", botId: "B1", botUserId: "U1" });
-    const bolt = createMeetMouse({
+    const bolt = createMeetingMouse({
       features: [],
       signingSecret: "secret",
       auth: { authorize },
@@ -117,7 +117,7 @@ describe("createMeetMouse", () => {
     });
 
     it("answers the install path with a redirect to Slack carrying the client id, scopes and a state", async () => {
-      const bolt = createMeetMouse({
+      const bolt = createMeetingMouse({
         features: [],
         signingSecret: "secret",
         auth: { oauth: oauth(store()) },
@@ -139,7 +139,7 @@ describe("createMeetMouse", () => {
 
     it("resolves each request's token from the installation store, by workspace", async () => {
       const s = store();
-      const bolt = createMeetMouse({
+      const bolt = createMeetingMouse({
         features: [],
         signingSecret: "secret",
         auth: { oauth: oauth(s) },
@@ -166,7 +166,7 @@ describe("createMeetMouse", () => {
 
   it("rejects two features with the same name", () => {
     expect(() =>
-      createMeetMouse({
+      createMeetingMouse({
         features: [spy("poll-create", []), spy("poll-create", [])],
         signingSecret: "secret",
         auth: { token: "xoxb-test" },
