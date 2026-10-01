@@ -1,6 +1,7 @@
 # Meet Mouse
 
 [![CI](https://github.com/masaok/meetmouse/actions/workflows/ci.yml/badge.svg)](https://github.com/masaok/meetmouse/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 Find a meeting time without leaving Slack. `/when Sprint planning` posts an availability poll
 in the channel. Everyone marks when they're free, in their own time zone. The message updates
@@ -76,3 +77,7 @@ Stack: Next.js 16 · `@slack/bolt` + `@vercel/slack-bolt` · Neon Postgres + Dri
 
 Issues and pull requests are welcome. Start with [CONTRIBUTING.md](./CONTRIBUTING.md); it is
 short. Security reports go through [SECURITY.md](./SECURITY.md), not the issue tracker.
+
+## License
+
+[MIT](./LICENSE).
