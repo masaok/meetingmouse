@@ -3,17 +3,17 @@
 [![CI](https://github.com/masaok/meetingmouse/actions/workflows/ci.yml/badge.svg)](https://github.com/masaok/meetingmouse/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-Find a meeting time without leaving Slack. `/when Sprint planning` posts an availability poll
-in the channel. Everyone marks when they're free, in their own time zone. The message updates
-in place with a heatmap and the best times, and the organizer locks one in with an Add to
-Google Calendar link.
+Find the time everyone is free, right from Slack. `/when Sprint planning` posts an availability
+poll in the channel. Everyone marks when they're free, in their own time zone, by dragging
+across a grid. The message updates in place with a grid of who is free when and the best times,
+and the organizer locks one in with an Add to Google Calendar link.
 
 ## How it works
 
 1. **Start a poll.** `/when <title>` or the global shortcut opens a modal: date range, working hours, slot length.
-2. **One message.** The app posts a single poll message in the channel. There is nothing else to open.
-3. **Everyone responds.** Each person marks their free slots in a modal rendered in their own time zone.
-4. **Live results.** The channel message re-renders after every response: heatmap, best times, who is free when.
+2. **One message.** The app posts a single poll message in the channel.
+3. **Everyone responds.** Each person clicks Add my availability and paints their free slots on the [web grid](./docs/WEB_GRID.md), in their own time zone, with the group's availability beside theirs. A host that does not serve the grid gets a checkbox form in Slack.
+4. **Live results.** The channel message re-renders after every response: a grid of who is free when, and the best times.
 5. **Lock it in.** The organizer picks a time and the thread gets an Add to Google Calendar link.
 
 ## Run it yourself

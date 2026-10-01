@@ -13,13 +13,13 @@ const steps = [
   },
   {
     n: "2",
-    title: "Everyone marks their time",
-    body: "Each person clicks Add my availability and checks off slots shown in their own time zone.",
+    title: "Everyone paints their time",
+    body: "Each person clicks Add my availability and drags across a grid of slots shown in their own time zone.",
   },
   {
     n: "3",
-    title: "Watch the heatmap fill in",
-    body: "The channel message updates live with the best times and who has answered.",
+    title: "Watch the grid fill in",
+    body: "The group's availability darkens where more people are free, and the channel message updates with the best times.",
   },
   {
     n: "4",
@@ -30,8 +30,8 @@ const steps = [
 
 const features = [
   {
-    title: "Nobody leaves Slack",
-    body: "No links, no accounts, no new tabs. The whole poll lives in one message that updates in place.",
+    title: "Lives in your channel",
+    body: "The poll, the results and the final time are one Slack message that updates in place. No accounts and no sign-in.",
   },
   {
     title: "Time zones handled for you",
@@ -39,11 +39,11 @@ const features = [
   },
   {
     title: "Best times, ranked",
-    body: "The top three slots by headcount sit at the top of the message. Contiguous times where everyone is free are called out.",
+    body: "The top three slots by headcount sit at the top of the message, above a grid of who is free when.",
   },
   {
-    title: "Edit your answer any time",
-    body: "Reopen the modal and your previous picks are already checked. Submit again and the heatmap re-renders.",
+    title: "Drag to mark your time",
+    body: "Sweep across the hours you are free instead of ticking boxes one by one. Come back later and your answer is already painted.",
   },
   {
     title: "Organizer controls",
@@ -55,59 +55,93 @@ const features = [
   },
 ];
 
-type Row = { time: string; count: number };
-
-const day1: Row[] = [
-  { time: "09:00", count: 4 },
-  { time: "09:30", count: 3 },
-  { time: "10:00", count: 3 },
-  { time: "10:30", count: 1 },
-];
-
+const DAYS = ["Mon", "Tue", "Wed", "Thu"];
+const TIMES = ["9 AM", "", "10 AM", "", "11 AM", "", "12 PM", ""];
 const TOTAL = 4;
 
-function Heat({ count }: { count: number }) {
-  return (
-    <span className="inline-flex gap-0.5" aria-hidden="true">
-      {Array.from({ length: TOTAL }).map((_, i) => (
-        <span
-          key={i}
-          className={`inline-block h-3.5 w-3.5 rounded-[3px] ${
-            i < count
-              ? "bg-emerald-500 dark:bg-emerald-400"
-              : "bg-stone-200 dark:bg-stone-700"
-          }`}
-        />
-      ))}
-    </span>
-  );
-}
+/** `MINE[row][day]`: the half-hours the viewer painted. */
+const MINE = [
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
+  [1, 0, 0, 1],
+  [1, 1, 0, 1],
+  [1, 1, 0, 1],
+  [1, 1, 1, 0],
+  [0, 1, 1, 0],
+  [0, 0, 1, 0],
+];
 
-function DayBlock({ label, rows }: { label: string; rows: Row[] }) {
+/** `GROUP[row][day]`: how many of the four people are free. */
+const GROUP = [
+  [0, 1, 0, 0],
+  [1, 1, 0, 1],
+  [2, 1, 1, 2],
+  [3, 3, 1, 2],
+  [3, 4, 2, 3],
+  [2, 4, 3, 1],
+  [1, 3, 3, 1],
+  [0, 1, 2, 0],
+];
+
+const SHADE = ["opacity-0", "opacity-25", "opacity-50", "opacity-75", "opacity-100"];
+
+function MiniGrid({
+  title,
+  cells,
+  kind,
+}: {
+  title: string;
+  cells: number[][];
+  kind: "mine" | "group";
+}) {
   return (
-    <div className="mt-3">
-      <p className="text-sm font-semibold">{label}</p>
-      <ul className="mt-1 space-y-0.5">
-        {rows.map((r) => (
-          <li key={r.time} className="flex items-center gap-3 text-sm">
-            <code className="rounded bg-stone-100 px-1 font-mono text-[12px] text-stone-700 dark:bg-stone-800 dark:text-stone-300">
-              {r.time}
-            </code>
-            <Heat count={r.count} />
-            <span className="text-stone-500 dark:text-stone-400">
-              {r.count}
-              <span className="sr-only"> of {TOTAL} available</span>
-            </span>
-          </li>
+    <div>
+      <p className="text-center text-xs font-semibold">{title}</p>
+      <div
+        className="mt-2 grid grid-cols-[2.25rem_repeat(4,1.5rem)] text-[10px] text-stone-500 dark:text-stone-400"
+        aria-hidden="true"
+      >
+        <span />
+        {DAYS.map((d) => (
+          <span key={d} className="pb-1 text-center">
+            {d}
+          </span>
         ))}
-      </ul>
+        {cells.map((row, r) => (
+          <div key={r} className="contents">
+            <span className="-mt-1.5 pr-1.5 text-right leading-3">{TIMES[r]}</span>
+            {row.map((value, c) => (
+              <span
+                key={c}
+                className={`relative h-3.5 border-l border-stone-400 dark:border-stone-600 ${
+                  r % 2 === 0
+                    ? "border-t"
+                    : "border-t border-t-stone-300 dark:border-t-stone-700"
+                } ${c === row.length - 1 ? "border-r" : ""} ${
+                  r === cells.length - 1 ? "border-b" : ""
+                } ${
+                  kind === "mine" && !value
+                    ? "bg-rose-100 dark:bg-rose-950/50"
+                    : "bg-white dark:bg-stone-900"
+                }`}
+              >
+                <span
+                  className={`absolute inset-0 bg-emerald-600 dark:bg-emerald-500 ${
+                    kind === "mine" ? (value ? "opacity-100" : "opacity-0") : SHADE[value]
+                  }`}
+                />
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-function MockPoll() {
+function MockGrid() {
   return (
-    <div className="w-full max-w-xs rounded-2xl border border-stone-200 bg-white p-4 shadow-xl shadow-stone-900/5 dark:border-stone-800 dark:bg-stone-950 dark:shadow-black/40">
+    <div className="w-full max-w-sm rounded-2xl border border-stone-200 bg-white p-4 shadow-xl shadow-stone-900/5 dark:border-stone-800 dark:bg-stone-950 dark:shadow-black/40">
       <div className="flex items-center gap-2">
         <span className="bg-accent flex h-7 w-7 items-center justify-center rounded-md">
           <LogoMark className="h-5 w-5" />
@@ -122,19 +156,40 @@ function MockPoll() {
 
       <h3 className="mt-3 font-bold">📅 Sprint planning</h3>
       <p className="text-xs text-stone-500 dark:text-stone-400">
-        4 responded · times shown in your time zone
+        {TOTAL} responded · times shown in your time zone
       </p>
 
       <p className="mt-2 text-sm">
-        <span className="font-semibold">Best time</span> · Tue 9:00 AM — 4/4{" "}
+        <span className="font-semibold">Best time</span> · Tue 11:00 AM · {TOTAL}/{TOTAL}{" "}
         <span aria-label="everyone free">✅</span>
       </p>
 
-      <DayBlock label="Tue, Sep 30" rows={day1} />
+      <div className="mt-4 flex justify-between gap-3">
+        <MiniGrid title="Your availability" cells={MINE} kind="mine" />
+        <MiniGrid title="Group's availability" cells={GROUP} kind="group" />
+      </div>
+      <p className="sr-only">
+        Two grids of days by times. On the left, the hours you painted as free. On the
+        right, the group&apos;s availability, darker green where more of the {TOTAL}{" "}
+        people are free.
+      </p>
 
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-4 flex items-center justify-between gap-2">
         <span className="rounded-md bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white">
           Add my availability
+        </span>
+        <span className="flex items-center gap-1 text-[10px] text-stone-500 dark:text-stone-400">
+          0/{TOTAL}
+          <span className="flex border border-stone-400 dark:border-stone-600">
+            {SHADE.map((shade) => (
+              <span key={shade} className="relative h-3 w-3 bg-white dark:bg-stone-900">
+                <span
+                  className={`absolute inset-0 bg-emerald-600 dark:bg-emerald-500 ${shade}`}
+                />
+              </span>
+            ))}
+          </span>
+          {TOTAL}/{TOTAL} free
         </span>
       </div>
     </div>
@@ -177,15 +232,15 @@ export default function Home() {
               Meet the mouse who finds the time
             </p>
             <h1 className="text-4xl leading-tight font-semibold tracking-tight sm:text-5xl">
-              Find a meeting time without leaving the channel.
+              Find the time everyone is free, right from Slack.
             </h1>
             <p className="mt-5 max-w-lg text-lg leading-8 text-stone-600 dark:text-stone-400">
               Run{" "}
               <code className="rounded bg-stone-200/70 px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-stone-800">
                 /when
               </code>
-              , let everyone mark when they&apos;re free, and let Meeting Mouse turn one
-              Slack message into a live heatmap with the best times on top.
+              , let everyone drag across a grid to mark when they&apos;re free, and watch
+              the group&apos;s availability fill in, darker where more people can meet.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
@@ -207,7 +262,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-end sm:justify-center md:justify-end">
             <Mascot className="w-48 shrink-0 drop-shadow-lg sm:-mr-8 sm:w-56" />
-            <MockPoll />
+            <MockGrid />
           </div>
         </section>
 
