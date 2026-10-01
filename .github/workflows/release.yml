@@ -1,0 +1,38 @@
+name: Release
+
+# On a version tag: run the whole gate, build the library, attach the tarball to the GitHub
+# release (always), and publish to npm only when the repository variable NPM_PUBLISH is "true".
+# Setting that variable, and the npm trusted publisher or NPM_TOKEN it relies on, is a human step.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    name: Build, attach, publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup
+      - run: pnpm verify
+      - run: pnpm pack:check
+      - run: pnpm smoke:pack
+      - name: Tag matches package.json version
+        run: |
+          v=$(node -p "require('./package.json').version")
+          [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "tag ${GITHUB_REF_NAME} but package.json is $v"; exit 1; }
+      - name: Pack
+        run: pnpm --silent pack:lib --dest .
+      - name: Attach the tarball to the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${GITHUB_REF_NAME}" meetmouse-*.tgz --clobber
+      - name: Publish to npm
+        if: vars.NPM_PUBLISH == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish meetmouse-*.tgz --provenance --access public
