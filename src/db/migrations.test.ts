@@ -11,7 +11,13 @@ import { describe, expect, it } from "vitest";
 
 import { CORE_MIGRATIONS } from "./migrations";
 
-const CORE_TABLES = ["availability", "participants", "poll_slots", "polls", "slack_users"];
+const CORE_TABLES = [
+  "availability",
+  "participants",
+  "poll_slots",
+  "polls",
+  "slack_users",
+];
 
 /** What a host's own drizzle folder looks like: one journal entry, created after the core's. */
 function hostMigrationsFolder(): string {
@@ -23,7 +29,13 @@ function hostMigrationsFolder(): string {
       version: "7",
       dialect: "postgresql",
       entries: [
-        { idx: 0, version: "7", when: Date.now(), tag: "0000_host_accounts", breakpoints: true },
+        {
+          idx: 0,
+          version: "7",
+          when: Date.now(),
+          tag: "0000_host_accounts",
+          breakpoints: true,
+        },
       ],
     }),
   );

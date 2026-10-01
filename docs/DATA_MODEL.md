@@ -49,8 +49,12 @@ A host that embeds Meet Mouse runs the core's migrations with the migrator for i
 
 ```ts
 import { migrate } from "drizzle-orm/neon-http/migrator";
+
 await migrate(db, CORE_MIGRATIONS);
-await migrate(db, { migrationsFolder: "./drizzle", migrationsTable: "__host_migrations" });
+await migrate(db, {
+  migrationsFolder: "./drizzle",
+  migrationsTable: "__host_migrations",
+});
 ```
 
 The host's journal must use its own `migrationsTable`. Drizzle applies only the entries newer
