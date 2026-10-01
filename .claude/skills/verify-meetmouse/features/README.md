@@ -34,8 +34,8 @@ Each file: H1, one paragraph, then exactly these H2s in order: `Sub-features`,
 
 ## Features
 
-- [Create a poll](./create-poll.md): `/when`, the global shortcut, the create modal, validation, the first message.
+- [Create a poll](./poll-create.md): `/when`, the global shortcut, the create modal, validation, the first message.
 - [Poll message](./poll-message.md): heatmap, best times, everyone-free, closed and scheduled renders, limits.
-- [Respond](./respond.md): the Add my availability button, the local-time modal, saving, live update.
-- [Organizer actions](./organizer-actions.md): pick final time, close, delete, thread announcement (phase 5).
+- [Respond](./poll-respond.md): the Add my availability button, the local-time modal, saving, live update.
+- [Organizer actions](./poll-organize.md): pick final time, close, delete, thread announcement (phase 5).
 - [App Home](./app-home.md): the home tab lists (phase 6).

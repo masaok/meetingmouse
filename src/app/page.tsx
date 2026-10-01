@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Logo, LogoMark, Mascot } from "@/components/brand";
 
-const SLACK_INSTALL_URL = "#install";
+const SLACK_INSTALL_URL = "https://github.com/masaok/meetmouse#run-it-yourself";
 
 const steps = [
   {
@@ -164,7 +164,7 @@ export default function Home() {
             href={SLACK_INSTALL_URL}
             className="bg-accent hover:bg-accent-hover rounded-full px-4 py-2 font-medium text-white transition-colors dark:text-stone-950"
           >
-            Add to Slack
+            Self-host it
           </a>
         </nav>
       </header>
@@ -191,7 +191,7 @@ export default function Home() {
                 href={SLACK_INSTALL_URL}
                 className="bg-accent hover:bg-accent-hover inline-flex h-12 items-center justify-center rounded-full px-6 font-medium text-white transition-colors dark:text-stone-950"
               >
-                Add to Slack
+                Self-host it
               </a>
               <a
                 href="#how"
@@ -262,7 +262,7 @@ export default function Home() {
                   Stop scheduling in a thread.
                 </h2>
                 <p className="mt-2 text-stone-600 dark:text-stone-400">
-                  Install Meet Mouse and run your first poll in under a minute.
+                  Deploy your own copy and run your first poll today.
                 </p>
               </div>
             </div>
@@ -270,7 +270,7 @@ export default function Home() {
               href={SLACK_INSTALL_URL}
               className="bg-accent hover:bg-accent-hover inline-flex h-12 items-center justify-center rounded-full px-6 font-medium text-white transition-colors dark:text-stone-950"
             >
-              Add to Slack
+              Self-host it
             </a>
           </div>
         </section>

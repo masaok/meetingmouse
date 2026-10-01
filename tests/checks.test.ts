@@ -46,14 +46,8 @@ describe("verification recipes", () => {
     const dirs = readdirSync("src/features", { withFileTypes: true })
       .filter((d) => d.isDirectory())
       .map((d) => d.name);
-    const recipeFor: Record<string, string> = {
-      "poll-create": "create-poll",
-      "poll-respond": "respond",
-      "poll-organize": "organizer-actions",
-      "app-home": "app-home",
-    };
     for (const dir of dirs) {
-      const file = `.claude/skills/verify-meetmouse/features/${recipeFor[dir] ?? dir}.md`;
+      const file = `.claude/skills/verify-meetmouse/features/${dir}.md`;
       expect(existsSync(file), `${dir} needs ${file}`).toBe(true);
       const md = readFileSync(file, "utf8");
       for (const h2 of [
