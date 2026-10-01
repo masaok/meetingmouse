@@ -2,6 +2,7 @@ import type { App } from "@slack/bolt";
 
 import { db } from "@/db/client";
 import { getPollSnapshot, getUserAvailability, saveResponse } from "@/db/queries";
+import type { Feature } from "@/features/types";
 import { log } from "@/lib/log";
 import { refreshPollMessage } from "@/lib/refresh";
 import { slackErrorCode } from "@/lib/respond";
@@ -143,3 +144,5 @@ export function register(app: App): void {
     }
   });
 }
+
+export const feature: Feature = { name: "poll-respond", register };

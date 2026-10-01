@@ -3,6 +3,7 @@ import type { App } from "@slack/bolt";
 import { db } from "@/db/client";
 import { createPoll, deletePoll, setMessageTs } from "@/db/queries";
 import { generateSlots } from "@/domain/slots";
+import type { Feature } from "@/features/types";
 import { log } from "@/lib/log";
 import { respondViaUrl, slackErrorCode } from "@/lib/respond";
 import { getUserProfile } from "@/lib/users";
@@ -135,3 +136,5 @@ export function register(app: App): void {
     }
   });
 }
+
+export const feature: Feature = { name: "poll-create", register };

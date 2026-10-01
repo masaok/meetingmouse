@@ -1,18 +1,20 @@
-import type { App } from "@slack/bolt";
+import { feature as appHome } from "./app-home/listener";
+import { feature as pollCreate } from "./poll-create/listener";
+import { feature as pollOrganize } from "./poll-organize/listener";
+import { feature as pollRespond } from "./poll-respond/listener";
+import type { Feature } from "./types";
 
-import * as appHome from "./app-home/listener";
-import * as pollCreate from "./poll-create/listener";
-import * as pollOrganize from "./poll-organize/listener";
-import * as pollRespond from "./poll-respond/listener";
+export type { Feature } from "./types";
 
 /**
  * Features are colocated: each directory owns its listener, its block builders, its
  * payload schema and its tests. Surface ids live in src/slack/ids.ts and every one of
- * them is documented in docs/FEATURE_MAP.md (CI checks this).
+ * them is documented in docs/FEATURE_MAP.md (CI checks this). A host application passes
+ * this list, plus its own features, to `createMeetMouse`.
  */
-export function registerFeatures(app: App): void {
-  pollCreate.register(app);
-  pollRespond.register(app);
-  pollOrganize.register(app);
-  appHome.register(app);
-}
+export const coreFeatures: readonly Feature[] = [
+  pollCreate,
+  pollRespond,
+  pollOrganize,
+  appHome,
+];

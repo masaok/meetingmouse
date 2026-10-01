@@ -46,7 +46,7 @@ docs/                               living docs (link-checked)
 
 Use the `add-slack-surface` skill, or by hand (and add a recipe file under `.claude/skills/verify-meetmouse/features/` when the surface is a new feature):
 
-1. Add the id constant to `src/slack/ids.ts`; subscribe in `src/features/<surface>/listener.ts`; register in `src/features/index.ts`.
+1. Add the id constant to `src/slack/ids.ts`; subscribe in `src/features/<surface>/listener.ts` and export it on that file's `feature`; for a new directory, add the `feature` to `coreFeatures` in `src/features/index.ts`.
 2. Blocks in `blocks.ts` (pure); payload parsing in `schema.ts` (zod); tests next to them, including a worst-case size test for renders.
 3. Add a row to `docs/FEATURE_MAP.md` with a reproduce command (`pnpm slack:sign …` or a payload fixture in `tests/fixtures/payloads/`).
 4. If the manifest changes (new command, shortcut, scope, event), edit `manifest.json` and note it in the PR; a human re-applies it in Slack.
