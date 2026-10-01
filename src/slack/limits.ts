@@ -14,6 +14,12 @@ export const SLACK_LIMITS = {
   SECTION_TEXT_CHARS: 3000,
   /** `context` element text max length. */
   CONTEXT_TEXT_CHARS: 2000,
+  /** `table` block: max rows, header row included. */
+  TABLE_ROWS: 100,
+  /** `table` block: max cells in a row. */
+  TABLE_COLUMNS: 20,
+  /** `table` block: max characters across all cells. */
+  TABLE_CHARS: 10_000,
   /** `header.text` max length. */
   HEADER_TEXT_CHARS: 150,
   /** option.value max length. */

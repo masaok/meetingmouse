@@ -18,5 +18,5 @@ const stats = messageStats(message);
 if (!process.argv.includes("--stats"))
   console.log(JSON.stringify({ blocks: message.blocks }, null, 2));
 console.error(
-  `blocks: ${stats.blocks}/50  longest section: ${stats.longestSection}/3000 chars`,
+  `blocks: ${stats.blocks}/50  longest section: ${stats.longestSection}/3000 chars  table: ${stats.tableRows}/100 rows, ${stats.tableColumns}/20 columns, ${stats.tableChars}/10000 chars`,
 );
