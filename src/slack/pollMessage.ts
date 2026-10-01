@@ -9,7 +9,8 @@ import type {
 
 import { POLL_LIMITS } from "@/domain/constants";
 import { gcalUrl } from "@/domain/gcal";
-import { formatInTz, groupByLocalDate, slotEnd } from "@/domain/slots";
+import { gridModel } from "@/domain/grid";
+import { formatInTz, slotEnd } from "@/domain/slots";
 import { bestTimes, fullOverlapRanges, tally } from "@/domain/tally";
 import type { PollSnapshot, SlotTally } from "@/domain/types";
 
@@ -192,32 +193,26 @@ function gridTable(
   tz: string,
 ): TableBlock {
   const countBySlot = new Map(tallies.map((t) => [t.slot.getTime(), t.count]));
-  const days = [...groupByLocalDate(slots, tz).values()].map(
-    (daySlots) => new Map(daySlots.map((s) => [formatInTz(s, tz, "HH:mm"), s])),
-  );
-  const times = [...new Set(days.flatMap((day) => [...day.keys()]))].sort();
+  const { days, rows, cells } = gridModel(slots, tz);
   const blank = cell({ type: "text", text: " " });
 
-  const header = days.map((day) => {
-    const first = [...day.values()][0];
-    return cell({
+  const header = days.map(({ first }) =>
+    cell({
       type: "date",
       timestamp: epochSeconds(first),
       format: "{date_short}",
       fallback: formatInTz(first, tz, "EEE, MMM d"),
       style: { bold: true },
-    });
-  });
-  const rows = times.map((time) => {
-    const labelled = days.find((day) => day.has(time))?.get(time) as Date;
+    }),
+  );
+  const body = rows.map(({ sample }, r) => {
     const label = cell({
       type: "date",
-      timestamp: epochSeconds(labelled),
+      timestamp: epochSeconds(sample),
       format: "{time}",
-      fallback: formatInTz(labelled, tz, "h:mm a"),
+      fallback: formatInTz(sample, tz, "h:mm a"),
     });
-    const cells = days.map((day) => {
-      const slot = day.get(time);
+    const heat = cells[r].map((slot) => {
       if (!slot) return blank;
       const count = countBySlot.get(slot.getTime()) ?? 0;
       const square: RichTextElement = {
@@ -226,7 +221,7 @@ function gridTable(
       };
       return count > 0 ? cell(square, { type: "text", text: ` ${count}` }) : cell(square);
     });
-    return [label, ...cells];
+    return [label, ...heat];
   });
 
   return {
@@ -235,7 +230,7 @@ function gridTable(
       { align: "right" },
       ...days.map(() => ({ align: "center" as const })),
     ],
-    rows: [[blank, ...header], ...rows],
+    rows: [[blank, ...header], ...body],
   };
 }
 
