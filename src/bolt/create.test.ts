@@ -41,6 +41,38 @@ describe("createMeetingMouse", () => {
     expect(contexts[1].grid).toBeUndefined();
   });
 
+  it("hands every feature the support URL when the host sets one", () => {
+    const contexts: FeatureContext[] = [];
+    const feature: Feature = {
+      name: "a",
+      register: (_app, context) => contexts.push(context),
+    };
+    const base = {
+      features: [feature],
+      signingSecret: "secret",
+      auth: { token: "xoxb-test" },
+    };
+    createMeetingMouse({ ...base, supportUrl: "https://example.com/help?a=1|2" });
+    createMeetingMouse(base);
+
+    expect(contexts[0].supportUrl).toBe("https://example.com/help?a=1%7C2");
+    expect(contexts[1].supportUrl).toBeUndefined();
+  });
+
+  it.each(["", "example.com/help", "mailto:help@example.com", "javascript:alert(1)"])(
+    "rejects the support URL %j, which is not http(s)",
+    (supportUrl) => {
+      expect(() =>
+        createMeetingMouse({
+          features: [],
+          signingSecret: "secret",
+          auth: { token: "xoxb-test" },
+          supportUrl,
+        }),
+      ).toThrow(`supportUrl must be an http(s) URL, got "${supportUrl}"`);
+    },
+  );
+
   it("registers every feature once, in order, on the app it returns", () => {
     const seen: unknown[][] = [];
     const bolt = createMeetingMouse({

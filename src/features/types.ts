@@ -6,6 +6,8 @@ import type { GridLinks } from "@/web/link";
 export interface FeatureContext {
   /** Present when the host serves the web grid; absent, features stay inside Slack. */
   grid?: GridLinks;
+  /** Where a person gets help, when the host names a place; absent, the Home tab says nothing. */
+  supportUrl?: string;
 }
 
 /**

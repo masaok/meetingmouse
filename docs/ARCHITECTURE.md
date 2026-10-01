@@ -47,7 +47,7 @@ surface errors to the user ephemerally (see [Testing](./TESTING.md#error-surfaci
 
 ## Embedding in another app
 
-`createMeetingMouse({ features, signingSecret, auth, logLevel })` in `src/bolt/create.ts` builds
+`createMeetingMouse({ features, signingSecret, auth, grid, supportUrl, logLevel })` in `src/bolt/create.ts` builds
 the Bolt app and the Vercel receiver from a list of features and nothing else. It never reads
 the environment. The reference app in this repo calls it from `getBolt()` with `coreFeatures`
 and the three env vars; a host that embeds Meeting Mouse calls it with `coreFeatures` plus its own
@@ -59,7 +59,11 @@ secret, a state secret, the scopes (`CORE_BOT_SCOPES` plus the host's own) and a
 store: the receiver then serves the install path (`receiver.handleInstall`) and the callback
 (`receiver.handleCallback`), and tokens come from the store per workspace. Self-hosting stays a
 three-variable setup because the reference app uses the token form. Feature names must be
-unique, and the factory throws on a duplicate. The host
+unique, and the factory throws on a duplicate. Two options are optional and reach every feature
+through its `FeatureContext`: `grid` turns on the [web grid](./WEB_GRID.md), and `supportUrl`, an
+http(s) URL, ends the App Home tab with the line "Need help? Get support." linked to it. The
+factory throws on a `supportUrl` that is not http(s). The reference app sets no `supportUrl`, so
+its Home tab has no help line. The host
 owns its route handler, its env preflight and its migrations. The core's database client asks the
 environment for `DATABASE_URL` and nothing else, so a host with no bot token in its environment
 works.

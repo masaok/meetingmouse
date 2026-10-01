@@ -3,7 +3,7 @@ import type { App } from "@slack/bolt";
 import { db } from "@/db/client";
 import { listPollsForUser } from "@/db/queries";
 import type { Poll } from "@/domain/types";
-import type { Feature } from "@/features/types";
+import type { Feature, FeatureContext } from "@/features/types";
 import { log } from "@/lib/log";
 import { slackErrorCode } from "@/lib/respond";
 import { EVENT_APP_HOME_OPENED } from "@/slack/ids";
@@ -45,7 +45,8 @@ export async function withPermalinks(
   );
 }
 
-export function register(app: App): void {
+export function register(app: App, context: FeatureContext = {}): void {
+  const { supportUrl } = context;
   app.event(EVENT_APP_HOME_OPENED, async ({ event, body, client }) => {
     if (event.tab !== "home") return;
     const userId = event.user;
@@ -58,7 +59,7 @@ export function register(app: App): void {
       ]);
       await client.views.publish({
         user_id: userId,
-        view: homeView({ organized, responded }),
+        view: homeView({ organized, responded, supportUrl }),
       });
       log.info({
         action: "home_published",
