@@ -241,6 +241,34 @@ describe("poll-respond listener", () => {
     expect(refreshPollMessage).not.toHaveBeenCalled();
   });
 
+  it("a click on a form that was closed before the redraw still refreshes the message", async () => {
+    const client = fakeClient();
+    vi.mocked(getUserAvailability).mockResolvedValue([SLOT]);
+    // Slack answers views.update with not_found once the view is gone.
+    client.views.update.mockRejectedValueOnce(
+      Object.assign(new Error("An API error occurred: not_found"), {
+        data: { error: "not_found" },
+      }),
+    );
+    await invoke("action", SLOT_KEY, slotClick(client, SLOT));
+    expect(toggleSlot).toHaveBeenCalledOnce();
+    expect(refreshPollMessage).toHaveBeenCalledWith({}, client, POLL_ID);
+    // No error view is pushed at a form that is not there.
+    expect(client.views.update).toHaveBeenCalledOnce();
+  });
+
+  it("any other failure to redraw the form is still an error", async () => {
+    const client = fakeClient();
+    client.views.update.mockRejectedValueOnce(
+      Object.assign(new Error("x"), { data: { error: "ratelimited" } }),
+    );
+    await invoke("action", SLOT_KEY, slotClick(client, SLOT));
+    expect(client.views.update).toHaveBeenCalledTimes(2);
+    expect(JSON.stringify(client.views.update.mock.calls[1][0].view)).toContain(
+      "went wrong",
+    );
+  });
+
   it("does nothing for a click that carries no form", async () => {
     const client = fakeClient();
     const args = slotClick(client, SLOT);
