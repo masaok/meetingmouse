@@ -1,6 +1,6 @@
 {
   "name": "meetmouse",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Slack availability polls that live in one channel message. The app, and the library a host embeds.",
   "license": "MIT",
   "repository": {

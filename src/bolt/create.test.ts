@@ -1,10 +1,11 @@
 import { LogLevel } from "@slack/bolt";
+import type { Installation, InstallationStore } from "@slack/bolt";
 import { VercelReceiver } from "@vercel/slack-bolt";
 import { describe, expect, it, vi } from "vitest";
 
 import type { Feature } from "@/features/types";
 
-import { createMeetMouse } from "./create";
+import { CORE_BOT_SCOPES, createMeetMouse, type OAuthOptions } from "./create";
 
 vi.mock("server-only", () => ({}));
 
@@ -78,6 +79,88 @@ describe("createMeetMouse", () => {
       teamId: "T123",
       userId: "U42",
       isEnterpriseInstall: false,
+    });
+  });
+
+  describe("with Slack OAuth", () => {
+    const installation = {
+      team: { id: "T1", name: "Acme" },
+      enterprise: undefined,
+      user: { id: "U9", token: undefined, scopes: undefined },
+      bot: {
+        id: "B1",
+        userId: "UB1",
+        token: "xoxb-from-store",
+        scopes: [...CORE_BOT_SCOPES],
+      },
+      isEnterpriseInstall: false,
+      authVersion: "v2",
+    } satisfies Installation<"v2", false>;
+    const store = (): InstallationStore & { fetched: unknown[] } => {
+      const fetched: unknown[] = [];
+      return {
+        fetched,
+        storeInstallation: async () => {},
+        fetchInstallation: async (query) => {
+          fetched.push(query);
+          return installation;
+        },
+      };
+    };
+    const oauth = (installationStore: InstallationStore): OAuthOptions => ({
+      clientId: "123.456",
+      clientSecret: "shh",
+      stateSecret: "state-secret",
+      scopes: CORE_BOT_SCOPES,
+      redirectUri: "https://host.example/api/slack/oauth_redirect",
+      installationStore,
+    });
+
+    it("answers the install path with a redirect to Slack carrying the client id, scopes and a state", async () => {
+      const bolt = createMeetMouse({
+        features: [],
+        signingSecret: "secret",
+        auth: { oauth: oauth(store()) },
+        logLevel: LogLevel.ERROR,
+      });
+      const res = await bolt.receiver.handleInstall(
+        new Request("https://host.example/api/slack/install"),
+      );
+      expect(res.status).toBe(302);
+      const to = new URL(res.headers.get("location") ?? "");
+      expect(`${to.origin}${to.pathname}`).toBe("https://slack.com/oauth/v2/authorize");
+      expect(to.searchParams.get("client_id")).toBe("123.456");
+      expect(to.searchParams.get("scope")).toBe(CORE_BOT_SCOPES.join(","));
+      expect(to.searchParams.get("redirect_uri")).toBe(
+        "https://host.example/api/slack/oauth_redirect",
+      );
+      expect(to.searchParams.get("state")?.length ?? 0).toBeGreaterThan(20);
+    });
+
+    it("resolves each request's token from the installation store, by workspace", async () => {
+      const s = store();
+      const bolt = createMeetMouse({
+        features: [],
+        signingSecret: "secret",
+        auth: { oauth: oauth(s) },
+        logLevel: LogLevel.ERROR,
+      });
+      expect(bolt.app.client.token).toBeUndefined();
+      await bolt.app.init();
+      await bolt.app.processEvent({
+        body: {
+          command: "/when",
+          team_id: "T1",
+          user_id: "U9",
+          channel_id: "C1",
+          trigger_id: "t",
+          text: "",
+        },
+        ack: async () => {},
+      });
+      expect(s.fetched).toEqual([
+        expect.objectContaining({ teamId: "T1", isEnterpriseInstall: false }),
+      ]);
     });
   });
 
