@@ -7,7 +7,7 @@ import { FIXTURE_NOW } from "@/slack/fixtures";
 import { CALLBACK_CREATE_POLL_MODAL, COMMANDS, SHORTCUT_CREATE_POLL } from "@/slack/ids";
 
 import { fakeApp, fakeClient } from "../../../tests/helpers/fakeApp";
-import { DM_HINT, INVITE_HINT, register } from "./listener";
+import { DM_HINT, HELP_TEXT, INVITE_HINT, register } from "./listener";
 import { INPUT } from "./schema";
 
 vi.mock("@/db/client", () => ({ db: {} }));
@@ -124,6 +124,57 @@ describe("poll-create listener", () => {
     expect(ack).toHaveBeenCalledOnce();
     expect(ack).toHaveBeenCalledWith(DM_HINT);
     expect(client.views.open).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["help", "C123", "general"],
+    ["  HeLp \n", "C123", "general"],
+    ["help", "D123", "directmessage"],
+  ])(
+    "/when %j answers with usage and opens nothing",
+    async (text, channel_id, channel_name) => {
+      const client = fakeClient();
+      const ack = vi.fn();
+      await invoke("command", "/when", {
+        ack,
+        client,
+        command: {
+          team_id: "T1",
+          user_id: "U1",
+          channel_id,
+          channel_name,
+          text,
+          trigger_id: "tr",
+        },
+      });
+      expect(ack).toHaveBeenCalledOnce();
+      expect(ack).toHaveBeenCalledWith(HELP_TEXT);
+      expect(HELP_TEXT).toContain("The title is optional");
+      expect(HELP_TEXT).toContain("Find a meeting time");
+      expect(client.views.open).not.toHaveBeenCalled();
+    },
+  );
+
+  it("a title that merely starts with help still opens the form with that title", async () => {
+    const client = fakeClient();
+    const ack = vi.fn();
+    await invoke("command", "/when", {
+      ack,
+      client,
+      command: {
+        team_id: "T1",
+        user_id: "U1",
+        channel_id: "C123",
+        channel_name: "general",
+        text: "Help the new hire settle in",
+        trigger_id: "tr",
+      },
+    });
+    expect(ack).toHaveBeenCalledWith();
+    expect(client.views.open).toHaveBeenCalledOnce();
+    expect(JSON.stringify(client.views.open.mock.calls[0][0].view)).toContain(
+      '"initial_value":"Help the new hire settle in"',
+    );
   });
 
   it("the shortcut opens the modal without a channel", async () => {

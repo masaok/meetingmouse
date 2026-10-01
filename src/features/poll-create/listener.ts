@@ -19,6 +19,18 @@ export const INVITE_HINT =
 export const DM_HINT =
   "I can't post a poll in a direct message. Run `/meet` in a channel instead.";
 
+/** The answer to `/meet help`. Plain words for what exists today; see README "How it works". */
+export const HELP_TEXT = [
+  "*Meeting Mouse finds a time that works for everyone.*",
+  "• `/meet [title]` opens a form to start an availability poll in a channel. The title is optional: `/meet Sprint planning` fills it in, and plain `/meet` leaves it for you to type. `/mouse` and `/when` do the same.",
+  "• The *Find a meeting time* shortcut, in Slack's search bar under Shortcuts, opens the same form.",
+  "• I post one poll message in the channel. Each person clicks *Add my availability* and clicks the times that work, shown in their own time zone. Each click saves, and the message updates with who is free when.",
+  "• The organizer picks a time from the poll's menu, and the thread gets an Add to Google Calendar link.",
+].join("\n");
+
+/** Exactly the word "help", any case, surrounding whitespace ignored. A longer title is a title. */
+const isHelpRequest = (text: string): boolean => text.trim().toLowerCase() === "help";
+
 /** A 1:1 or group DM. The bot cannot post there and the modal's channel picker excludes both. */
 const isDirectMessage = (command: {
   channel_id: string;
@@ -30,6 +42,17 @@ const isDirectMessage = (command: {
 
 function registerCommand(app: App, name: (typeof COMMANDS)[number]): void {
   app.command(name, async ({ ack, command, client }) => {
+    if (isHelpRequest(command.text)) {
+      // Before the DM check: usage is worth reading wherever it was asked for.
+      await ack(HELP_TEXT);
+      log.info({
+        action: "when_command_help",
+        command: name,
+        user_id: command.user_id,
+        channel_id: command.channel_id,
+      });
+      return;
+    }
     if (isDirectMessage(command)) {
       // The ack itself carries the reply: Slack shows a command's ack text ephemerally.
       await ack(DM_HINT);

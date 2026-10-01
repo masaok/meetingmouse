@@ -8,6 +8,7 @@ posted in the channel.
 
 - `create-command` `/meet [title]` opens the modal with the title and current channel pre-filled.
 - `create-dm` `/meet` in a 1:1 or group DM answers with an ephemeral hint and opens no modal.
+- `create-help` `/meet help` (exactly that word, any case) answers with ephemeral usage instructions and opens no modal.
 - `create-shortcut` the "Find a meeting time" global shortcut opens the modal with no channel.
 - `create-validate` the modal rejects To ≤ From, more than 24 slots per day, more than 14 dates, missing title or channel.
 - `create-post` submit inserts the poll and slots and posts the initial message; `message_ts` is stored.
@@ -26,6 +27,7 @@ Preconditions:
 
 - **Command opens the modal.** Run `pnpm slack:sign --command /meet --text "Sprint planning"`. Status `200`; dev log has `action: 'when_command'` then (offline) a logged `views.open` failure on the fake token, which proves the listener reached the API call.
 - **DM is refused.** Run `pnpm slack:sign --command /meet --channel D0000TEST`. Status `200`; the body is the hint ("I can't post a poll in a direct message..."); log `action: 'when_command_dm'` and no `views.open` call.
+- **Help answers with usage.** Run `pnpm slack:sign --command /when --text help`. Status `200`; the body is the usage text (`HELP_TEXT` in `listener.ts`); log `action: 'when_command_help'` and no `views.open` call. `--text "Help the new hire settle in"` opens the modal as any title does.
 - **Shortcut opens the modal.** Run `pnpm slack:sign --payload tests/fixtures/payloads/create_poll_shortcut.json`. Status `200`; log `action: 'create_poll_shortcut'`.
 - **Modal shape.** Run `pnpm test src/features/poll-create/blocks.test.ts`. `Tests 5 passed`; the snapshot in `__snapshots__/` shows 21 date options, 6:00 to 23:00 times, 15/30/60 radios, the channel select with `response_url_enabled`.
 - **Validation.** Run `pnpm test src/features/poll-create/schema.test.ts`. `Tests 7 passed`, one per rule.
