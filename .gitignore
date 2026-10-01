@@ -46,3 +46,6 @@ next-env.d.ts
 # agent worktrees
 .claude/worktrees/
 
+
+# library build
+/dist/

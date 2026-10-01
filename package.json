@@ -1,11 +1,40 @@
 {
   "name": "meetmouse",
   "version": "0.1.0",
-  "private": true,
+  "description": "Slack availability polls that live in one channel message. The app, and the library a host embeds.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masaok/meetmouse.git"
+  },
   "type": "module",
   "packageManager": "pnpm@12.8.1",
   "engines": {
     "node": ">=22"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./db": {
+      "types": "./dist/db/index.d.ts",
+      "default": "./dist/db/index.js"
+    },
+    "./slack": {
+      "types": "./dist/slack/index.d.ts",
+      "default": "./dist/slack/index.js"
+    },
+    "./domain": {
+      "types": "./dist/domain/index.d.ts",
+      "default": "./dist/domain/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
@@ -19,7 +48,7 @@
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "verify": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm docs:check && pnpm featuremap:check && pnpm prose:check && pnpm smoke && pnpm build",
+    "verify": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm docs:check && pnpm featuremap:check && pnpm prose:check && pnpm smoke && pnpm build && pnpm pack:check && pnpm smoke:pack",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "slack:sign": "tsx scripts/slack-sign.ts",
@@ -31,7 +60,11 @@
     "featuremap:check": "tsx scripts/check-feature-map.ts",
     "predev": "tsx scripts/check-dev-env.ts",
     "health": "tsx scripts/doctor.ts",
-    "prose:check": "tsx scripts/check-prose.ts"
+    "prose:check": "tsx scripts/check-prose.ts",
+    "build:lib": "tsdown",
+    "pack:check": "tsx scripts/pack-lib.ts --dry-run | tsx scripts/check-pack.ts",
+    "smoke:pack": "bash scripts/smoke-pack.sh",
+    "pack:lib": "tsx scripts/pack-lib.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,mjs,json,md,yml,yaml,css}": "prettier --write"
@@ -71,9 +104,9 @@
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4",
+    "tsdown": "^0.23.0",
     "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^5.0.2"
-  },
-  "license": "MIT"
+  }
 }

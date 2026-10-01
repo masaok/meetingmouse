@@ -56,8 +56,24 @@ serves many, `auth: { authorize }`: Bolt calls it once per incoming request with
 `{ botToken, botId, botUserId }` back, which is where an installation store plugs in. Self-hosting
 stays a three-variable setup because the reference app uses the token form. Feature names must be
 unique, and the factory throws on a duplicate. The host
-owns its route handler, its env preflight and its migrations. Publishing this as a package is
-tracked under the "Core as a package" milestone.
+owns its route handler, its env preflight and its migrations.
+
+The library build (`pnpm build:lib`, tsdown) ships four entry points:
+
+| Import             | Holds                                                                 |
+| ------------------ | --------------------------------------------------------------------- |
+| `meetmouse`        | `createMeetMouse`, `coreFeatures`, the `Feature` and option types     |
+| `meetmouse/db`     | `CORE_MIGRATIONS`, the Drizzle `schema`, the queries, the lazy client |
+| `meetmouse/slack`  | Surface ids, Slack limits, formatting helpers                         |
+| `meetmouse/domain` | Slots, tally, calendar links, constants, types (pure)                 |
+
+The tarball holds `dist/`, `drizzle/`, the README and the license, checked by
+`scripts/check-pack.ts`. `pnpm smoke:pack` installs the tarball into a scratch project, imports
+every entry point under the `react-server` condition a Next.js route handler runs under, and
+proves the handler answers an unsigned request with 401. Every version tag attaches the tarball
+to its GitHub release; publishing to npm is a separate switch (`.github/workflows/release.yml`).
+Modules that import `server-only` (`createMeetMouse`, the db client) need a host that honors the
+`react-server` condition, which a Next.js route handler does.
 
 ## Directory layout
 

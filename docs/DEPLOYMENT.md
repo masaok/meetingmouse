@@ -42,6 +42,7 @@ Branch protection on `main` should require these job names, exactly:
 - `Production build`
 - `Smoke imports`
 - `Docs links`
+- `Package`
 
 This is a repository setting, not a file, so it is the step that gets forgotten. Verify under
 Settings → Branches.
