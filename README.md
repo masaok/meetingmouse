@@ -4,8 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 Find the time everyone is free, right from Slack. `/when Sprint planning` posts an availability
-poll in the channel. Everyone marks when they're free, in their own time zone, by dragging
-across a grid. The message updates in place with a grid of who is free when and the best times,
+poll in the channel. Everyone marks when they're free, in their own time zone, in a form in
+Slack or by dragging across a grid. The message updates in place with a grid of who is free when and the best times,
 and the organizer locks one in with an Add to Google Calendar link.
 
 ## How it works

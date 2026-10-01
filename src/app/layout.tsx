@@ -18,12 +18,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Meeting Mouse · find the time everyone is free, right from Slack",
   description:
-    "Availability polls that start in Slack. Run /when, everyone drags across a grid to mark when they're free, and the channel message updates live with the group's availability and the best times.",
+    "Availability polls that start in Slack. Run /when, everyone marks when they're free in a form in Slack or by dragging across a grid, and the channel message updates live with the group's availability and the best times.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
     title: "Meeting Mouse · find the time everyone is free, right from Slack",
     description:
-      "Availability polls with a paint-your-time grid, right from your Slack channel.",
+      "Availability polls that live in one Slack message, with a form in Slack and a grid for dragging.",
     url: SITE_URL,
     siteName: SITE_NAME,
     type: "website",

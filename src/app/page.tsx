@@ -10,13 +10,13 @@ const steps = [
   },
   {
     n: "2",
-    title: "Everyone paints their time",
-    body: "Each person clicks Add my availability and drags across a grid of slots shown in their own time zone.",
+    title: "Everyone marks their time",
+    body: "Each person clicks Add my availability and ticks their free slots in a form in Slack, shown in their own time zone. A link opens a grid for dragging instead.",
   },
   {
     n: "3",
     title: "Watch the grid fill in",
-    body: "The group's availability darkens where more people are free, and the channel message updates with the best times.",
+    body: "The channel message updates after every answer with a grid of who is free when and the best times.",
   },
   {
     n: "4",
@@ -39,8 +39,8 @@ const features = [
     body: "The top three slots by headcount sit at the top of the message, above a grid of who is free when.",
   },
   {
-    title: "Drag to mark your time",
-    body: "Sweep across the hours you are free instead of ticking boxes one by one. Come back later and your answer is already painted.",
+    title: "Tick or drag",
+    body: "Answer in a form without leaving Slack, with a count beside each time of who is free so far. Or open the grid and sweep across the hours. Come back later and your answer is already filled in.",
   },
   {
     title: "Organizer controls",
@@ -212,8 +212,8 @@ export default function Home() {
               <code className="rounded bg-stone-200/70 px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-stone-800">
                 /when
               </code>
-              , let everyone drag across a grid to mark when they&apos;re free, and watch
-              the group&apos;s availability fill in, darker where more people can meet.
+              , let everyone mark when they&apos;re free without leaving Slack, and watch
+              the channel message fill in with who is free when and the best times.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
