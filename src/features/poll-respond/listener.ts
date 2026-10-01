@@ -166,7 +166,9 @@ export function register(app: App, context: FeatureContext = {}): void {
       const done = await change(snapshot, { userId, profile });
       if (!done) return;
       const selected = await getUserAvailability(db, pollId, userId);
-      await update(
+      // The change is saved by now. A form closed before the redraw lands makes Slack answer
+      // `not_found`; the channel message still has to count the click.
+      const form = await update(
         respondModal({
           poll: snapshot.poll,
           slots: snapshot.slots,
@@ -175,6 +177,12 @@ export function register(app: App, context: FeatureContext = {}): void {
           noneSelected: done.answered && selected.length === 0,
           gridUrl: grid?.urlFor({ pollId, teamId, userId }),
         }),
+      ).then(
+        () => "redrawn" as const,
+        (error: unknown) => {
+          if (slackErrorCode(error) === "not_found") return "closed" as const;
+          throw error;
+        },
       );
       const refresh = await refreshPollMessage(db, client, pollId);
       log.info({
@@ -183,6 +191,7 @@ export function register(app: App, context: FeatureContext = {}): void {
         user_id: userId,
         change: done.what,
         slots: selected.length,
+        form,
         refresh,
       });
     } catch (error) {

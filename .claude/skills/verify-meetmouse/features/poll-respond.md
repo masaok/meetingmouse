@@ -37,6 +37,7 @@ Preconditions:
 
 - Each button's `action_id` is `toggle_slot:<epoch seconds>`, because Slack wants the ids in one block to differ. The listener subscribes with a pattern, and reads the slot from the button's `value`.
 - A click on a slot that is not in the poll is ignored (a form left open after the poll was recreated).
+- A click followed at once by closing the form is saved and the channel message is refreshed; Slack answers the redraw with `not_found`, and the log line is `response_saved` with `form: "closed"`.
 - Two fast clicks both reach the database. The form can show the earlier of the two until the next click or until it is reopened.
 - Unticking the last chosen time leaves an answer with no times, which reads as "none of these". The button at the bottom withdraws it.
 - The payload fixture's slot value is epoch seconds for 2026-10-06 16:00Z; a different poll needs a different value.
