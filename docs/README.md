@@ -1,4 +1,4 @@
-# Meet Mouse docs
+# Meeting Mouse docs
 
 One living document per subsystem. These describe the code **as it exists today**; a behavior
 change lands with its doc change in the same PR. Every relative link and heading anchor here is

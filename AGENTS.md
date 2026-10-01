@@ -1,6 +1,6 @@
 # AGENTS.md, the operating guide for agents in this repo
 
-Meet Mouse is a Slack availability-poll app: Next.js 16 route handler + Bolt on Vercel, Neon
+Meeting Mouse is a Slack availability-poll app: Next.js 16 route handler + Bolt on Vercel, Neon
 Postgres via Drizzle. Read `docs/ARCHITECTURE.md` first; it describes the code that exists.
 Package manager is **pnpm** (enforced). Node from `.nvmrc`. Read `docs/PRINCIPLES.md` at the
 start of any multi-step task.

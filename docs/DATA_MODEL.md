@@ -44,7 +44,7 @@ Applied migrations are tracked in `drizzle.__drizzle_migrations`.
 
 ### A host's migrations next to the core's
 
-A host that embeds Meet Mouse runs the core's migrations with the migrator for its own driver and
+A host that embeds Meeting Mouse runs the core's migrations with the migrator for its own driver and
 `CORE_MIGRATIONS` from `src/db/migrations.ts`, then its own folder:
 
 ```ts

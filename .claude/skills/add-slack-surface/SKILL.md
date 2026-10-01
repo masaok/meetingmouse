@@ -1,6 +1,6 @@
 ---
 name: add-slack-surface
-description: Add a new Slack command, shortcut, button action, view submission or event to Meet Mouse with its listener, blocks, schema, tests, feature-map row and manifest change in the right places.
+description: Add a new Slack command, shortcut, button action, view submission or event to Meeting Mouse with its listener, blocks, schema, tests, feature-map row and manifest change in the right places.
 ---
 
 # Add a Slack surface

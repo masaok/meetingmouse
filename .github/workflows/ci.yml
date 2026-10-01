@@ -43,7 +43,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: meetmouse
+          POSTGRES_DB: meetingmouse
         ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U postgres"
@@ -56,14 +56,14 @@ jobs:
       - name: Generated SQL matches schema.ts
         run: pnpm db:generate && git diff --exit-code -- drizzle
         env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/meetmouse
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/meetingmouse
       - run: pnpm db:migrate
         env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/meetmouse
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/meetingmouse
       - name: Migrations are idempotent
         run: pnpm db:migrate
         env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/meetmouse
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/meetingmouse
 
   build:
     name: Production build

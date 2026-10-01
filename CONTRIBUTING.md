@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping make Meet Mouse better. This page is the human process. The code is
+Thanks for helping make Meeting Mouse better. This page is the human process. The code is
 described in [docs/](./docs/README.md) and the agent guardrails in [AGENTS.md](./AGENTS.md).
 
 ## Before you start

@@ -1,6 +1,6 @@
 # Deployment
 
-Meet Mouse deploys as one Next.js app. The reference host is Vercel (Fluid Compute, Node.js
+Meeting Mouse deploys as one Next.js app. The reference host is Vercel (Fluid Compute, Node.js
 runtime, never Edge). The only host-specific code is `@vercel/slack-bolt`'s receiver, which
 needs `waitUntil` to finish listener work after the 3 s ack.
 
@@ -21,7 +21,7 @@ vercel env add DATABASE_URL production      # or provision Neon: vercel integrat
 
 ## Slack app URLs
 
-`manifest.json` points every URL at `https://www.meetmouse.net/api/slack/events`, the hosted
+`manifest.json` points every URL at `https://www.meetingmouse.net/api/slack/events`, the hosted
 instance. For your own deployment, replace the three URLs with your host before creating the
 app from the manifest. After the first production deploy, confirm in api.slack.com/apps that
 Slash Commands, Interactivity and Event Subscriptions all show that URL and that Event

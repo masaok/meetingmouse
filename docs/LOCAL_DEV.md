@@ -22,7 +22,7 @@ After linking (`vercel link`), `vercel env pull .env.local` fills the first thre
 ## Creating the Slack app
 
 api.slack.com/apps → Create New App → From a manifest → paste `manifest.json`. For local
-work replace the three `https://www.meetmouse.net/...` URLs with your tunnel URL, or let
+work replace the three `https://www.meetingmouse.net/...` URLs with your tunnel URL, or let
 `pnpm dev:tunnel` rewrite them (it restores the file on exit).
 
 ## Exercising the route without Slack

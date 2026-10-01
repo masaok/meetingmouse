@@ -1,4 +1,4 @@
-# Meet Mouse verification map
+# Meeting Mouse verification map
 
 Maintained source for proving user-facing behavior. Read this index, then the feature file
 that matches what you are verifying. Surface ids are indexed in `docs/FEATURE_MAP.md` (CI

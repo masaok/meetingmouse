@@ -12,7 +12,7 @@ describe("gcal", () => {
       title: "Sprint & planning",
       start: new Date("2026-10-01T16:00:00Z"),
       end: new Date("2026-10-01T16:30:00Z"),
-      details: "Picked via Meet Mouse",
+      details: "Picked via Meeting Mouse",
     });
     const parsed = new URL(url);
     expect(parsed.origin + parsed.pathname).toBe(
@@ -21,7 +21,7 @@ describe("gcal", () => {
     expect(parsed.searchParams.get("action")).toBe("TEMPLATE");
     expect(parsed.searchParams.get("text")).toBe("Sprint & planning");
     expect(parsed.searchParams.get("dates")).toBe("20261001T160000Z/20261001T163000Z");
-    expect(parsed.searchParams.get("details")).toBe("Picked via Meet Mouse");
+    expect(parsed.searchParams.get("details")).toBe("Picked via Meeting Mouse");
     expect(url).toContain("text=Sprint+%26+planning");
   });
 

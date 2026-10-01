@@ -1,7 +1,7 @@
 # Architecture
 
-Meet Mouse is a Slack app: an availability poll that lives in one channel message and
-updates in place. Nobody leaves Slack. The web app at meetmouse.net is a static homepage
+Meeting Mouse is a Slack app: an availability poll that lives in one channel message and
+updates in place. Nobody leaves Slack. The web app at meetingmouse.net is a static homepage
 plus a single route handler that receives every Slack request.
 
 ## Request path
@@ -49,7 +49,7 @@ surface errors to the user ephemerally (see [Testing](./TESTING.md#error-surfaci
 `createMeetMouse({ features, signingSecret, auth, logLevel })` in `src/bolt/create.ts` builds
 the Bolt app and the Vercel receiver from a list of features and nothing else. It never reads
 the environment. The reference app in this repo calls it from `getBolt()` with `coreFeatures`
-and the three env vars; a host that embeds Meet Mouse calls it with `coreFeatures` plus its own
+and the three env vars; a host that embeds Meeting Mouse calls it with `coreFeatures` plus its own
 features and its own credentials. For one workspace, `auth: { token }`. For a deployment that
 serves many, `auth: { authorize }`: Bolt calls it once per incoming request with the request's
 `{ teamId, enterpriseId, userId, conversationId, isEnterpriseInstall }` and expects
@@ -63,12 +63,12 @@ owns its route handler, its env preflight and its migrations.
 
 The library build (`pnpm build:lib`, tsdown) ships four entry points:
 
-| Import             | Holds                                                                 |
-| ------------------ | --------------------------------------------------------------------- |
-| `meetmouse`        | `createMeetMouse`, `coreFeatures`, the `Feature` and option types     |
-| `meetmouse/db`     | `CORE_MIGRATIONS`, the Drizzle `schema`, the queries, the lazy client |
-| `meetmouse/slack`  | Surface ids, Slack limits, formatting helpers                         |
-| `meetmouse/domain` | Slots, tally, calendar links, constants, types (pure)                 |
+| Import                | Holds                                                                 |
+| --------------------- | --------------------------------------------------------------------- |
+| `meetingmouse`        | `createMeetMouse`, `coreFeatures`, the `Feature` and option types     |
+| `meetingmouse/db`     | `CORE_MIGRATIONS`, the Drizzle `schema`, the queries, the lazy client |
+| `meetingmouse/slack`  | Surface ids, Slack limits, formatting helpers                         |
+| `meetingmouse/domain` | Slots, tally, calendar links, constants, types (pure)                 |
 
 The tarball holds `dist/`, `drizzle/`, the README and the license, checked by
 `scripts/check-pack.ts`. `pnpm smoke:pack` installs the tarball into a scratch project, imports

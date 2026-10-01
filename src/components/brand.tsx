@@ -7,7 +7,7 @@ const NOSE = "#ec4899";
 const INK = "#1c1917";
 
 /** Simplified mouse head. Used for the logo, favicon, and Slack avatar. */
-export function LogoMark({ className, title = "Meet Mouse" }: SvgProps) {
+export function LogoMark({ className, title = "Meeting Mouse" }: SvgProps) {
   return (
     <svg
       viewBox="0 0 64 64"
@@ -50,7 +50,7 @@ export function Logo({ className = "" }: { className?: string }) {
 }
 
 /** Full mascot: the mouse holding a calendar with a checked-off day. */
-export function Mascot({ className, title = "Meet Mouse mascot" }: SvgProps) {
+export function Mascot({ className, title = "Meeting Mouse mascot" }: SvgProps) {
   return (
     <svg
       viewBox="0 0 240 240"

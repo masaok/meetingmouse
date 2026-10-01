@@ -30,9 +30,9 @@ jobs:
       - name: Attach the tarball to the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${GITHUB_REF_NAME}" meetmouse-*.tgz --clobber
+        run: gh release upload "${GITHUB_REF_NAME}" meetingmouse-*.tgz --clobber
       - name: Publish to npm
         if: vars.NPM_PUBLISH == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish meetmouse-*.tgz --provenance --access public
+        run: npm publish meetingmouse-*.tgz --provenance --access public

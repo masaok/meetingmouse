@@ -41,7 +41,7 @@ body:
     attributes:
       label: Where it ran
       options:
-        - Hosted instance (meetmouse.net)
+        - Hosted instance (meetingmouse.net)
         - Self-hosted
         - Local dev, offline mode (fake token)
         - Local dev, live workspace

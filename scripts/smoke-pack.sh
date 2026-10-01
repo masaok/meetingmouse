@@ -14,10 +14,10 @@ printf '{ "name": "scratch-host", "private": true, "type": "module" }\n' > packa
 pnpm add --silent "$tgz" "$receiver" >/dev/null
 cat > host.mjs <<'JS'
 import { createHandler } from "@vercel/slack-bolt";
-import { coreFeatures, createMeetMouse } from "meetmouse";
-import { CORE_MIGRATIONS, schema } from "meetmouse/db";
-import { COMMAND_WHEN } from "meetmouse/slack";
-import { SLOT_MINUTES } from "meetmouse/domain";
+import { coreFeatures, createMeetMouse } from "meetingmouse";
+import { CORE_MIGRATIONS, schema } from "meetingmouse/db";
+import { COMMAND_WHEN } from "meetingmouse/slack";
+import { SLOT_MINUTES } from "meetingmouse/domain";
 
 process.env.SLACK_BOT_TOKEN = "xoxb-scratch";
 process.env.SLACK_SIGNING_SECRET = "scratch";
