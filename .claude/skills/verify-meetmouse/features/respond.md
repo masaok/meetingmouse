@@ -19,7 +19,7 @@ time zone (or "I can't make any of these"), save, and see the channel message up
 
 Preconditions:
 
-- `pnpm doctor` green. For the DB path, `src/db/queries.test.ts` (PGlite) is the offline oracle.
+- `pnpm health` green. For the DB path, `src/db/queries.test.ts` (PGlite) is the offline oracle.
 
 - **Button opens the loading view first.** Run `pnpm slack:sign --payload tests/fixtures/payloads/respond_button.json`. Status `200`; offline log shows `views.open` attempted before any DB read, then `respond_modal_failed` with the fake-token code. The ordering itself is asserted by `pnpm test src/features/poll-respond/listener.test.ts -t "before touching"`.
 - **Local-date grouping.** Run `pnpm test src/features/poll-respond/blocks.test.ts`. `Tests 6 passed`; the Tokyo case shows one PDT day split into `day_2026-10-06_0` (4 options) and `day_2026-10-07_0/_1` (10 + 10).

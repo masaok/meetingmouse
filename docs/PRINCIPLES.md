@@ -59,5 +59,5 @@ A citation with no decision behind it is name-dropping. Humans use the names to 
 - `src/domain/constants.ts` feeding the DB checks, zod parsers and modals: _model the domain_, _type system discipline_.
 - `saveResponse` as one replace-all statement and `refreshPollMessage` rendering from fresh reads: _make operations idempotent_.
 - ESLint import boundaries, `server-only`, `featuremap:check`, `docs:check` with failure fixtures: _encode lessons in structure_, _boundary discipline_.
-- `pnpm verify`, `pnpm doctor`, the `verify-meetmouse` recipes: _prove it works_, _build the lever_.
+- `pnpm verify`, `pnpm health`, the `verify-meetmouse` recipes: _prove it works_, _build the lever_.
 - One worktree per agent, one PR per phase: _separate before serializing shared state_, _sequence verifiable units_.

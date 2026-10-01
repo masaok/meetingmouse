@@ -36,7 +36,7 @@ to every drive command. Teardown: stop the `next dev` you started (its PID), nev
 ## Doctor
 
 ```bash
-pnpm doctor                           # or DOCTOR_URL=http://localhost:3111 pnpm doctor
+pnpm health                           # or DOCTOR_URL=http://localhost:3111 pnpm health
 ```
 
 Read-only. Reports env presence (names only), homepage 200, unsigned POST → **401** (500 means
@@ -92,7 +92,7 @@ the row) rather than by hand.
 | --------------------------- | --------------------------------------------------------------------------------- |
 | `scripts/slack-sign.ts`     | `pnpm slack:sign …` (see Drive)                                                   |
 | `scripts/render-fixture.ts` | `pnpm render:fixture <name> [--stats]`                                            |
-| `scripts/doctor.ts`         | `pnpm doctor`                                                                     |
+| `scripts/doctor.ts`         | `pnpm health`                                                                     |
 | `scripts/log-decision.sh`   | `scripts/log-decision.sh <phase> "<decision>" "<reason>" "<evidence>" "<result>"` |
 
 ## The gate

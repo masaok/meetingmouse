@@ -21,7 +21,7 @@ posted in the channel.
 
 Preconditions:
 
-- `pnpm doctor` green. Offline mode is enough for everything but the visible message.
+- `pnpm health` green. Offline mode is enough for everything but the visible message.
 
 - **Command opens the modal.** Run `pnpm slack:sign --command /when --text "Sprint planning"`. Status `200`; dev log has `action: 'when_command'` then (offline) a logged `views.open` failure on the fake token, which proves the listener reached the API call.
 - **Shortcut opens the modal.** Run `pnpm slack:sign --payload tests/fixtures/payloads/create_poll_shortcut.json`. Status `200`; log `action: 'create_poll_shortcut'`.

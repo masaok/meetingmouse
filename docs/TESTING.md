@@ -34,7 +34,7 @@ If you find yourself leaving the same review comment twice, add a row here and a
 
 ## Driving the app
 
-`pnpm doctor` says whether a running instance is worth driving (env names, homepage, unsigned
+`pnpm health` says whether a running instance is worth driving (env names, homepage, unsigned
 POST → 401, DB, Slack). The `verify-meetmouse` skill has the Launch / Doctor / Drive / Evidence /
 Cleanup contract and one recipe file per feature under `.claude/skills/verify-meetmouse/features/`.
 
