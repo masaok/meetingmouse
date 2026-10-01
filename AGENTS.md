@@ -5,6 +5,13 @@ Postgres via Drizzle. Read `docs/ARCHITECTURE.md` first; it describes the code t
 Package manager is **pnpm** (enforced). Node from `.nvmrc`. Read `docs/PRINCIPLES.md` at the
 start of any multi-step task.
 
+## Process
+
+The [agentic engineering manual](https://expeditionlabs.co/resources/agentic-manual/llms.txt) is
+the working method here: match a playbook and copy its steps, understand before editing, verify
+on the real surface, one PR per issue, every step leaves an artifact. An explicit instruction
+wins over this file; this file wins over the manual.
+
 ## Non-negotiables
 
 1. **Verify before you report.** Run the `verify-meetmouse` skill (Doctor, Drive, Evidence, then `pnpm verify`). Paste real output and say whether it came from offline or live mode. A change is not done because it typechecks.
