@@ -16,7 +16,7 @@ cat > host.mjs <<'JS'
 import { createHandler } from "@vercel/slack-bolt";
 import { coreFeatures, createMeetingMouse } from "meetingmouse";
 import { CORE_MIGRATIONS, schema } from "meetingmouse/db";
-import { COMMAND_WHEN } from "meetingmouse/slack";
+import { COMMAND_MEET, COMMANDS } from "meetingmouse/slack";
 import { SLOT_MINUTES } from "meetingmouse/domain";
 import { createGridHandlers, deriveGridSecret, signGridLink } from "meetingmouse/web";
 
@@ -32,7 +32,7 @@ const { app, receiver } = createMeetingMouse({
 });
 const handler = createHandler(app, receiver);
 const res = await handler(
-  new Request("http://host/api/slack/events", { method: "POST", body: "command=%2Fwhen" }),
+  new Request("http://host/api/slack/events", { method: "POST", body: "command=%2Fmeet" }),
 );
 const gridSecret = deriveGridSecret("scratch");
 const grid = createGridHandlers({ secret: gridSecret, clientFor: async () => { throw new Error("unreachable"); } });
@@ -43,7 +43,8 @@ const facts = {
   gridBadLink: badLink.status,
   gridLinkParts: goodLink.split(".").length,
   features: coreFeatures.map((f) => f.name),
-  command: COMMAND_WHEN,
+  command: COMMAND_MEET,
+  commands: COMMANDS,
   slotMinutes: SLOT_MINUTES,
   migrationsFolderEndsWith: CORE_MIGRATIONS.migrationsFolder.replace(/\\/g, "/").split("/").slice(-3).join("/"),
   tables: Object.keys(schema).length,

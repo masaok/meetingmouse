@@ -5,11 +5,10 @@
  */
 /** The command the copy leads with. */
 export const COMMAND_MEET = "/meet";
-/** Aliases of `/meet`: the app's own name, and the command it shipped with. */
+/** An alias of `/meet`: the app's own name. */
 export const COMMAND_MOUSE = "/mouse";
-export const COMMAND_WHEN = "/when";
-/** Every command that opens the create form. The manifest registers the same three. */
-export const COMMANDS = [COMMAND_MEET, COMMAND_MOUSE, COMMAND_WHEN] as const;
+/** Every command that opens the create form. The manifest registers the same two. */
+export const COMMANDS = [COMMAND_MEET, COMMAND_MOUSE] as const;
 export const SHORTCUT_CREATE_POLL = "create_poll";
 
 export const CALLBACK_CREATE_POLL_MODAL = "create_poll_modal";

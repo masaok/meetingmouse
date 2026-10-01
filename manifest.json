@@ -41,13 +41,6 @@
         "usage_hint": "[title]",
         "should_escape": false,
         "url": "https://www.meetingmouse.net/api/slack/events"
-      },
-      {
-        "command": "/when",
-        "description": "Start an availability poll in this channel (same as /meet)",
-        "usage_hint": "[title]",
-        "should_escape": false,
-        "url": "https://www.meetingmouse.net/api/slack/events"
       }
     ]
   },
