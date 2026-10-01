@@ -6,7 +6,7 @@ description: Add a new Slack command, shortcut, button action, view submission o
 # Add a Slack surface
 
 1. **Pick the feature directory** under `src/features/` (create one if the surface is new: `listener.ts`, `blocks.ts`, `schema.ts`).
-2. **Name the id** as a constant in `src/slack/ids.ts`: `COMMAND_*`, `SHORTCUT_*`, `ACTION_*`, `CALLBACK_*`, or `EVENT_*`. Subscribe to it in `listener.ts` `register(app)` and make sure `src/features/index.ts` calls it.
+2. **Name the id** as a constant in `src/slack/ids.ts`: `COMMAND_*`, `SHORTCUT_*`, `ACTION_*`, `CALLBACK_*`, or `EVENT_*`. Subscribe to it in `listener.ts` `register(app)`; a new directory also exports `feature = { name, register }` and is added to `coreFeatures` in `src/features/index.ts`.
 3. **Ack first.** Commands/actions: `await ack()` before anything. Buttons that open modals: `views.open` a loading view first, then fetch, then `views.update`.
 4. **Blocks are pure.** `blocks.ts` takes data and returns `KnownBlock[]`; no `@/db` imports. Reuse `src/slack/format.ts` for date tokens and escaping.
 5. **Parse with zod** in `schema.ts`; return `response_action: "errors"` keyed by `block_id` on validation failure.

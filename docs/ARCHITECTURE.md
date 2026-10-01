@@ -44,19 +44,32 @@ of the database, Bolt or env from either. The rules are in [Dependency rules](#d
 Consequence: anything after `ack()` is background work. It must be idempotent and must
 surface errors to the user ephemerally (see [Testing](./TESTING.md#error-surfacing)).
 
+## Embedding in another app
+
+`createMeetMouse({ features, signingSecret, auth, logLevel })` in `src/bolt/create.ts` builds
+the Bolt app and the Vercel receiver from a list of features and nothing else. It never reads
+the environment. The reference app in this repo calls it from `getBolt()` with `coreFeatures`
+and the three env vars; a host that embeds Meet Mouse calls it with `coreFeatures` plus its own
+features and its own credentials, including an `authorize` function when one deployment serves
+many workspaces. Feature names must be unique, and the factory throws on a duplicate. The host
+owns its route handler, its env preflight and its migrations. Publishing this as a package is
+tracked under the "Core as a package" milestone.
+
 ## Directory layout
 
 ```
 src/
   app/                      Next.js routes: homepage + api/slack/events/route.ts
   components/brand.tsx      Logo, mark and mascot for the homepage and the icon
-  bolt/app.ts               App + VercelReceiver; registers features. server-only.
+  bolt/create.ts            createMeetMouse(features, credentials): App + receiver for any host. server-only.
+  bolt/app.ts               Reference wiring: env in, coreFeatures, built on first request. server-only.
   features/                 One directory per Slack surface, colocated:
     poll-create/            listener.ts · blocks.ts · schema.ts · *.test.ts
     poll-respond/
     poll-organize/
     app-home/
-    index.ts                registerFeatures(app)
+    index.ts                coreFeatures, the list a host passes to createMeetMouse
+    types.ts                Feature: a name and a register(app) function
   domain/                   Pure logic: constants, types, slots, tally, gcal. No I/O.
   slack/                    Shared Slack knowledge: limits.ts, format.ts, block helpers.
   db/                       schema.ts (Drizzle), client.ts (server-only), queries.ts
