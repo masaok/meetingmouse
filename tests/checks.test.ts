@@ -120,6 +120,17 @@ describe("package scripts", () => {
   });
 });
 
+describe("manifest", () => {
+  it("asks for chat:write.public, so a poll posts in a public channel the bot has not joined", () => {
+    const manifest = JSON.parse(readFileSync("manifest.json", "utf8")) as {
+      oauth_config: { scopes: { bot: string[] } };
+    };
+    expect(manifest.oauth_config.scopes.bot).toEqual(
+      expect.arrayContaining(["chat:write", "chat:write.public"]),
+    );
+  });
+});
+
 describe("check-pack", () => {
   const good = [
     "package.json",
