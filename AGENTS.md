@@ -38,7 +38,8 @@ src/slack/                          limits · format · shared block helpers
 src/db/                             schema · client (server-only) · queries
 src/lib/                            env · users · log · refresh (re-render the poll message) · respond (response_url, error codes)
 src/components/brand.tsx            logo, mark and mascot for the homepage and the icon
-scripts/                            doctor · slack-sign · render-fixture · smoke-imports · check-docs · check-feature-map · check-prose · check-dev-env · dev.tunnel
+src/blog/ · content/blog/           the blog: schema, loader, content check · one Markdown file per post (docs/BLOG.md)
+scripts/                            doctor · slack-sign · render-fixture · smoke-imports · check-docs · check-feature-map · check-prose · check-blog · check-dev-env · dev.tunnel
 docs/                               living docs (link-checked)
 ```
 
@@ -50,6 +51,10 @@ Use the `add-slack-surface` skill, or by hand (and add a recipe file under `.cla
 2. Blocks in `blocks.ts` (pure); payload parsing in `schema.ts` (zod); tests next to them, including a worst-case size test for renders.
 3. Add a row to `docs/FEATURE_MAP.md` with a reproduce command (`pnpm slack:sign …` or a payload fixture in `tests/fixtures/payloads/`).
 4. If the manifest changes (new command, shortcut, scope, event), edit `manifest.json` and note it in the PR; a human re-applies it in Slack.
+
+## Adding a blog post
+
+Use the `add-blog-post` skill. The rules are in `docs/BLOG.md` and `pnpm blog:check` enforces them.
 
 ## Verification commands
 

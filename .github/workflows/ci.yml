@@ -99,3 +99,4 @@ jobs:
       - run: pnpm docs:check
       - run: pnpm featuremap:check
       - run: pnpm prose:check
+      - run: pnpm blog:check

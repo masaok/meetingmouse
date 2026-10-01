@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { SITE_NAME, SITE_URL } from "@/lib/site";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,13 +19,13 @@ export const metadata: Metadata = {
   title: "Meeting Mouse · find the time everyone is free, right from Slack",
   description:
     "Availability polls that start in Slack. Run /when, everyone drags across a grid to mark when they're free, and the channel message updates live with the group's availability and the best times.",
-  metadataBase: new URL("https://meetingmouse.net"),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     title: "Meeting Mouse · find the time everyone is free, right from Slack",
     description:
       "Availability polls with a paint-your-time grid, right from your Slack channel.",
-    url: "https://meetingmouse.net",
-    siteName: "Meeting Mouse",
+    url: SITE_URL,
+    siteName: SITE_NAME,
     type: "website",
   },
 };

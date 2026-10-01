@@ -1,0 +1,6 @@
+/** Facts about the public site that pages, metadata, the sitemap and the feed all share. */
+export const SITE_URL = "https://www.meetingmouse.net";
+export const SITE_NAME = "Meeting Mouse";
+
+export const SLACK_INSTALL_URL = "https://app.meetingmouse.net/api/slack/install";
+export const SELF_HOST_URL = "https://github.com/masaok/meetingmouse#run-it-yourself";

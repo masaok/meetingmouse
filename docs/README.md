@@ -9,6 +9,8 @@ validated in CI (`pnpm docs:check`).
 | [Architecture](./ARCHITECTURE.md)                   | What runs where, directory layout, dependency rules, time zones         |
 | [Feature map](./FEATURE_MAP.md)                     | Every Slack surface: ids, files, how to reproduce it                    |
 | [Web grid](./WEB_GRID.md)                           | The page outside Slack: the signed link, the flow, how a host mounts it |
+| [Blog](./BLOG.md)                                   | Where posts live, the post shape, the content check, how to add a post  |
+| [Blog keyword map](./BLOG_KEYWORDS.md)              | Which post owns which keyword                                           |
 | [Data model](./DATA_MODEL.md)                       | Tables, keys, the replace-all write, migrations                         |
 | [Local development](./LOCAL_DEV.md)                 | Env vars, tunnel, exercising the route without Slack                    |
 | [Deployment](./DEPLOYMENT.md)                       | Vercel, manifest URLs, required checks, secrets                         |
