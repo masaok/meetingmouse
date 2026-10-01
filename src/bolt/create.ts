@@ -54,11 +54,6 @@ export interface CreateMeetingMouseOptions {
  * environment: the caller decides where credentials come from, so the same function serves
  * the reference app in this repo and a host that embeds it.
  */
-function installerOf(receiver: VercelReceiver) {
-  if (!receiver.installer)
-    throw new Error("the receiver has no OAuth installer; pass auth.oauth");
-  return receiver.installer;
-}
 
 export function createMeetingMouse(options: CreateMeetingMouseOptions): Bolt {
   const { features, signingSecret, auth, logLevel = LogLevel.INFO } = options;
