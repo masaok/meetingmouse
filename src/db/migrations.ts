@@ -1,3 +1,4 @@
+import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { MigrationConfig } from "drizzle-orm/migrator";
@@ -10,5 +11,12 @@ import type { MigrationConfig } from "drizzle-orm/migrator";
  * other's older migrations. `src/db/migrations.test.ts` proves both halves of that sentence.
  */
 export const CORE_MIGRATIONS: MigrationConfig = {
-  migrationsFolder: fileURLToPath(new URL("../../drizzle/", import.meta.url)),
+  // path.join, not new URL(literal, import.meta.url): bundlers read the latter as an asset reference
+  // and a host's Turbopack build fails with "Can't resolve '../../drizzle/'".
+  migrationsFolder: path.join(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "..",
+    "..",
+    "drizzle",
+  ),
 };
