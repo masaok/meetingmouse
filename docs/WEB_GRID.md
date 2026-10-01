@@ -5,7 +5,7 @@ clicking and dragging, and the group's availability redraws on the right, darker
 more people are free. It is optional. A host turns it on by giving `createMeetingMouse` a
 `grid` option and mounting one route.
 
-Slack cannot draw this. A modal has checkboxes and no paintable cells, a message is one column,
+Slack cannot draw this. A modal has buttons and no paintable cells, a message is one column,
 and the only way to color a table cell is an emoji. The poll message keeps its own grid of
 squares as the summary in the channel; this page is where the input happens.
 
@@ -18,7 +18,7 @@ sequenceDiagram
   participant A as App
   P->>S: Add my availability
   S->>A: block action (who, which poll)
-  A->>S: the checkbox form, with "Open the grid" above it (a signed link for that person)
+  A->>S: the form, with "Open the grid" above it (a signed link for that person)
   P->>A: GET /grid/{token}
   A-->>P: the page, both grids, state as JSON
   P->>A: POST /grid/{token} with the painted slots
@@ -34,7 +34,7 @@ sequenceDiagram
 
 - Creating a poll, picking the final time, closing and deleting.
 - The poll message, which is still where the group sees the result.
-- The checkbox form. It is what Add my availability opens, and nobody has to leave Slack to
+- The form of time buttons. It is what Add my availability opens, and nobody has to leave Slack to
   answer. The grid is a link above the form for people who would rather drag. A host with no
   `grid` option shows the form without the link, so the three-variable self-hosted setup is
   unchanged.
@@ -70,7 +70,7 @@ more here: the worst a leaked link allows is editing one person's answer on one 
 | `src/web/client.ts`             | The inline browser script: paint, redraw, save, poll                             |
 | `src/web/handlers.ts`           | `createGridHandlers`: `GET` and `POST` for a host's route                        |
 | `src/app/grid/[token]/route.ts` | The reference app's mount                                                        |
-| `src/features/poll-respond/`    | The checkbox form, which carries the link                                        |
+| `src/features/poll-respond/`    | The form in Slack, which carries the link                                        |
 | `scripts/grid-preview.ts`       | The page on a fixture poll with no Slack and no secrets                          |
 
 The page is an HTML string from a route handler, not a React page. A host installs the library
@@ -102,7 +102,7 @@ the project's production domain. See [Local development](./LOCAL_DEV.md#environm
 
 ## Time zones
 
-The page labels and groups by the viewer's Slack time zone, the same zone the checkbox form
+The page labels and groups by the viewer's Slack time zone, the same zone the form in Slack
 uses, read from the `slack_users` cache. Opening the modal warms that cache. The page names the
 zone under the title. There is no zone picker.
 
@@ -135,5 +135,4 @@ zone under the title. There is no zone picker.
 - No zone picker, and no "who has not answered" list.
 - The link is a bearer credential. It is not tied to a browser.
 - Polling, not push: another person's change shows up within 5 s.
-- A person who opens the grid and then saves a stale checkbox form overwrites what they painted.
-  The modal says the grid saves as it goes.
+- A form left open in Slack while the same person paints on the grid shows the older answer until it is reopened. Its clicks flip single slots, so they do not overwrite the rest.

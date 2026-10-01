@@ -14,6 +14,9 @@ export const ACTION_RESPOND_BUTTON = "respond_button";
 export const ACTION_ORGANIZER_MENU = "organizer_menu";
 export const ACTION_GCAL_LINK = "gcal_link";
 export const ACTION_GRID_LINK = "grid_link";
+/** One button per slot in the respond form; its action id is this plus `:<epoch seconds>`. */
+export const ACTION_TOGGLE_SLOT = "toggle_slot";
+export const ACTION_TOGGLE_NONE = "toggle_none";
 
 export const EVENT_APP_HOME_OPENED = "app_home_opened";
 

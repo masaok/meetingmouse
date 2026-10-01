@@ -147,28 +147,27 @@ client import is a build error, not a review comment.
 Constants in `src/slack/limits.ts`; poll limits in `src/domain/constants.ts`; the derivation is
 asserted in `src/slack/limits.test.ts`.
 
-| Limit                      | Value                                    | Consequence                                              |
-| -------------------------- | ---------------------------------------- | -------------------------------------------------------- |
-| Checkbox options / element | 10                                       | Each day's slots split into ≤10-option inputs            |
-| Blocks / modal             | 100                                      | Polls capped at 14 days × 24 slots                       |
-| Blocks / message           | 50                                       | Heatmap is one table block, not one block per slot       |
-| Table block                | 100 rows, 20 cells per row, 10,000 chars | 14 days of 24 slots is 25 rows by 15 columns             |
-| Section text               | 3000                                     | Only the best-times and everyone-free lines are sections |
-| `trigger_id` lifetime      | ~3 s                                     | `views.open` a loading view first, DB work after         |
+| Limit                    | Value                                    | Consequence                                              |
+| ------------------------ | ---------------------------------------- | -------------------------------------------------------- |
+| Elements / actions block | 25                                       | A day's slots are one row of buttons; 24 slots fit       |
+| Blocks / modal           | 100                                      | Polls capped at 14 days × 24 slots                       |
+| Blocks / message         | 50                                       | Heatmap is one table block, not one block per slot       |
+| Table block              | 100 rows, 20 cells per row, 10,000 chars | 14 days of 24 slots is 25 rows by 15 columns             |
+| Section text             | 3000                                     | Only the best-times and everyone-free lines are sections |
+| `trigger_id` lifetime    | ~3 s                                     | `views.open` a loading view first, DB work after         |
 
 ## Tradeoffs a reviewer will ask about
 
-**The respond modal's submit reads the database before `ack()`.** Rule 6 says ack first. A
-`view_submission` is the exception: Slack only accepts a new view or validation errors as the
-ack itself, so "this poll is closed" has to be known before answering. The handler in
-`src/features/poll-respond/listener.ts` runs one query, `getPollSnapshot`, then acks with
-`response_action: "update"` or with nothing. The rejected alternative, ack first and post an
-ephemeral afterwards, closes the modal as if the save had worked. If Neon latency ever threatens
-the window, the fallback is to carry the poll status in `private_metadata` from when the modal
-opened, at the cost of a stale answer for a poll closed while the modal was up.
+**Every click in the respond form is its own save.** The form is a row of buttons per day, one
+per slot, and has no Save button. A click is acked, then `toggleSlot` flips that one slot in one
+statement, the view is redrawn from what the database now holds, and the channel message is
+re-rendered. The rejected alternative kept the choices in the view and wrote them on a Save: it
+needs the same round trip per click to redraw the buttons, and loses everything if the person
+closes the window. The cost is one write and one `chat.update` per click. Two clicks that race
+both land in the database; the view can briefly show the earlier of the two, and the next click
+or reopening the form corrects it.
 
-**Two people submit within the same second.** `saveResponse` is one replace-all statement per
-user. `refreshPollMessage` reads the aggregates after that write committed, so every render is
+**Two people answer within the same second.** Each write is one statement for one user. `refreshPollMessage` reads the aggregates after that write committed, so every render is
 complete; two renders can still race on `chat.update`, and the last writer wins, which shows a
 complete picture that may be one response newer than the other. Ordering is not guaranteed and
 has not needed to be. The original plan reserved `pg_advisory_xact_lock(hashtext(poll_id))` for
@@ -179,7 +178,7 @@ the day flicker is observed; see [Data model](./DATA_MODEL.md).
 The homepage and the webhook deploy as one project with one set of env vars, and `next typegen`
 types the route. A bare function would drop the page and the typegen to save one framework.
 
-**Where the in-Slack design stops.** The 100-block modal caps a poll at 14 days of 24 slots and
+**Where the in-Slack design stops.** The 100-block modal and 25 buttons per row cap a poll at 14 days of 24 slots and
 the heatmap table holds at most 20 columns and squares, not shades, for intensity; see
 [Slack limits that shape the design](#slack-limits-that-shape-the-design). Past that, the exits
 are the [web grid](./WEB_GRID.md), which is built, and a rendered heatmap image, which is an

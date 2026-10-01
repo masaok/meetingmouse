@@ -62,7 +62,7 @@ on `chat.update` (message deleted manually) is handled, not fatal.
 - [ ] Global shortcut path with the channel picker
 - [ ] Responder in a tz where a slot crosses midnight
 - [ ] Poll spanning the DST change
-- [ ] Two people submitting within the same second
+- [ ] Two people answering within the same second
 - [ ] "Can't make any" response shows up in the respondent count
 - [ ] Organizer closes, then someone clicks an old Add button
 - [ ] Deleting the Slack message manually (no crash on `message_not_found`)

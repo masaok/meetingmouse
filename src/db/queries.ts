@@ -113,6 +113,52 @@ export async function saveResponse(db: Db, input: SaveResponseInput): Promise<vo
   `);
 }
 
+export interface ToggleSlotInput {
+  pollId: string;
+  userId: string;
+  tz: string;
+  displayName: string;
+  slot: Date;
+}
+
+/**
+ * Flip one slot for one user, atomically, in one statement: upsert the participant, delete
+ * the row if it is there, insert it if the delete found nothing. Two clicks on the same slot
+ * that race cannot leave a duplicate. A slot that is not in `poll_slots` violates the FK.
+ */
+export async function toggleSlot(db: Db, input: ToggleSlotInput): Promise<void> {
+  const slot = sql`${input.slot.toISOString()}::timestamptz`;
+  await db.execute(sql`
+    with p as (
+      insert into ${participants} (poll_id, user_id, tz, display_name)
+      values (${input.pollId}::uuid, ${input.userId}, ${input.tz}, ${input.displayName})
+      on conflict (poll_id, user_id) do update
+        set tz = excluded.tz, display_name = excluded.display_name, responded_at = now()
+    ),
+    d as (
+      delete from ${availability}
+      where poll_id = ${input.pollId}::uuid and user_id = ${input.userId}
+        and slot_start = ${slot}
+      returning 1
+    )
+    insert into ${availability} (poll_id, user_id, slot_start)
+    select ${input.pollId}::uuid, ${input.userId}, ${slot}
+    where not exists (select 1 from d)
+    on conflict do nothing
+  `);
+}
+
+/** Forget one user's answer entirely: the participant row, and its availability by cascade. */
+export async function removeResponse(
+  db: Db,
+  pollId: string,
+  userId: string,
+): Promise<void> {
+  await db
+    .delete(participants)
+    .where(and(eq(participants.pollId, pollId), eq(participants.userId, userId)));
+}
+
 export async function getPoll(db: Db, pollId: string): Promise<Poll | null> {
   const [row] = await db.select().from(polls).where(eq(polls.id, pollId)).limit(1);
   return row ? toPoll(row) : null;
