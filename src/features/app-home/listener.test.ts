@@ -41,6 +41,24 @@ describe("app-home listener", () => {
     expect(JSON.stringify(view)).toContain("https://slack.com/archives/C1/p1");
   });
 
+  it("omits the help line when the host sets no support URL", async () => {
+    const client = fakeClient();
+    await invoke("event", EVENT_APP_HOME_OPENED, eventArgs(client));
+    expect(JSON.stringify(client.views.publish.mock.calls[0][0].view)).not.toContain(
+      "Need help?",
+    );
+  });
+
+  it("ends the home view with the host's support link", async () => {
+    const hosted = fakeApp();
+    register(hosted.app, { supportUrl: "https://example.com/support" });
+    const client = fakeClient();
+    await hosted.invoke("event", EVENT_APP_HOME_OPENED, eventArgs(client));
+    expect(JSON.stringify(client.views.publish.mock.calls[0][0].view)).toContain(
+      "Need help? <https://example.com/support|Get support>.",
+    );
+  });
+
   it("ignores other tabs", async () => {
     const client = fakeClient();
     await invoke("event", EVENT_APP_HOME_OPENED, eventArgs(client, "messages"));
