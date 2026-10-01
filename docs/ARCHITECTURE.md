@@ -87,7 +87,10 @@ Modules that import `server-only` (`createMeetingMouse`, the db client) need a h
 ```
 src/
   app/                      Next.js routes: homepage + api/slack/events/route.ts + grid/[token]/route.ts
+                            + blog/ (index, post page, feed) + sitemap.ts
+  blog/                     The blog: post schema, loader, Markdown renderer, feed, content check.
   components/brand.tsx      Logo, mark and mascot for the homepage and the icon
+  components/site.tsx       The header and footer every page shares
   bolt/create.ts            createMeetingMouse(features, credentials): App + receiver for any host. server-only.
   bolt/app.ts               Reference wiring: env in, coreFeatures, built on first request. server-only.
   features/                 One directory per Slack surface, colocated:
@@ -103,10 +106,12 @@ src/
   db/                       schema.ts (Drizzle), client.ts (server-only), queries.ts
   lib/                      env.ts (preflight), users.ts (users.info cache), log.ts,
                             refresh.ts (re-render the poll message from fresh reads),
-                            respond.ts (response_url replies, Slack error codes)
+                            respond.ts (response_url replies, Slack error codes),
+                            site.ts (site URL, name, call-to-action links)
+content/blog/               Blog posts, one Markdown file each. See docs/BLOG.md.
 drizzle/                    Numbered SQL migrations generated from schema.ts
 scripts/                    doctor, slack-sign, render-fixture, smoke-imports, check-docs,
-                            check-feature-map, check-prose, check-dev-env, dev.tunnel
+                            check-feature-map, check-prose, check-blog, check-dev-env, dev.tunnel
 tests/                      Cross-cutting tests + proof-of-failure fixtures
 docs/                       These living documents
 ```

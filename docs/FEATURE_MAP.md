@@ -25,6 +25,11 @@ Every id is a constant in `src/slack/ids.ts`. The poll message itself is rendere
 `src/slack/pollMessage.ts` from a `PollSnapshot`; fixtures for it live in `src/slack/fixtures.ts`
 (`empty`, `three-day`, `worst-case`, `closed`, `scheduled`, `many-participants`).
 
+## Web pages
+
+The homepage, the web grid and the blog are routes, not Slack surfaces, so the id check does
+not cover them. The blog's routes and reproduce commands are in [Blog](./BLOG.md#surfaces).
+
 ## Reproducing a report
 
 1. Find the surface above from the words in the report ("the button", "the modal that lists times").

@@ -1,6 +1,6 @@
 /**
  * Mechanical prose rules for Markdown: no long dashes, no curly quotes. Covers docs/, the
- * root Markdown files, the skills and .github. Code fences, inline code and link targets
+ * blog posts in content/, the root Markdown files, the skills and .github. Code fences, inline code and link targets
  * are skipped.
  *
  *   pnpm prose:check              # all prose
@@ -56,6 +56,7 @@ const isMain =
 if (isMain) {
   const own = [
     "docs",
+    "content",
     "AGENTS.md",
     "CONTRIBUTING.md",
     "README.md",

@@ -1,9 +1,6 @@
-import Link from "next/link";
-
-import { Logo, LogoMark, Mascot } from "@/components/brand";
-
-const SLACK_INSTALL_URL = "https://app.meetingmouse.net/api/slack/install";
-const SELF_HOST_URL = "https://github.com/masaok/meetingmouse#run-it-yourself";
+import { LogoMark, Mascot } from "@/components/brand";
+import { SiteFooter, SiteHeader } from "@/components/site";
+import { SELF_HOST_URL, SLACK_INSTALL_URL } from "@/lib/site";
 
 const steps = [
   {
@@ -199,31 +196,7 @@ function MockGrid() {
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
-        <Link href="/" aria-label="Meeting Mouse home">
-          <Logo />
-        </Link>
-        <nav className="flex items-center gap-6 text-sm">
-          <a
-            href="#how"
-            className="hover:text-foreground hidden text-stone-600 sm:inline dark:text-stone-400"
-          >
-            How it works
-          </a>
-          <a
-            href="#features"
-            className="hover:text-foreground hidden text-stone-600 sm:inline dark:text-stone-400"
-          >
-            Features
-          </a>
-          <a
-            href={SLACK_INSTALL_URL}
-            className="bg-accent hover:bg-accent-hover rounded-full px-4 py-2 font-medium text-white transition-colors dark:text-stone-950"
-          >
-            Add to Slack
-          </a>
-        </nav>
-      </header>
+      <SiteHeader home />
 
       <main className="flex-1">
         <section className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-12 md:grid-cols-2 md:py-20">
@@ -336,10 +309,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 py-8 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between dark:text-stone-500">
-        <p>© {new Date().getFullYear()} Meeting Mouse · meetingmouse.net</p>
-        <p>Not affiliated with Slack Technologies.</p>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

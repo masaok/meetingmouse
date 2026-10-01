@@ -67,15 +67,15 @@ app; see [Embedding in another app](./docs/ARCHITECTURE.md#embedding-in-another-
 
 ## Development
 
-| Command                           | What it does                                                                             |
-| --------------------------------- | ---------------------------------------------------------------------------------------- |
-| `pnpm verify`                     | Typecheck, lint, format, tests, docs links, feature map, smoke imports, production build |
-| `pnpm test`                       | Unit tests (vitest; PGlite stands in for Postgres)                                       |
-| `pnpm slack:sign --command /when` | Sign and POST a payload the way Slack does                                               |
-| `pnpm render:fixture <name>`      | Print Block Kit JSON for a fixture poll                                                  |
-| `pnpm health`                     | Check whether a running instance is worth driving                                        |
-| `pnpm db:generate`                | Regenerate SQL migrations from `src/db/schema.ts`                                        |
-| `pnpm pack:check`                 | Build the library and check the tarball holds only what a host needs                     |
+| Command                           | What it does                                                                                         |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `pnpm verify`                     | Typecheck, lint, format, tests, docs links, feature map, blog check, smoke imports, production build |
+| `pnpm test`                       | Unit tests (vitest; PGlite stands in for Postgres)                                                   |
+| `pnpm slack:sign --command /when` | Sign and POST a payload the way Slack does                                                           |
+| `pnpm render:fixture <name>`      | Print Block Kit JSON for a fixture poll                                                              |
+| `pnpm health`                     | Check whether a running instance is worth driving                                                    |
+| `pnpm db:generate`                | Regenerate SQL migrations from `src/db/schema.ts`                                                    |
+| `pnpm pack:check`                 | Build the library and check the tarball holds only what a host needs                                 |
 
 ## Contributing
 
