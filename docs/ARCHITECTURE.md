@@ -59,7 +59,9 @@ store: the receiver then serves the install path (`receiver.handleInstall`) and 
 (`receiver.handleCallback`), and tokens come from the store per workspace. Self-hosting stays a
 three-variable setup because the reference app uses the token form. Feature names must be
 unique, and the factory throws on a duplicate. The host
-owns its route handler, its env preflight and its migrations.
+owns its route handler, its env preflight and its migrations. The core's database client asks the
+environment for `DATABASE_URL` and nothing else, so a host with no bot token in its environment
+works.
 
 The library build (`pnpm build:lib`, tsdown) ships four entry points:
 

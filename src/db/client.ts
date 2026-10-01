@@ -3,7 +3,7 @@ import "server-only";
 import { neon } from "@neondatabase/serverless";
 import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
 
-import { env } from "@/lib/env";
+import { requireEnv } from "@/lib/env";
 
 import * as schema from "./schema";
 
@@ -17,7 +17,7 @@ let instance: Db | undefined;
  * to collect metadata on a host that may have no environment variables at all.
  */
 export function getDb(): Db {
-  return (instance ??= drizzle(neon(env().DATABASE_URL), { schema }));
+  return (instance ??= drizzle(neon(requireEnv("DATABASE_URL")), { schema }));
 }
 
 /**
