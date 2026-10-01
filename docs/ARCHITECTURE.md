@@ -49,6 +49,7 @@ surface errors to the user ephemerally (see [Testing](./TESTING.md#error-surfaci
 ```
 src/
   app/                      Next.js routes: homepage + api/slack/events/route.ts
+  components/brand.tsx      Logo, mark and mascot for the homepage and the icon
   bolt/app.ts               App + VercelReceiver; registers features. server-only.
   features/                 One directory per Slack surface, colocated:
     poll-create/            listener.ts · blocks.ts · schema.ts · *.test.ts
@@ -59,9 +60,12 @@ src/
   domain/                   Pure logic: constants, types, slots, tally, gcal. No I/O.
   slack/                    Shared Slack knowledge: limits.ts, format.ts, block helpers.
   db/                       schema.ts (Drizzle), client.ts (server-only), queries.ts
-  lib/                      env.ts (preflight), users.ts (users.info cache), log.ts
+  lib/                      env.ts (preflight), users.ts (users.info cache), log.ts,
+                            refresh.ts (re-render the poll message from fresh reads),
+                            respond.ts (response_url replies, Slack error codes)
 drizzle/                    Numbered SQL migrations generated from schema.ts
-scripts/                    Verification and dev tooling (see Local development)
+scripts/                    doctor, slack-sign, render-fixture, smoke-imports, check-docs,
+                            check-feature-map, check-prose, check-dev-env, dev.tunnel
 tests/                      Cross-cutting tests + proof-of-failure fixtures
 docs/                       These living documents
 ```
@@ -104,3 +108,31 @@ asserted in `src/slack/limits.test.ts`.
 | Blocks / message           | 50    | Heatmap is one section per day, not one block per slot      |
 | Section text               | 3000  | Compact rows; fall back to top rows plus a note if exceeded |
 | `trigger_id` lifetime      | ~3 s  | `views.open` a loading view first, DB work after            |
+
+## Tradeoffs a reviewer will ask about
+
+**The respond modal's submit reads the database before `ack()`.** Rule 6 says ack first. A
+`view_submission` is the exception: Slack only accepts a new view or validation errors as the
+ack itself, so "this poll is closed" has to be known before answering. The handler in
+`src/features/poll-respond/listener.ts` runs one query, `getPollSnapshot`, then acks with
+`response_action: "update"` or with nothing. The rejected alternative, ack first and post an
+ephemeral afterwards, closes the modal as if the save had worked. If Neon latency ever threatens
+the window, the fallback is to carry the poll status in `private_metadata` from when the modal
+opened, at the cost of a stale answer for a poll closed while the modal was up.
+
+**Two people submit within the same second.** `saveResponse` is one replace-all statement per
+user. `refreshPollMessage` reads the aggregates after that write committed, so every render is
+complete; two renders can still race on `chat.update`, and the last writer wins, which shows a
+complete picture that may be one response newer than the other. Ordering is not guaranteed and
+has not needed to be. The original plan reserved `pg_advisory_xact_lock(hashtext(poll_id))` for
+the day flicker is observed; see [Data model](./DATA_MODEL.md).
+
+**Why Next.js for one webhook and a page.** `@vercel/slack-bolt` ships `VercelReceiver` and
+`createHandler` for a Next.js route handler and relies on `waitUntil` for the work after the ack.
+The homepage and the webhook deploy as one project with one set of env vars, and `next typegen`
+types the route. A bare function would drop the page and the typegen to save one framework.
+
+**Where the in-Slack design stops.** The 100-block modal caps a poll at 14 days of 24 slots and
+the 50-block message caps the heatmap at one section per day; see
+[Slack limits that shape the design](#slack-limits-that-shape-the-design). Past that, the exits
+are a rendered heatmap image and a web grid, tracked as issues rather than built ahead of need.

@@ -88,6 +88,7 @@ export function register(app: App): void {
     }
     const userId = body.user.id;
     const teamId = body.team?.id ?? view.team_id;
+    // Before ack on purpose: a closed poll must answer as the ack itself (rule 6's one exception).
     const snapshot = await getPollSnapshot(db, meta.pollId);
     if (!snapshot) {
       await ack({ response_action: "update", view: unavailableView("missing") });
