@@ -30,6 +30,15 @@ export function assertEnv(
   );
 }
 
+/**
+ * One variable, validated on its own. For modules a host may run without the reference app's
+ * full environment: the database client needs DATABASE_URL and nothing else (#37).
+ */
+export function requireEnv<K extends EnvKey>(key: K): Env[K] {
+  assertEnv([key]);
+  return EnvSchema.shape[key].parse(process.env[key]) as Env[K];
+}
+
 let cached: Env | undefined;
 
 /** Parsed, validated environment. Throws with the list of missing variables. */
