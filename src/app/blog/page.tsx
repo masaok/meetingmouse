@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { SOCIAL_IMAGE } from "@/app/opengraph-image";
 import { absoluteUrl, BLOG_PATH, FEED_PATH, postPath } from "@/blog/paths";
 import { visiblePosts } from "@/blog/posts";
 import { PostDate, PostTags } from "@/components/post";
@@ -24,7 +25,9 @@ export const metadata: Metadata = {
     url: absoluteUrl(BLOG_PATH),
     siteName: SITE_NAME,
     type: "website",
+    images: [SOCIAL_IMAGE],
   },
+  twitter: { card: "summary_large_image", images: [SOCIAL_IMAGE] },
 };
 
 export default function BlogIndex() {

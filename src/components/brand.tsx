@@ -1,4 +1,5 @@
-type SvgProps = { className?: string; title?: string };
+/** `size` sets width and height in pixels, for renderers that have no CSS classes. */
+type SvgProps = { className?: string; title?: string; size?: number };
 
 const FUR = "#b9b4c7";
 const FUR_DARK = "#8e879f";
@@ -7,10 +8,12 @@ const NOSE = "#ec4899";
 const INK = "#1c1917";
 
 /** Simplified mouse head. Used for the logo, favicon, and Slack avatar. */
-export function LogoMark({ className, title = "Meeting Mouse" }: SvgProps) {
+export function LogoMark({ className, title = "Meeting Mouse", size }: SvgProps) {
   return (
     <svg
       viewBox="0 0 64 64"
+      width={size}
+      height={size}
       className={className}
       role="img"
       aria-label={title}
@@ -50,10 +53,12 @@ export function Logo({ className = "" }: { className?: string }) {
 }
 
 /** Full mascot: the mouse holding a calendar with a checked-off day. */
-export function Mascot({ className, title = "Meeting Mouse mascot" }: SvgProps) {
+export function Mascot({ className, title = "Meeting Mouse mascot", size }: SvgProps) {
   return (
     <svg
       viewBox="0 0 240 240"
+      width={size}
+      height={size}
       className={className}
       role="img"
       aria-label={title}

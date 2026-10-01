@@ -95,5 +95,16 @@ post under `pnpm dev`.
 
 ## What is not built
 
-There is no social preview image, no `robots.txt`, no tag pages and no pagination. The
-sitemap exists at `/sitemap.xml`; submitting it to a search console is a human step.
+There are no per-post preview images, no tag pages and no pagination. The sitemap exists at
+`/sitemap.xml` and `robots.txt` points at it; submitting it to a search console is a human
+step.
+
+## Social preview and robots
+
+Every page shares one preview image, drawn at build time by `src/app/opengraph-image.tsx`
+from the logo and mascot in `src/components/brand.tsx`. A page that sets its own `openGraph`
+metadata replaces the root's, image included, so the blog index and the post page pass
+`SOCIAL_IMAGE` from that file in `openGraph.images` and `twitter.images`. A new page with its
+own `openGraph` has to do the same.
+
+`src/app/robots.ts` allows every page, disallows `/api/` and `/grid/`, and names the sitemap.

@@ -87,7 +87,8 @@ Modules that import `server-only` (`createMeetingMouse`, the db client) need a h
 ```
 src/
   app/                      Next.js routes: homepage + api/slack/events/route.ts + grid/[token]/route.ts
-                            + blog/ (index, post page, feed) + sitemap.ts
+                            + blog/ (index, post page, feed) + sitemap.ts + robots.ts
+                            + opengraph-image.tsx (the social preview)
   blog/                     The blog: post schema, loader, Markdown renderer, feed, content check.
   components/brand.tsx      Logo, mark and mascot for the homepage and the icon
   components/site.tsx       The header and footer every page shares
