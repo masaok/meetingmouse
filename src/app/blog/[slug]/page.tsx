@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { SOCIAL_IMAGE } from "@/app/opengraph-image";
 import { lastChanged } from "@/blog/feed";
 import { renderMarkdown } from "@/blog/markdown";
 import { absoluteUrl, BLOG_PATH, postPath } from "@/blog/paths";
@@ -10,6 +9,7 @@ import { visiblePosts } from "@/blog/posts";
 import type { Post } from "@/blog/schema";
 import { PostDate, PostTags } from "@/components/post";
 import { SiteFooter, SiteHeader } from "@/components/site";
+import { SOCIAL_IMAGE_SIZE } from "@/components/social-image";
 import { SELF_HOST_URL, SITE_NAME, SITE_URL, SLACK_INSTALL_URL } from "@/lib/site";
 
 /** A post with at least this many sections gets a table of contents. */
@@ -31,6 +31,11 @@ export async function generateMetadata({
   const post = findPost((await params).slug);
   if (!post) return {};
   const url = absoluteUrl(postPath(post.slug));
+  const image = {
+    url: `${postPath(post.slug)}/opengraph-image`,
+    ...SOCIAL_IMAGE_SIZE,
+    alt: post.title,
+  };
   return {
     title: post.title,
     description: post.description,
@@ -46,13 +51,13 @@ export async function generateMetadata({
       modifiedTime: lastChanged(post).toISOString(),
       authors: [post.author],
       tags: post.tags,
-      images: [SOCIAL_IMAGE],
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
-      images: [SOCIAL_IMAGE],
+      images: [image],
     },
   };
 }

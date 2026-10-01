@@ -6,13 +6,14 @@ keyword from the [keyword map](./BLOG_KEYWORDS.md).
 
 ## Surfaces
 
-| Surface   | Route             | File                             | Reproduce                              |
-| --------- | ----------------- | -------------------------------- | -------------------------------------- |
-| Index     | `/blog`           | `src/app/blog/page.tsx`          | `curl -s localhost:3000/blog`          |
-| Post page | `/blog/<slug>`    | `src/app/blog/[slug]/page.tsx`   | `curl -s localhost:3000/blog/<slug>`   |
-| Feed      | `/blog/feed.xml`  | `src/app/blog/feed.xml/route.ts` | `curl -s localhost:3000/blog/feed.xml` |
-| Sitemap   | `/sitemap.xml`    | `src/app/sitemap.ts`             | `curl -s localhost:3000/sitemap.xml`   |
-| Nav links | header and footer | `src/components/site.tsx`        | open `/` and click Blog                |
+| Surface    | Route                          | File                                      | Reproduce                                                        |
+| ---------- | ------------------------------ | ----------------------------------------- | ---------------------------------------------------------------- |
+| Index      | `/blog`                        | `src/app/blog/page.tsx`                   | `curl -s localhost:3000/blog`                                    |
+| Post page  | `/blog/<slug>`                 | `src/app/blog/[slug]/page.tsx`            | `curl -s localhost:3000/blog/<slug>`                             |
+| Post image | `/blog/<slug>/opengraph-image` | `src/app/blog/[slug]/opengraph-image.tsx` | `curl -s -o post.png localhost:3000/blog/<slug>/opengraph-image` |
+| Feed       | `/blog/feed.xml`               | `src/app/blog/feed.xml/route.ts`          | `curl -s localhost:3000/blog/feed.xml`                           |
+| Sitemap    | `/sitemap.xml`                 | `src/app/sitemap.ts`                      | `curl -s localhost:3000/sitemap.xml`                             |
+| Nav links  | header and footer              | `src/components/site.tsx`                 | open `/` and click Blog                                          |
 
 An unknown slug returns the 404 page: the post route sets `dynamicParams = false`, so only the
 slugs the loader returns exist. All four routes are prerendered by `next build`.
@@ -95,16 +96,24 @@ post under `pnpm dev`.
 
 ## What is not built
 
-There are no per-post preview images, no tag pages and no pagination. The sitemap exists at
-`/sitemap.xml` and `robots.txt` points at it; submitting it to a search console is a human
-step.
+There are no tag pages and no pagination. The sitemap exists at `/sitemap.xml` and
+`robots.txt` points at it; submitting it to a search console is a human step.
 
 ## Social preview and robots
 
-Every page shares one preview image, drawn at build time by `src/app/opengraph-image.tsx`
-from the logo and mascot in `src/components/brand.tsx`. A page that sets its own `openGraph`
-metadata replaces the root's, image included, so the blog index and the post page pass
-`SOCIAL_IMAGE` from that file in `openGraph.images` and `twitter.images`. A new page with its
-own `openGraph` has to do the same.
+Preview images are drawn at build time by `socialImage` in `src/components/social-image.tsx`:
+the logo, a headline, one line under it and the mascot.
+
+| Page       | Image route                               | Headline       |
+| ---------- | ----------------------------------------- | -------------- |
+| Homepage   | `src/app/opengraph-image.tsx`             | The site's own |
+| Blog index | the homepage's image, as `SOCIAL_IMAGE`   | The site's own |
+| A post     | `src/app/blog/[slug]/opengraph-image.tsx` | The post title |
+
+A new post needs no image work: its preview is prerendered from its title, and an unknown
+slug returns 404. A page that sets its own `openGraph` metadata replaces the root's, image
+included, so the blog index passes `SOCIAL_IMAGE` and the post page passes its own image URL
+in `openGraph.images` and `twitter.images`. A new page with its own `openGraph` has to do the
+same.
 
 `src/app/robots.ts` allows every page, disallows `/api/` and `/grid/`, and names the sitemap.
