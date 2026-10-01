@@ -154,6 +154,32 @@ describe("poll-create listener", () => {
     expect(respondViaUrl).toHaveBeenCalledWith("https://hooks.slack.com/x", INVITE_HINT);
   });
 
+  it("on channel_not_found (a DM, or a private channel without the bot) does the same", async () => {
+    const client = fakeClient();
+    client.chat.postMessage.mockRejectedValueOnce(
+      Object.assign(new Error("An API error occurred: channel_not_found"), {
+        data: { error: "channel_not_found" },
+      }),
+    );
+    const args = submission(client);
+    args.view.state.values = {
+      ...validState,
+      [INPUT.CHANNEL.block]: {
+        [INPUT.CHANNEL.action]: { selected_conversation: "D123" },
+      },
+    };
+    args.body.response_urls = [
+      { channel_id: "D123", response_url: "https://hooks.slack.com/dm" },
+    ];
+    await invoke("view", CALLBACK_CREATE_POLL_MODAL, args);
+    expect(client.chat.postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ channel: "D123" }),
+    );
+    expect(deletePoll).toHaveBeenCalledWith({}, "P1");
+    expect(setMessageTs).not.toHaveBeenCalled();
+    expect(respondViaUrl).toHaveBeenCalledWith("https://hooks.slack.com/dm", INVITE_HINT);
+  });
+
   it("surfaces other Slack errors with their code", async () => {
     const client = fakeClient();
     client.chat.postMessage.mockRejectedValueOnce(

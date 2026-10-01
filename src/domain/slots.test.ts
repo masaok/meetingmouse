@@ -60,6 +60,49 @@ describe("generateSlots", () => {
     expect(labels).toEqual(["01:00", "01:30", "03:00", "03:30"]);
   });
 
+  it("a poll spanning fall-back keeps the wall-clock time and shifts the UTC instant", () => {
+    const slots = generateSlots({
+      dates: ["2026-10-31", "2026-11-01", "2026-11-02"],
+      fromMinutes: 9 * 60,
+      toMinutes: 10 * 60,
+      slotMinutes: 60,
+      tz: LA,
+    });
+    // PDT (UTC-7) on Oct 31, PST (UTC-8) from Nov 1.
+    expect(slots.map((d) => d.toISOString())).toEqual([
+      "2026-10-31T16:00:00.000Z",
+      "2026-11-01T17:00:00.000Z",
+      "2026-11-02T17:00:00.000Z",
+    ]);
+    expect(slots.map((d) => formatInTz(d, LA, "MM-dd HH:mm"))).toEqual([
+      "10-31 09:00",
+      "11-01 09:00",
+      "11-02 09:00",
+    ]);
+    // A responder in a zone with no DST sees the same meeting move by an hour.
+    expect(slots.map((d) => formatInTz(d, TOKYO, "MM-dd HH:mm"))).toEqual([
+      "11-01 01:00",
+      "11-02 02:00",
+      "11-03 02:00",
+    ]);
+  });
+
+  it("a poll spanning spring-forward keeps the wall-clock time and shifts the UTC instant", () => {
+    const slots = generateSlots({
+      dates: ["2026-03-07", "2026-03-08", "2026-03-09"],
+      fromMinutes: 9 * 60,
+      toMinutes: 10 * 60,
+      slotMinutes: 60,
+      tz: LA,
+    });
+    // PST (UTC-8) on Mar 7, PDT (UTC-7) from Mar 8.
+    expect(slots.map((d) => d.toISOString())).toEqual([
+      "2026-03-07T17:00:00.000Z",
+      "2026-03-08T16:00:00.000Z",
+      "2026-03-09T16:00:00.000Z",
+    ]);
+  });
+
   it("generates the 14-day × 24-slot maximum", () => {
     const dates = upcomingDates(
       new Date("2026-10-05T12:00:00Z"),

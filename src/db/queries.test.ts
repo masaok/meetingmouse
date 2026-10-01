@@ -152,6 +152,29 @@ describe("saveResponse", () => {
       { userId: "UA", slotStart: S4 },
     ]);
   });
+
+  it("two people saving at the same moment both land, each with their own slots", async () => {
+    const poll = await newPoll();
+    await Promise.all([
+      respond(poll.id, "UA", [S1, S2]),
+      respond(poll.id, "UB", [S2, S3]),
+    ]);
+    const snap = (await getPollSnapshot(db, poll.id))!;
+    expect(snap.participants.map((p) => p.userId).sort()).toEqual(["UA", "UB"]);
+    expect(await getUserAvailability(db, poll.id, "UA")).toEqual([S1, S2]);
+    expect(await getUserAvailability(db, poll.id, "UB")).toEqual([S2, S3]);
+  });
+
+  it("one person saving twice at the same moment ends with one answer, never a mix", async () => {
+    const poll = await newPoll();
+    const first = [S1, S2];
+    const second = [S3, S4];
+    await Promise.all([respond(poll.id, "UA", first), respond(poll.id, "UA", second)]);
+    const snap = (await getPollSnapshot(db, poll.id))!;
+    expect(snap.participants).toHaveLength(1);
+    const saved = await getUserAvailability(db, poll.id, "UA");
+    expect([first, second]).toContainEqual(saved);
+  });
 });
 
 describe("poll lifecycle", () => {
