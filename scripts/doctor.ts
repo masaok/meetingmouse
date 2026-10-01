@@ -2,8 +2,8 @@
  * Read-only health check: is this instance worth driving? Prints one line per check and exits 1
  * on any FAIL. Never prints secret values.
  *
- *   pnpm doctor
- *   DOCTOR_URL=http://localhost:3111 pnpm doctor
+ *   pnpm health
+ *   DOCTOR_URL=http://localhost:3111 pnpm health
  */
 import { config } from "dotenv";
 

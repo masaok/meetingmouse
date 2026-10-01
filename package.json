@@ -30,7 +30,7 @@
     "docs:check": "tsx scripts/check-docs.ts",
     "featuremap:check": "tsx scripts/check-feature-map.ts",
     "predev": "tsx scripts/check-dev-env.ts",
-    "doctor": "tsx scripts/doctor.ts",
+    "health": "tsx scripts/doctor.ts",
     "prose:check": "tsx scripts/check-prose.ts"
   },
   "lint-staged": {

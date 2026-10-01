@@ -6,7 +6,7 @@ checks that every id in `src/` appears there); these files hold the recipes.
 
 ## Baseline preconditions
 
-- `pnpm dev` is up and `pnpm doctor` is green (see `../SKILL.md`).
+- `pnpm dev` is up and `pnpm health` is green (see `../SKILL.md`).
 - Offline mode unless `.env.local` holds real tokens; say which mode evidence came from.
 - Fixture payloads under `tests/fixtures/payloads/` use team `T0000TEST`, user `U0000TEST`,
   channel `C0000TEST`, poll `00000000-0000-4000-8000-000000000001`.

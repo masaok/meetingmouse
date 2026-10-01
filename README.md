@@ -70,7 +70,7 @@ Stack: Next.js 16 · `@slack/bolt` + `@vercel/slack-bolt` · Neon Postgres + Dri
 | `pnpm test`                       | Unit tests (vitest; PGlite stands in for Postgres)                                       |
 | `pnpm slack:sign --command /when` | Sign and POST a payload the way Slack does                                               |
 | `pnpm render:fixture <name>`      | Print Block Kit JSON for a fixture poll                                                  |
-| `pnpm doctor`                     | Check whether a running instance is worth driving                                        |
+| `pnpm health`                     | Check whether a running instance is worth driving                                        |
 | `pnpm db:generate`                | Regenerate SQL migrations from `src/db/schema.ts`                                        |
 
 ## Contributing

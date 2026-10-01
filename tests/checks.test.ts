@@ -67,3 +67,59 @@ describe("verification recipes", () => {
     }
   });
 });
+
+/**
+ * pnpm resolves its own commands before package scripts, so a script named like one of them is
+ * unreachable through `pnpm <name>` and silently runs the built-in instead. Script runners
+ * (`start`, `test`, `run`) are not in the list because they do run the script.
+ */
+const PNPM_BUILTINS = new Set([
+  "add",
+  "approve-builds",
+  "audit",
+  "bin",
+  "config",
+  "create",
+  "dedupe",
+  "deploy",
+  "dlx",
+  "doctor",
+  "env",
+  "exec",
+  "fetch",
+  "import",
+  "init",
+  "install",
+  "licenses",
+  "link",
+  "list",
+  "ls",
+  "outdated",
+  "pack",
+  "patch",
+  "prune",
+  "publish",
+  "rebuild",
+  "remove",
+  "root",
+  "self-update",
+  "setup",
+  "store",
+  "unlink",
+  "update",
+  "why",
+]);
+
+describe("package scripts", () => {
+  it("no script name is shadowed by a pnpm built-in command", () => {
+    const { scripts } = JSON.parse(readFileSync("package.json", "utf8")) as {
+      scripts: Record<string, string>;
+    };
+    const shadowed = Object.keys(scripts).filter((name) => PNPM_BUILTINS.has(name));
+    expect(shadowed).toEqual([]);
+  });
+
+  it("fails on a script named like a built-in", () => {
+    expect(["doctor"].filter((name) => PNPM_BUILTINS.has(name))).toEqual(["doctor"]);
+  });
+});
