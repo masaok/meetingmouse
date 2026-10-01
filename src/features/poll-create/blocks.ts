@@ -7,7 +7,7 @@ import { CALLBACK_CREATE_POLL_MODAL } from "@/slack/ids";
 import { INPUT } from "./schema";
 
 export interface CreatePollModalInput {
-  /** Pre-filled from `/when <title>`. */
+  /** Pre-filled from `/meet <title>`. */
   title?: string;
   /** Channel the command was run in; pre-selected. Absent for the global shortcut. */
   channelId?: string;

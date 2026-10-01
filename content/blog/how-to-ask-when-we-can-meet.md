@@ -19,6 +19,7 @@ tags:
 author: Meeting Mouse
 createdAt: 2026-10-01
 publishedAt: 2026-10-01
+updatedAt: 2026-10-01
 draft: false
 ---
 
@@ -80,6 +81,6 @@ Pick the slot with the most people. If someone cannot make it, tell them directl
 
 ## In Slack, the ask and the answer can be one message
 
-If the group shares a Slack channel, Meeting Mouse turns the ask into a poll. `/when Billing kickoff` posts one message with an Add my availability button, each person marks their free slots in their own time zone, and the message lists the best times by headcount. The organizer then picks the final time, and a thread reply carries an Add to Google Calendar link. See [how Meeting Mouse works](/#how).
+If the group shares a Slack channel, Meeting Mouse turns the ask into a poll. `/meet Billing kickoff` posts one message with an Add my availability button, each person marks their free slots in their own time zone, and the message lists the best times by headcount. The organizer then picks the final time, and a thread reply carries an Add to Google Calendar link. See [how Meeting Mouse works](/#how).
 
 If you need to send a link to people outside Slack, read [how to make and share a when to meet link](/blog/when-to-meet-link-how-to-make-one-and-share-it).

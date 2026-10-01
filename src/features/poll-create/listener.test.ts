@@ -4,11 +4,7 @@ import { createPoll, deletePoll, setMessageTs } from "@/db/queries";
 import type * as RespondModule from "@/lib/respond";
 import { respondViaUrl } from "@/lib/respond";
 import { FIXTURE_NOW } from "@/slack/fixtures";
-import {
-  CALLBACK_CREATE_POLL_MODAL,
-  COMMAND_WHEN,
-  SHORTCUT_CREATE_POLL,
-} from "@/slack/ids";
+import { CALLBACK_CREATE_POLL_MODAL, COMMANDS, SHORTCUT_CREATE_POLL } from "@/slack/ids";
 
 import { fakeApp, fakeClient } from "../../../tests/helpers/fakeApp";
 import { DM_HINT, INVITE_HINT, register } from "./listener";
@@ -78,36 +74,43 @@ describe("poll-create listener", () => {
     });
   });
 
-  it("/when acks then opens the create modal with the title and channel", async () => {
-    const client = fakeClient();
-    const ack = vi.fn();
-    await invoke("command", COMMAND_WHEN, {
-      ack,
-      client,
-      command: {
-        team_id: "T1",
-        user_id: "U1",
-        channel_id: "C123",
-        channel_name: "general",
-        text: " Sprint planning ",
-        trigger_id: "tr",
-      },
-    });
-    expect(ack).toHaveBeenCalledOnce();
-    expect(client.views.open).toHaveBeenCalledOnce();
-    const view = client.views.open.mock.calls[0][0].view;
-    expect(view.callback_id).toBe(CALLBACK_CREATE_POLL_MODAL);
-    expect(JSON.stringify(view)).toContain('"initial_value":"Sprint planning"');
-    expect(JSON.stringify(view)).toContain('"initial_conversation":"C123"');
+  it("registers /meet and its two aliases, in the order the copy names them", () => {
+    expect(COMMANDS).toEqual(["/meet", "/mouse", "/when"]);
   });
+
+  it.each(COMMANDS)(
+    "%s acks then opens the create modal with the title and channel",
+    async (name) => {
+      const client = fakeClient();
+      const ack = vi.fn();
+      await invoke("command", name, {
+        ack,
+        client,
+        command: {
+          team_id: "T1",
+          user_id: "U1",
+          channel_id: "C123",
+          channel_name: "general",
+          text: " Sprint planning ",
+          trigger_id: "tr",
+        },
+      });
+      expect(ack).toHaveBeenCalledOnce();
+      expect(client.views.open).toHaveBeenCalledOnce();
+      const view = client.views.open.mock.calls[0][0].view;
+      expect(view.callback_id).toBe(CALLBACK_CREATE_POLL_MODAL);
+      expect(JSON.stringify(view)).toContain('"initial_value":"Sprint planning"');
+      expect(JSON.stringify(view)).toContain('"initial_conversation":"C123"');
+    },
+  );
 
   it.each([
     ["a 1:1 DM", { channel_id: "D123", channel_name: "directmessage" }],
     ["a group DM", { channel_id: "C999", channel_name: "mpdm-ann--bob--cy-1" }],
-  ])("/when in %s answers with the hint and opens nothing", async (_name, channel) => {
+  ])("/meet in %s answers with the hint and opens nothing", async (_name, channel) => {
     const client = fakeClient();
     const ack = vi.fn();
-    await invoke("command", COMMAND_WHEN, {
+    await invoke("command", COMMANDS[0], {
       ack,
       client,
       command: {

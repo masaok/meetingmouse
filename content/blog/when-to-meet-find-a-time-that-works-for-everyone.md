@@ -12,6 +12,7 @@ tags:
 author: Meeting Mouse
 createdAt: 2026-10-01
 publishedAt: 2026-10-01
+updatedAt: 2026-10-01
 draft: false
 ---
 
@@ -63,4 +64,4 @@ When the question is which day and not which hour, the same counting works on da
 
 ## Where to run the grid
 
-If the group already talks in Slack, the grid can live there. Meeting Mouse posts an availability poll as one channel message when you run `/when` with a title. Each person marks their free slots in their own time zone, and the message updates with the three best times by headcount. [How Meeting Mouse works](/#how) shows the four steps.
+If the group already talks in Slack, the grid can live there. Meeting Mouse posts an availability poll as one channel message when you run `/meet` with a title. Each person marks their free slots in their own time zone, and the message updates with the three best times by headcount. [How Meeting Mouse works](/#how) shows the four steps.

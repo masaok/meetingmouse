@@ -11,6 +11,7 @@ tags:
 author: Meeting Mouse
 createdAt: 2026-10-01
 publishedAt: 2026-10-01
+updatedAt: 2026-10-01
 draft: false
 ---
 
@@ -59,4 +60,4 @@ Post it where the group already talks. Send one reminder a day before the deadli
 
 A link asks people to leave the conversation, open a page and come back. If everyone is in one Slack channel, the poll can be a message in that channel.
 
-Meeting Mouse works this way. Running `/when` with a title posts the poll as one message, and each person clicks Add my availability to answer in a form in Slack. The form can also link to a grid page for dragging across the slots. That grid link is personal. It is signed for one person and one poll, it works for 30 days, and whoever holds it can change that person's answer, so do not forward it. Nobody has to paste a shared URL, and the channel message shows the result. [How Meeting Mouse works](/#how) walks through it.
+Meeting Mouse works this way. Running `/meet` with a title posts the poll as one message, and each person clicks Add my availability to answer in a form in Slack. The form can also link to a grid page for dragging across the slots. That grid link is personal. It is signed for one person and one poll, it works for 30 days, and whoever holds it can change that person's answer, so do not forward it. Nobody has to paste a shared URL, and the channel message shows the result. [How Meeting Mouse works](/#how) walks through it.

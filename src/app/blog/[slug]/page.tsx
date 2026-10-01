@@ -149,7 +149,7 @@ export default async function BlogPost({ params }: PageProps<"/blog/[slug]">) {
             Find the time everyone is free, right from Slack
           </h2>
           <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-400">
-            Run /when in a channel, let everyone mark when they are free, and pick the
+            Run /meet in a channel, let everyone mark when they are free, and pick the
             time most people can make.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">

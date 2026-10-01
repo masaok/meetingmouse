@@ -49,7 +49,7 @@ after any drive that surprised you. Do not drive an instance whose doctor is red
 Every command below is literal. The harness is `scripts/slack-sign.ts`:
 
 ```bash
-pnpm slack:sign --command /when --text "Sprint planning"          # slash command (form body)
+pnpm slack:sign --command /meet --text "Sprint planning"          # slash command (form body)
 pnpm slack:sign --payload tests/fixtures/payloads/<name>.json     # interactivity (payload=…)
 pnpm slack:sign --json tests/fixtures/payloads/app_home_opened.json  # Events API (JSON body)
 pnpm render:fixture <empty|three-day|worst-case|closed|scheduled|many-participants> [--stats]

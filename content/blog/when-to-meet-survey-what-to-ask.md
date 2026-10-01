@@ -11,6 +11,7 @@ tags:
 author: Meeting Mouse
 createdAt: 2026-10-01
 publishedAt: 2026-10-01
+updatedAt: 2026-10-01
 draft: false
 ---
 
@@ -57,6 +58,6 @@ A tool built for availability solves both. It groups the times by day, lets peop
 
 ## The same four settings in Slack
 
-Meeting Mouse asks for these settings in one form. Run `/when` with a title in a Slack channel and it asks for the dates, up to 14 of them, the daily window, which starts as 9:00 to 17:00, and a slot length of 15, 30 or 60 minutes, which starts at 30. A day can hold at most 24 slots, so a window of 15-minute slots covers up to six hours.
+Meeting Mouse asks for these settings in one form. Run `/meet` with a title in a Slack channel and it asks for the dates, up to 14 of them, the daily window, which starts as 9:00 to 17:00, and a slot length of 15, 30 or 60 minutes, which starts at 30. A day can hold at most 24 slots, so a window of 15-minute slots covers up to six hours.
 
 The survey is then one message in the channel. People mark their slots in their own time zone, and the message lists the best times by headcount. There is no deadline setting, so say the deadline in the channel and close the poll from the organizer's menu when it passes. [See how Meeting Mouse works](/#how).

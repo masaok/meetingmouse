@@ -63,7 +63,7 @@ Use the `add-blog-post` skill. The rules are in `docs/BLOG.md` and `pnpm blog:ch
 | `pnpm verify`                          | Everything CI requires                                 |
 | `pnpm test -- <path>`                  | One feature's tests                                    |
 | `pnpm render:fixture <name>`           | Block JSON for a fixture; paste into Block Kit Builder |
-| `pnpm slack:sign --command /when`      | Route + signature + listener, against `pnpm dev`       |
+| `pnpm slack:sign --command /meet`      | Route + signature + listener, against `pnpm dev`       |
 | `pnpm db:generate && git diff drizzle` | Schema change produced the SQL you expect              |
 
 <!-- BEGIN:nextjs-agent-rules -->

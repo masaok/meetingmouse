@@ -12,6 +12,7 @@ tags:
 author: Meeting Mouse
 createdAt: 2026-10-01
 publishedAt: 2026-10-01
+updatedAt: 2026-10-01
 draft: false
 ---
 
@@ -37,7 +38,7 @@ A free plan is also paid for in time. Count the minutes each person spends leavi
 
 Meeting Mouse is a Slack app for availability polls, and it is free in two ways.
 
-- **The hosted app is free while in beta.** You add it to your workspace and run `/when` in a channel. "While in beta" means that may change.
+- **The hosted app is free while in beta.** You add it to your workspace and run `/meet` in a channel. "While in beta" means that may change.
 - **The code is open source under the MIT license.** You can run your own copy. That needs a Slack app you create, a host for the web app and a Postgres database, so it costs setup time and whatever your host charges.
 
 It needs no account for participants and no calendar access. A poll offers up to 14 dates, with slots of 15, 30 or 60 minutes. [See how Meeting Mouse works](/#how).
