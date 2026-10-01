@@ -11,6 +11,7 @@ tags:
 author: Meeting Mouse
 createdAt: 2026-10-01
 publishedAt: 2026-10-01
+updatedAt: 2026-10-01
 draft: false
 ---
 
@@ -53,6 +54,6 @@ Connect when you schedule many meetings, your calendar is accurate, and the tool
 
 ## What Meeting Mouse does
 
-Meeting Mouse takes the first approach. It does not read calendars and asks for no calendar access. Each person marks their own free slots on a grid from a Slack message, in their own time zone. When the organizer picks the final time, a thread reply carries an Add to Google Calendar link with the start and end time filled in, so each person adds the event with one click. [See how Meeting Mouse works](/#how).
+Meeting Mouse takes the first approach. It does not read calendars and asks for no calendar access. Each person clicks the times they are free in a form in Slack, in their own time zone. When the organizer picks the final time, a thread reply carries an Add to Google Calendar link with the start and end time filled in, so each person adds the event with one click. [See how Meeting Mouse works](/#how).
 
 For the wider comparison of grids and polls, read [When 2 Meet vs Doodle](/blog/when-2-meet-vs-doodle). If cost is part of the decision, read [Doodle free plan or a free Slack poll](/blog/doodle-free-plan-or-a-free-slack-poll).
