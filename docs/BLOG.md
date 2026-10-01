@@ -25,7 +25,8 @@ content/blog/<slug>.md      one post per file: YAML front matter, then a Markdow
 docs/BLOG_KEYWORDS.md       the keyword map: which post owns which keyword
 src/blog/schema.ts          the Post shape (zod) and parsePost, the one parser
 src/blog/posts.ts           loadPosts, the one loader every page, the sitemap and the feed call
-src/blog/markdown.ts        Markdown to HTML, heading ids, the table of contents
+src/blog/markdown.ts        Markdown to HTML, heading ids, the table of contents, the word count
+src/components/post-toc.tsx the table of contents: a sidebar on a wide screen, a box above the body on a phone
 src/blog/feed.ts            sitemap rows and the Atom feed
 src/blog/paths.ts           blog routes and the pages a post may link to
 src/blog/check.ts           the content rules
@@ -53,9 +54,23 @@ error, so a typo in a field name fails the check.
 | `draft`             | `true` shows the post under `pnpm dev` only.                         |
 
 The body is Markdown and starts with a paragraph, not a heading. The page renders the title as
-the only top-level heading, so sections start at `##`. A post with three or more `##` sections
-gets a table of contents. The page adds the date, the call to action and three related posts;
-none of those belong in the body.
+the only top-level heading, so sections start at `##`. The page adds the date, the table of
+contents, the call to action and three related posts; none of those belong in the body.
+
+A published post has at least 1,500 words of prose under at least four `##` sections. Code
+blocks and link targets are not counted. Reach the length by answering more of the question:
+the next thing a reader asks, a worked example, the edge cases, the common mistakes. A keyword
+that cannot carry 1,500 useful words becomes a secondary keyword of a broader post.
+
+## The table of contents
+
+Every post page has one. `renderMarkdown` returns the `##` headings with the same ids it
+writes into the HTML, so the entries cannot drift from the body. It lists one level only.
+
+- From the `lg` breakpoint up it is a sidebar to the right of the body that stays in view
+  while the page scrolls.
+- Below `lg` it is a box between the title and the body.
+- The entries are plain links. A script marks the section being read with `aria-current`.
 
 ## What the content check enforces
 
@@ -70,13 +85,16 @@ Each rule has a fixture that breaks it in `src/blog/check.test.ts`.
 | Keyword placement            | The primary keyword is missing from the title, slug, description or first paragraph          |
 | Title and description length | A title is over 60 characters, or a description is outside 120 to 160                        |
 | One top-level heading        | The body has a `#` heading                                                                   |
+| Minimum length               | A published post has fewer than 1,500 words of prose                                         |
+| Sections for the sidebar     | A published post has fewer than four `##` headings, or two of them have the same text        |
 | Links resolve                | An internal link points at a missing page or post, a draft, or is relative                   |
 | Images described             | An image has no alt text                                                                     |
 | Honest dates                 | `publishedAt` is in the future on a non-draft, before `createdAt`, or after `updatedAt`      |
 | Connected                    | A post links to fewer than two other posts or to no page of the site, once three posts exist |
 | Drafts stay home             | A draft is in the sitemap or the feed                                                        |
 
-There is no keyword-density rule. Repeating a phrase to satisfy a counter makes a post worse.
+The length rule is a floor. It cannot tell substance from padding, so a reviewer still reads
+each post for sections that repeat another. There is no keyword-density rule. Repeating a phrase to satisfy a counter makes a post worse.
 `pnpm prose:check` also covers `content/`: no long dashes, no curly quotes.
 
 ## What a post may claim

@@ -1,6 +1,6 @@
 import type { Tokens } from "marked";
 
-import { allTokens, firstParagraph } from "./markdown";
+import { allTokens, firstParagraph, renderMarkdown, wordCount } from "./markdown";
 import { absoluteUrl, postPath, SITE_ROUTES } from "./paths";
 import type { PostFile } from "./posts";
 import { parsePost, type Post } from "./schema";
@@ -116,6 +116,33 @@ function bodyProblems(post: Post, livePaths: Set<string>): string[] {
   return out;
 }
 
+/** A published post has at least this many words of prose. */
+export const MIN_POST_WORDS = 1500;
+/** And at least this many `##` sections, which are the entries of its table of contents. */
+export const MIN_POST_SECTIONS = 4;
+
+/** A floor on length and on sections. It cannot tell substance from padding; a reviewer does. */
+function sizeProblems(post: Post): string[] {
+  if (post.draft) return [];
+  const out: string[] = [];
+  const words = wordCount(post.body);
+  if (words < MIN_POST_WORDS) {
+    out.push(
+      `${post.slug}: the body has ${words} words; write at least ${MIN_POST_WORDS}`,
+    );
+  }
+  const sections = renderMarkdown(post.body).toc.map((entry) => entry.text);
+  if (sections.length < MIN_POST_SECTIONS) {
+    out.push(
+      `${post.slug}: the body has ${sections.length} sections; the table of contents needs at least ${MIN_POST_SECTIONS} second-level headings`,
+    );
+  }
+  for (const text of new Set(sections.filter((t, i) => sections.indexOf(t) !== i))) {
+    out.push(`${post.slug}: two sections share the heading "${text}"`);
+  }
+  return out;
+}
+
 function dateProblems(post: Post, now: Date): string[] {
   const out: string[] = [];
   if (!post.draft && Date.parse(post.publishedAt) > now.getTime()) {
@@ -202,6 +229,7 @@ export function checkBlog(input: CheckInput): string[] {
   for (const post of posts) {
     problems.push(...placementProblems(post));
     problems.push(...bodyProblems(post, livePaths));
+    problems.push(...sizeProblems(post));
     problems.push(...dateProblems(post, input.now));
     if (post.draft) {
       const url = absoluteUrl(postPath(post.slug));
