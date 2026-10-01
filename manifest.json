@@ -6,7 +6,7 @@
   "display_information": {
     "name": "Meeting Mouse",
     "description": "Find a meeting time without leaving Slack.",
-    "long_description": "Start an availability poll in a channel with /meet. Everyone marks when they're free in their own time zone, the message updates live with a heatmap and the best times, and the organizer locks in a final time with an Add to Google Calendar link.",
+    "long_description": "Start an availability poll in a channel with /meet. Everyone clicks the times they're free, shown in their own time zone. The message updates live with a grid of who is free when and the best times, and the organizer locks in a final time with an Add to Google Calendar link.",
     "background_color": "#4a154b"
   },
   "features": {
