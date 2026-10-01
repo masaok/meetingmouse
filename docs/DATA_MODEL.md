@@ -41,3 +41,20 @@ The check constraints on `slot_minutes` and `status` are generated from `SLOT_MI
 | Apply             | `pnpm db:migrate`  | Uses `DATABASE_URL`. CI applies every migration to an empty Postgres 17, twice. |
 
 Applied migrations are tracked in `drizzle.__drizzle_migrations`.
+
+### A host's migrations next to the core's
+
+A host that embeds Meet Mouse runs the core's migrations with the migrator for its own driver and
+`CORE_MIGRATIONS` from `src/db/migrations.ts`, then its own folder:
+
+```ts
+import { migrate } from "drizzle-orm/neon-http/migrator";
+await migrate(db, CORE_MIGRATIONS);
+await migrate(db, { migrationsFolder: "./drizzle", migrationsTable: "__host_migrations" });
+```
+
+The host's journal must use its own `migrationsTable`. Drizzle applies only the entries newer
+than the last row in the table it is handed, so two journals sharing `__drizzle_migrations` skip
+each other's older migrations without an error. `src/db/migrations.test.ts` applies both orders
+on PGlite and shows the shared-table case losing the core tables. A host never regenerates
+migrations for core tables; it adds its own tables in its own schema file.
