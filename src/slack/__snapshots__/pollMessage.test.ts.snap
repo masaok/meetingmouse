@@ -39,13 +39,13 @@ exports[`renderPollMessage > matches the snapshot for a three-day poll with resp
           "align": "right",
         },
         {
-          "align": "center",
+          "align": "left",
         },
         {
-          "align": "center",
+          "align": "left",
         },
         {
-          "align": "center",
+          "align": "left",
         },
       ],
       "rows": [
