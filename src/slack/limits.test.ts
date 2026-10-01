@@ -11,7 +11,7 @@ describe("poll limits fit inside Slack limits", () => {
       POLL_LIMITS.MAX_SLOTS_PER_DAY / SLACK_LIMITS.CHECKBOX_OPTIONS,
     );
     const perDay = 1 /* header */ + inputsPerDay;
-    const fixed = 3; // context line, divider, "can't make any" input
+    const fixed = 4; // context line, web grid link, divider, "can't make any" checkbox
     expect(POLL_LIMITS.MAX_DAYS * perDay + fixed).toBeLessThanOrEqual(
       SLACK_LIMITS.BLOCKS_PER_MODAL,
     );

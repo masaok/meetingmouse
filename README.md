@@ -12,7 +12,7 @@ and the organizer locks one in with an Add to Google Calendar link.
 
 1. **Start a poll.** `/when <title>` or the global shortcut opens a modal: date range, working hours, slot length.
 2. **One message.** The app posts a single poll message in the channel.
-3. **Everyone responds.** Each person clicks Add my availability and paints their free slots on the [web grid](./docs/WEB_GRID.md), in their own time zone, with the group's availability beside theirs. A host that does not serve the grid gets a checkbox form in Slack.
+3. **Everyone responds.** Each person clicks Add my availability and ticks their free slots in a form in Slack, in their own time zone, with a count beside each time of who is free so far. A host can also serve the [web grid](./docs/WEB_GRID.md), a page for dragging across the same slots.
 4. **Live results.** The channel message re-renders after every response: a grid of who is free when, and the best times.
 5. **Lock it in.** The organizer picks a time and the thread gets an Add to Google Calendar link.
 

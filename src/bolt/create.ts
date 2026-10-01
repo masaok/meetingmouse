@@ -48,7 +48,7 @@ export interface CreateMeetingMouseOptions {
    */
   auth: { token: string } | { authorize: Authorize } | { oauth: OAuthOptions };
   /**
-   * Turns on the web grid: Add my availability then leads with a personal link to it. The host
+   * Turns on the web grid: the Add my availability form then carries a personal link to it. The host
    * serves the page by mounting `createGridHandlers` from `meetingmouse/web` at `/grid/[token]`
    * with the same secret.
    */

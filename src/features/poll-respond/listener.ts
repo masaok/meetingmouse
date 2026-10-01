@@ -4,6 +4,7 @@ import type { WebClient } from "@slack/web-api";
 
 import { db } from "@/db/client";
 import { getPollSnapshot, getUserAvailability, saveResponse } from "@/db/queries";
+import { tally } from "@/domain/tally";
 import type { Feature, FeatureContext } from "@/features/types";
 import { log } from "@/lib/log";
 import { refreshPollMessage } from "@/lib/refresh";
@@ -13,18 +14,11 @@ import { epochSeconds } from "@/slack/format";
 import {
   ACTION_GRID_LINK,
   ACTION_RESPOND_BUTTON,
-  ACTION_RESPOND_CHECKBOXES,
   CALLBACK_RESPOND_MODAL,
 } from "@/slack/ids";
 
-import {
-  gridChooserView,
-  loadingView,
-  respondModal,
-  unavailableReason,
-  unavailableView,
-} from "./blocks";
-import { parsePrivateMetadata, parseRespondSubmission } from "./schema";
+import { loadingView, respondModal, unavailableReason, unavailableView } from "./blocks";
+import { parsePrivateMetadata, parseRespondSubmission, RESPOND } from "./schema";
 
 type ViewUpdate = (view: ModalView) => Promise<unknown>;
 type Respond = (message: {
@@ -40,11 +34,11 @@ interface Opening {
   client: WebClient;
   update: ViewUpdate;
   respond?: Respond;
-  /** The viewer's link to the web grid, when the host serves one and they have not declined it. */
-  gridUrl?: (pollId: string) => string;
+  /** The viewer's link to the web grid, when the host serves one. */
+  gridUrl?: string;
 }
 
-/** Fetch, then swap the loading view for the real one: the grid chooser or the checkbox form. */
+/** Fetch, then swap the loading view for the checkbox form. */
 async function showRespondView(opening: Opening): Promise<void> {
   const { pollId, userId, teamId, client, update, respond, gridUrl } = opening;
   try {
@@ -55,13 +49,6 @@ async function showRespondView(opening: Opening): Promise<void> {
     }
     if (snapshot.poll.status !== "open") {
       await update(unavailableView(unavailableReason(snapshot.poll.status)));
-      return;
-    }
-    if (gridUrl) {
-      // Warm the profile cache: the grid page labels its times in the viewer's Slack zone.
-      await getUserProfile(db, client, teamId, userId);
-      await update(gridChooserView({ pollId, gridUrl: gridUrl(pollId) }));
-      log.info({ action: "grid_link_offered", poll_id: pollId, user_id: userId });
       return;
     }
     const [profile, selected] = await Promise.all([
@@ -77,6 +64,14 @@ async function showRespondView(opening: Opening): Promise<void> {
         tz: profile.tz,
         selected,
         noneSelected,
+        counts: new Map(
+          tally(snapshot.slots, snapshot.availability).map((t) => [
+            epochSeconds(t.slot),
+            t.count,
+          ]),
+        ),
+        responded: snapshot.participants.length,
+        gridUrl,
       }),
     );
     log.info({
@@ -127,22 +122,7 @@ export function register(app: App, context: FeatureContext = {}): void {
       client,
       respond,
       update: (view) => client.views.update({ view_id: viewId, view }),
-      gridUrl: grid && ((id) => grid.urlFor({ pollId: id, teamId, userId })),
-    });
-  });
-
-  // "Use checkboxes instead" on the grid chooser: the same view, swapped for the form.
-  app.action(ACTION_RESPOND_CHECKBOXES, async ({ ack, action, body, client }) => {
-    await ack();
-    const pollId = action.type === "button" ? action.value : undefined;
-    const viewId = "view" in body ? body.view?.id : undefined;
-    if (!pollId || !viewId) return;
-    await showRespondView({
-      pollId,
-      userId: body.user.id,
-      teamId: body.team?.id ?? "",
-      client,
-      update: (view) => client.views.update({ view_id: viewId, view }),
+      gridUrl: grid?.urlFor({ pollId, teamId, userId }),
     });
   });
 
@@ -150,6 +130,13 @@ export function register(app: App, context: FeatureContext = {}): void {
   app.action(ACTION_GRID_LINK, async ({ ack }) => {
     await ack();
   });
+
+  // The form's checkboxes sit in actions blocks, so every tick is reported. The answer is read
+  // from the view's state on Save; a tick only needs the ack.
+  for (const actionId of [RESPOND.SLOTS_ACTION, RESPOND.NONE_ACTION])
+    app.action(actionId, async ({ ack }) => {
+      await ack();
+    });
 
   app.view(CALLBACK_RESPOND_MODAL, async ({ ack, view, body, client }) => {
     const meta = parsePrivateMetadata(view.private_metadata);
