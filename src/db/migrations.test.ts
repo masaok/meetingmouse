@@ -68,7 +68,8 @@ describe("a host running the core's migrations next to its own", () => {
     await migrate(db, CORE_MIGRATIONS);
     await migrate(db, host);
     expect(await publicTables(db)).toEqual(expected);
-  });
+    // Four migration runs on a fresh in-process Postgres: over the 5 s default when the suite runs in parallel.
+  }, 20_000);
 
   it("with separate journal tables, order does not matter", async () => {
     const db = drizzle(new PGlite());

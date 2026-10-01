@@ -1,35 +1,110 @@
-import type { ActionsBlock, Checkboxes, HeaderBlock, SectionBlock } from "@slack/types";
+import type { ActionsBlock, Button, SectionBlock } from "@slack/types";
 import { describe, expect, it } from "vitest";
 
 import { POLL_LIMITS } from "@/domain/constants";
 import { generateSlots, upcomingDates } from "@/domain/slots";
 import { fixture, FIXTURE_NOW, FIXTURE_TZ } from "@/slack/fixtures";
 import { epochSeconds } from "@/slack/format";
-import { CALLBACK_RESPOND_MODAL } from "@/slack/ids";
+import { ACTION_TOGGLE_NONE, CALLBACK_RESPOND_MODAL } from "@/slack/ids";
 import { SLACK_LIMITS } from "@/slack/limits";
 
 import { loadingView, respondModal, unavailableView } from "./blocks";
-import { dayBlockId, RESPOND } from "./schema";
+import { dayBlockId, SLOT_ACTION, slotActionId } from "./schema";
 
-/** The form's checkbox groups: actions blocks holding one checkboxes element each. */
-const checkboxGroups = (blocks: ReturnType<typeof respondModal>["blocks"]) =>
-  blocks
+type View = ReturnType<typeof respondModal>;
+
+/** The rows of time buttons: every actions block except the one holding "none of these". */
+const dayRows = (view: View) =>
+  view.blocks
     .filter((b): b is ActionsBlock => b.type === "actions")
-    .map((b) => ({ block_id: b.block_id, element: b.elements[0] as Checkboxes }));
+    .filter((b) => b.block_id?.startsWith("day_"))
+    .map((b) => ({ block_id: b.block_id, buttons: b.elements as Button[] }));
+const noneButton = (view: View) =>
+  view.blocks
+    .filter((b): b is ActionsBlock => b.type === "actions")
+    .flatMap((b) => b.elements as Button[])
+    .find((b) => b.action_id === ACTION_TOGGLE_NONE);
+const dayHeadings = (view: View) =>
+  view.blocks
+    .filter((b): b is SectionBlock => b.type === "section")
+    .map((b) => b.text?.text ?? "")
+    .filter((text) => text.startsWith("*"));
+const statusLine = (view: View) => JSON.stringify(view.blocks.at(-1));
+
+const form = (overrides: Partial<Parameters<typeof respondModal>[0]> = {}) => {
+  const s = fixture("three-day");
+  return respondModal({
+    poll: s.poll,
+    slots: s.slots,
+    tz: FIXTURE_TZ,
+    selected: [],
+    noneSelected: false,
+    ...overrides,
+  });
+};
 
 describe("respondModal", () => {
   it("matches the snapshot for a three-day poll viewed from Tokyo with a prior answer", () => {
     const s = fixture("three-day");
-    const view = respondModal({
-      poll: s.poll,
-      slots: s.slots,
-      tz: "Asia/Tokyo",
-      selected: [s.slots[0], s.slots[3]],
-      noneSelected: false,
-    });
+    const view = form({ tz: "Asia/Tokyo", selected: [s.slots[0], s.slots[3]] });
     expect(view).toMatchSnapshot();
     expect(view.callback_id).toBe(CALLBACK_RESPOND_MODAL);
     expect(JSON.parse(view.private_metadata ?? "{}")).toEqual({ pollId: s.poll.id });
+  });
+
+  it("is a row of buttons per day, one per slot, with no Save", () => {
+    const s = fixture("three-day");
+    const view = form();
+    const rows = dayRows(view);
+
+    expect(dayHeadings(view)).toEqual([
+      "*Tuesday, October 6*",
+      "*Wednesday, October 7*",
+      "*Thursday, October 8*",
+    ]);
+    expect(rows.map((r) => r.buttons.length)).toEqual([16, 16, 16]);
+    expect(rows[0].buttons.slice(0, 3).map((b) => b.text.text)).toEqual([
+      "9am",
+      "9:30am",
+      "10am",
+    ]);
+    expect(rows[0].buttons[0]).toMatchObject({
+      action_id: slotActionId(epochSeconds(s.slots[0])),
+      value: String(epochSeconds(s.slots[0])),
+    });
+    expect(view.submit).toBeUndefined();
+    expect(view.close?.text).toBe("Done");
+    expect(view.blocks.filter((b) => b.type === "input")).toEqual([]);
+  });
+
+  it("marks the chosen times green with a tick and counts them", () => {
+    const s = fixture("three-day");
+    const view = form({ selected: [s.slots[1], s.slots[2]] });
+    const [first] = dayRows(view);
+
+    expect(first.buttons.slice(0, 4).map((b) => [b.text.text, b.style])).toEqual([
+      ["9am", undefined],
+      ["✓ 9:30am", "primary"],
+      ["✓ 10am", "primary"],
+      ["10:30am", undefined],
+    ]);
+    expect(statusLine(view)).toContain("2 times chosen");
+    expect(statusLine(form({ selected: [s.slots[1]] }))).toContain("1 time chosen");
+  });
+
+  it("says so when nothing is answered yet, and when the answer is none of these", () => {
+    expect(statusLine(form())).toContain("You have not answered yet");
+    expect(noneButton(form())).toMatchObject({
+      text: { text: "I can't make any of these" },
+    });
+    expect(noneButton(form())?.style).toBeUndefined();
+
+    const none = form({ noneSelected: true });
+    expect(statusLine(none)).toContain("none of these times work");
+    expect(noneButton(none)).toMatchObject({
+      style: "danger",
+      text: { text: "✓ I can't make any of these" },
+    });
   });
 
   it("groups by the responder's local date, so one creator day can span two local days", () => {
@@ -41,165 +116,47 @@ describe("respondModal", () => {
       slotMinutes: 30,
       tz: FIXTURE_TZ,
     });
-    const view = respondModal({
-      poll: fixture("empty").poll,
-      slots,
-      tz: "Asia/Tokyo",
-      selected: [],
-      noneSelected: false,
-    });
-    const headers = view.blocks
-      .filter((b) => b.type === "header")
-      .map((b) => (b as HeaderBlock).text.text);
-    expect(headers).toEqual(["Tuesday, October 6", "Wednesday, October 7"]);
-    const inputs = checkboxGroups(view.blocks).filter((b) =>
-      b.block_id?.startsWith(RESPOND.DAY_PREFIX),
-    );
-    expect(inputs.map((b) => [b.block_id, b.element.options.length])).toEqual([
+    const view = form({ poll: fixture("empty").poll, slots, tz: "Asia/Tokyo" });
+
+    expect(dayHeadings(view)).toEqual(["*Tuesday, October 6*", "*Wednesday, October 7*"]);
+    expect(dayRows(view).map((r) => [r.block_id, r.buttons.length])).toEqual([
       [dayBlockId("2026-10-06", 0), 4],
-      [dayBlockId("2026-10-07", 0), 10],
-      [dayBlockId("2026-10-07", 1), 10],
+      [dayBlockId("2026-10-07", 0), 20],
     ]);
-    expect(inputs[1].element.options[0].text.text).toBe("*12:00 AM*  ·  30 min");
-  });
-
-  it("has no input blocks, so no row carries a label or an (optional) tag", () => {
-    const s = fixture("three-day");
-    const view = respondModal({
-      poll: s.poll,
-      slots: s.slots,
-      tz: FIXTURE_TZ,
-      selected: [],
-      noneSelected: false,
-    });
-    expect(view.blocks.filter((b) => b.type === "input")).toEqual([]);
-    expect(JSON.stringify(view.blocks)).not.toContain("Times (continued)");
-  });
-
-  it("shows under each time how many of the people who answered are free", () => {
-    const s = fixture("three-day");
-    const [first, second] = s.slots;
-    const view = respondModal({
-      poll: s.poll,
-      slots: s.slots,
-      tz: FIXTURE_TZ,
-      selected: [],
-      noneSelected: false,
-      counts: new Map([[epochSeconds(first), 3]]),
-      responded: 4,
-    });
-    const [day] = checkboxGroups(view.blocks);
-    expect(day.element.options[0].text.text).toBe("*9:00 AM*  ·  30 min");
-    expect(day.element.options[0].description?.text).toBe("👥 3 of 4 free");
-    expect(day.element.options[1].value).toBe(String(epochSeconds(second)));
-    expect(day.element.options[1].description?.text).toBe("👥 0 of 4 free");
-    expect(JSON.stringify(view.blocks[0])).toContain("4 people have answered");
-  });
-
-  it("leaves the counts off when nobody has answered yet", () => {
-    const s = fixture("empty");
-    const view = respondModal({
-      poll: s.poll,
-      slots: s.slots,
-      tz: FIXTURE_TZ,
-      selected: [],
-      noneSelected: false,
-    });
-    const [day] = checkboxGroups(view.blocks);
-    expect(day.element.options[0].description).toBeUndefined();
-    expect(JSON.stringify(view.blocks[0])).toContain("Nobody has answered yet");
-  });
-
-  it("names the slot length the way a person would", () => {
-    const s = fixture("empty");
-    const text = (slotMinutes: 15 | 30 | 60) =>
-      checkboxGroups(
-        respondModal({
-          poll: { ...s.poll, slotMinutes },
-          slots: s.slots,
-          tz: FIXTURE_TZ,
-          selected: [],
-          noneSelected: false,
-        }).blocks,
-      )[0].element.options[0].text.text;
-    expect(text(15)).toBe("*9:00 AM*  ·  15 min");
-    expect(text(60)).toBe("*9:00 AM*  ·  1 h");
-  });
-
-  it("offers the web grid as a link above the form when the host serves it", () => {
-    const s = fixture("three-day");
-    const input = {
-      poll: s.poll,
-      slots: s.slots,
-      tz: FIXTURE_TZ,
-      selected: [],
-      noneSelected: false,
-    };
-    const withGrid = respondModal({ ...input, gridUrl: "https://host.test/grid/abc" });
-    const link = withGrid.blocks[1] as SectionBlock;
-    expect(link.accessory?.type === "button" && link.accessory.url).toBe(
-      "https://host.test/grid/abc",
-    );
-    expect(withGrid.submit?.text).toBe("Save");
-    expect(JSON.stringify(respondModal(input).blocks)).not.toContain("Open the grid");
+    expect(dayRows(view)[1].buttons[0].text.text).toBe("12am");
   });
 
   it("stays inside Slack limits for the 14-day × 24-slot worst case in another zone", () => {
     const s = fixture("worst-case");
-    const view = respondModal({
+    const view = form({
       poll: s.poll,
       slots: s.slots,
       tz: "Asia/Kolkata",
       selected: s.slots,
-      noneSelected: false,
     });
     expect(view.blocks.length).toBeLessThanOrEqual(SLACK_LIMITS.BLOCKS_PER_MODAL);
     expect(view.title.text.length).toBeLessThanOrEqual(SLACK_LIMITS.MODAL_TITLE_CHARS);
-    const inputs = checkboxGroups(view.blocks);
-    let options = 0;
-    for (const b of inputs) {
-      expect(b.element.options.length).toBeLessThanOrEqual(SLACK_LIMITS.CHECKBOX_OPTIONS);
-      for (const o of b.element.options) {
-        expect(o.text.text.length).toBeLessThanOrEqual(SLACK_LIMITS.OPTION_TEXT_CHARS);
-        expect(o.value?.length ?? 0).toBeLessThanOrEqual(SLACK_LIMITS.OPTION_VALUE_CHARS);
+    let buttons = 0;
+    for (const row of dayRows(view)) {
+      expect(row.buttons.length).toBeLessThanOrEqual(SLACK_LIMITS.ACTIONS_ELEMENTS);
+      const ids = row.buttons.map((b) => b.action_id);
+      expect(new Set(ids).size).toBe(ids.length);
+      for (const b of row.buttons) {
+        expect(SLOT_ACTION.test(b.action_id ?? "")).toBe(true);
+        expect(b.text.text.length).toBeLessThanOrEqual(SLACK_LIMITS.OPTION_TEXT_CHARS);
       }
-      options += b.block_id === RESPOND.NONE_BLOCK ? 0 : b.element.options.length;
+      buttons += row.buttons.length;
     }
-    expect(options).toBe(POLL_LIMITS.MAX_DAYS * POLL_LIMITS.MAX_SLOTS_PER_DAY);
+    expect(buttons).toBe(POLL_LIMITS.MAX_DAYS * POLL_LIMITS.MAX_SLOTS_PER_DAY);
   });
 
-  it("pre-fills the saved selection with option objects identical to the options", () => {
-    const s = fixture("three-day");
-    const selected = [s.slots[1], s.slots[2]];
-    const view = respondModal({
-      poll: s.poll,
-      slots: s.slots,
-      tz: FIXTURE_TZ,
-      selected,
-      noneSelected: false,
-    });
-    const first = checkboxGroups(view.blocks)[0];
-    expect(first.element.initial_options?.map((o) => o.value)).toEqual(
-      selected.map((d) => String(epochSeconds(d))),
+  it("offers the web grid as a link above the form when the host serves it", () => {
+    const withGrid = form({ gridUrl: "https://host.test/grid/abc" });
+    const link = withGrid.blocks[1] as SectionBlock;
+    expect(link.accessory?.type === "button" && link.accessory.url).toBe(
+      "https://host.test/grid/abc",
     );
-    for (const init of first.element.initial_options ?? [])
-      expect(first.element.options).toContainEqual(init);
-    expect(JSON.stringify(view.blocks[0])).toContain("your previous answer is ticked");
-  });
-
-  it("pre-checks 'none of these' when the participant previously chose it", () => {
-    const s = fixture("three-day");
-    const view = respondModal({
-      poll: s.poll,
-      slots: s.slots,
-      tz: FIXTURE_TZ,
-      selected: [],
-      noneSelected: true,
-    });
-    const none = checkboxGroups(view.blocks).find(
-      (b) => b.block_id === RESPOND.NONE_BLOCK,
-    );
-    expect(none?.element.initial_options?.[0]?.value).toBe(RESPOND.NONE_VALUE);
+    expect(JSON.stringify(form().blocks)).not.toContain("Open the grid");
   });
 
   it("has small loading and unavailable views", () => {

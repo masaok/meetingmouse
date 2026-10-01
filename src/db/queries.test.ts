@@ -11,10 +11,12 @@ import {
   getPollSnapshot,
   getUserAvailability,
   listPollsForUser,
+  removeResponse,
   rowsOf,
   saveResponse,
   setMessageTs,
   setStatus,
+  toggleSlot,
   upsertCachedUser,
   type Db,
 } from "./queries";
@@ -174,6 +176,61 @@ describe("saveResponse", () => {
     expect(snap.participants).toHaveLength(1);
     const saved = await getUserAvailability(db, poll.id, "UA");
     expect([first, second]).toContainEqual(saved);
+  });
+});
+
+describe("toggleSlot", () => {
+  const toggle = (pollId: string, userId: string, slot: Date) =>
+    toggleSlot(db, { pollId, userId, tz: "UTC", displayName: userId, slot });
+
+  it("adds a slot, records the participant, and removes the slot on the second call", async () => {
+    const poll = await newPoll();
+    await toggle(poll.id, "U1", S1);
+    expect(await getUserAvailability(db, poll.id, "U1")).toEqual([S1]);
+    expect(await countRows("participants", poll.id)).toBe(1);
+
+    await toggle(poll.id, "U1", S1);
+    expect(await getUserAvailability(db, poll.id, "U1")).toEqual([]);
+    expect(await countRows("participants", poll.id)).toBe(1);
+  });
+
+  it("flips only the slot it is given, for only that user", async () => {
+    const poll = await newPoll();
+    await respond(poll.id, "U1", [S1, S2]);
+    await respond(poll.id, "U2", [S1]);
+    await toggle(poll.id, "U1", S1);
+    await toggle(poll.id, "U1", S3);
+
+    expect(await getUserAvailability(db, poll.id, "U1")).toEqual([S2, S3]);
+    expect(await getUserAvailability(db, poll.id, "U2")).toEqual([S1]);
+  });
+
+  it("two toggles of one slot at once leave it either on or off, never doubled", async () => {
+    const poll = await newPoll();
+    await Promise.all([toggle(poll.id, "U1", S1), toggle(poll.id, "U1", S1)]);
+    expect((await getUserAvailability(db, poll.id, "U1")).length).toBeLessThanOrEqual(1);
+  });
+
+  it("rejects a slot that is not in the poll and writes nothing", async () => {
+    const poll = await newPoll();
+    await rejectsWithConstraint(
+      toggle(poll.id, "U1", NOT_A_SLOT),
+      /availability_slot_fk/,
+    );
+    expect(await countRows("participants", poll.id)).toBe(0);
+  });
+});
+
+describe("removeResponse", () => {
+  it("forgets one user's answer and slots, and nobody else's", async () => {
+    const poll = await newPoll();
+    await respond(poll.id, "U1", [S1, S2]);
+    await respond(poll.id, "U2", [S1]);
+    await removeResponse(db, poll.id, "U1");
+
+    const snapshot = await getPollSnapshot(db, poll.id);
+    expect(snapshot?.participants.map((p) => p.userId)).toEqual(["U2"]);
+    expect(snapshot?.availability).toEqual([{ userId: "U2", slotStart: S1 }]);
   });
 });
 

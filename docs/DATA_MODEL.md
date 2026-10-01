@@ -26,10 +26,11 @@ The check constraints on `slot_minutes` and `status` are generated from `SLOT_MI
 ## Semantics
 
 - A **participant row with zero availability rows** means "none of these work for me". It counts as responded.
-- **Saving a response is replace-all** for that user, in **one SQL statement** with data-modifying CTEs (`saveResponse` in `src/db/queries.ts`): upsert `participants`, delete that user's `availability` rows not in the new set, insert the rows not yet present (`ON CONFLICT DO NOTHING`). A single statement is atomic on every driver, so the same code runs on neon-http in production and PGlite in tests; no `batch`, no `transaction`. A slot outside `poll_slots` violates the FK and rejects the whole statement.
+- **A click in the respond form flips one slot** (`toggleSlot`): upsert `participants`, delete that slot's row if it is there, insert it if the delete found nothing, in one statement. `removeResponse` deletes the participant row, and its availability goes by cascade.
+- **Saving a whole answer is replace-all** for that user, in **one SQL statement** with data-modifying CTEs (`saveResponse` in `src/db/queries.ts`): upsert `participants`, delete that user's `availability` rows not in the new set, insert the rows not yet present (`ON CONFLICT DO NOTHING`). A single statement is atomic on every driver, so the same code runs on neon-http in production and PGlite in tests; no `batch`, no `transaction`. A slot outside `poll_slots` violates the FK and rejects the whole statement.
 - **Creating a poll** inserts the poll and all its slots the same way, in one statement.
 - **Queries take the database as their first argument** (`Db` in `src/db/queries.ts`); listeners pass the Neon `db` from `src/db/client.ts`, tests pass a PGlite instance with the real migrations applied (`tests/db/pglite.ts`).
-- **Concurrent submits:** every re-render reads fresh aggregates _after_ its write commits, so last-writer-wins on `chat.update` still shows complete data.
+- **Concurrent answers:** every re-render reads fresh aggregates _after_ its write commits, so last-writer-wins on `chat.update` still shows complete data.
 - `message_ts` is null between insert and a successful `chat.postMessage`. If posting fails the poll row is deleted.
 
 ## Migrations

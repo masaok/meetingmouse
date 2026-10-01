@@ -7,12 +7,14 @@ import { SLACK_LIMITS } from "./limits";
 /** The poll limits are derived from the Slack limits. These tests are the derivation. */
 describe("poll limits fit inside Slack limits", () => {
   it("worst-case respond modal stays under the block cap", () => {
-    const inputsPerDay = Math.ceil(
-      POLL_LIMITS.MAX_SLOTS_PER_DAY / SLACK_LIMITS.CHECKBOX_OPTIONS,
+    const rowsPerDay = Math.ceil(
+      POLL_LIMITS.MAX_SLOTS_PER_DAY / SLACK_LIMITS.ACTIONS_ELEMENTS,
     );
-    const perDay = 1 /* header */ + inputsPerDay;
-    const fixed = 4; // context line, web grid link, divider, "can't make any" checkbox
-    expect(POLL_LIMITS.MAX_DAYS * perDay + fixed).toBeLessThanOrEqual(
+    const perDay = 1 /* day heading */ + rowsPerDay;
+    // A responder in another zone can see one more local day than the organizer picked.
+    const days = POLL_LIMITS.MAX_DAYS + 1;
+    const fixed = 5; // context line, web grid link, divider, "can't make any" button, status line
+    expect(days * (perDay + 1) + fixed).toBeLessThanOrEqual(
       SLACK_LIMITS.BLOCKS_PER_MODAL,
     );
   });
