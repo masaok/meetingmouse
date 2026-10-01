@@ -11,7 +11,7 @@ import {
 } from "@/slack/ids";
 
 import { fakeApp, fakeClient } from "../../../tests/helpers/fakeApp";
-import { INVITE_HINT, register } from "./listener";
+import { DM_HINT, INVITE_HINT, register } from "./listener";
 import { INPUT } from "./schema";
 
 vi.mock("@/db/client", () => ({ db: {} }));
@@ -88,6 +88,7 @@ describe("poll-create listener", () => {
         team_id: "T1",
         user_id: "U1",
         channel_id: "C123",
+        channel_name: "general",
         text: " Sprint planning ",
         trigger_id: "tr",
       },
@@ -98,6 +99,28 @@ describe("poll-create listener", () => {
     expect(view.callback_id).toBe(CALLBACK_CREATE_POLL_MODAL);
     expect(JSON.stringify(view)).toContain('"initial_value":"Sprint planning"');
     expect(JSON.stringify(view)).toContain('"initial_conversation":"C123"');
+  });
+
+  it.each([
+    ["a 1:1 DM", { channel_id: "D123", channel_name: "directmessage" }],
+    ["a group DM", { channel_id: "C999", channel_name: "mpdm-ann--bob--cy-1" }],
+  ])("/when in %s answers with the hint and opens nothing", async (_name, channel) => {
+    const client = fakeClient();
+    const ack = vi.fn();
+    await invoke("command", COMMAND_WHEN, {
+      ack,
+      client,
+      command: {
+        team_id: "T1",
+        user_id: "U1",
+        ...channel,
+        text: "Sprint planning",
+        trigger_id: "tr",
+      },
+    });
+    expect(ack).toHaveBeenCalledOnce();
+    expect(ack).toHaveBeenCalledWith(DM_HINT);
+    expect(client.views.open).not.toHaveBeenCalled();
   });
 
   it("the shortcut opens the modal without a channel", async () => {
