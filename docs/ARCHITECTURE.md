@@ -139,13 +139,14 @@ client import is a build error, not a review comment.
 Constants in `src/slack/limits.ts`; poll limits in `src/domain/constants.ts`; the derivation is
 asserted in `src/slack/limits.test.ts`.
 
-| Limit                      | Value | Consequence                                                 |
-| -------------------------- | ----- | ----------------------------------------------------------- |
-| Checkbox options / element | 10    | Each day's slots split into ≤10-option inputs               |
-| Blocks / modal             | 100   | Polls capped at 14 days × 24 slots                          |
-| Blocks / message           | 50    | Heatmap is one section per day, not one block per slot      |
-| Section text               | 3000  | Compact rows; fall back to top rows plus a note if exceeded |
-| `trigger_id` lifetime      | ~3 s  | `views.open` a loading view first, DB work after            |
+| Limit                      | Value                                    | Consequence                                              |
+| -------------------------- | ---------------------------------------- | -------------------------------------------------------- |
+| Checkbox options / element | 10                                       | Each day's slots split into ≤10-option inputs            |
+| Blocks / modal             | 100                                      | Polls capped at 14 days × 24 slots                       |
+| Blocks / message           | 50                                       | Heatmap is one table block, not one block per slot       |
+| Table block                | 100 rows, 20 cells per row, 10,000 chars | 14 days of 24 slots is 25 rows by 15 columns             |
+| Section text               | 3000                                     | Only the best-times and everyone-free lines are sections |
+| `trigger_id` lifetime      | ~3 s                                     | `views.open` a loading view first, DB work after         |
 
 ## Tradeoffs a reviewer will ask about
 
@@ -171,6 +172,6 @@ The homepage and the webhook deploy as one project with one set of env vars, and
 types the route. A bare function would drop the page and the typegen to save one framework.
 
 **Where the in-Slack design stops.** The 100-block modal caps a poll at 14 days of 24 slots and
-the 50-block message caps the heatmap at one section per day; see
+the heatmap table holds at most 20 columns and squares, not shades, for intensity; see
 [Slack limits that shape the design](#slack-limits-that-shape-the-design). Past that, the exits
 are a rendered heatmap image and a web grid, tracked as issues rather than built ahead of need.
