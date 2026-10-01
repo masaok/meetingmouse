@@ -2,7 +2,8 @@ import Link from "next/link";
 
 import { Logo, LogoMark, Mascot } from "@/components/brand";
 
-const SLACK_INSTALL_URL = "https://github.com/masaok/meetmouse#run-it-yourself";
+const SLACK_INSTALL_URL = "https://app.meetmouse.net/api/slack/install";
+const SELF_HOST_URL = "https://github.com/masaok/meetmouse#run-it-yourself";
 
 const steps = [
   {
@@ -164,7 +165,7 @@ export default function Home() {
             href={SLACK_INSTALL_URL}
             className="bg-accent hover:bg-accent-hover rounded-full px-4 py-2 font-medium text-white transition-colors dark:text-stone-950"
           >
-            Self-host it
+            Add to Slack
           </a>
         </nav>
       </header>
@@ -191,13 +192,13 @@ export default function Home() {
                 href={SLACK_INSTALL_URL}
                 className="bg-accent hover:bg-accent-hover inline-flex h-12 items-center justify-center rounded-full px-6 font-medium text-white transition-colors dark:text-stone-950"
               >
-                Self-host it
+                Add to Slack
               </a>
               <a
-                href="#how"
+                href={SELF_HOST_URL}
                 className="inline-flex h-12 items-center justify-center rounded-full border border-stone-300 px-6 font-medium transition-colors hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-900"
               >
-                See how it works
+                Self-host it
               </a>
             </div>
             <p className="mt-4 text-sm text-stone-500 dark:text-stone-500">
@@ -262,15 +263,19 @@ export default function Home() {
                   Stop scheduling in a thread.
                 </h2>
                 <p className="mt-2 text-stone-600 dark:text-stone-400">
-                  Deploy your own copy and run your first poll today.
+                  Add it to your workspace and run your first poll today, or{" "}
+                  <a href={SELF_HOST_URL} className="underline underline-offset-4">
+                    deploy your own copy
+                  </a>
+                  .
                 </p>
               </div>
             </div>
             <a
               href={SLACK_INSTALL_URL}
-              className="bg-accent hover:bg-accent-hover inline-flex h-12 items-center justify-center rounded-full px-6 font-medium text-white transition-colors dark:text-stone-950"
+              className="bg-accent hover:bg-accent-hover inline-flex h-12 shrink-0 items-center justify-center rounded-full px-6 font-medium text-white transition-colors dark:text-stone-950"
             >
-              Self-host it
+              Add to Slack
             </a>
           </div>
         </section>
