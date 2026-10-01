@@ -14,15 +14,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Meet Mouse · find a meeting time without leaving Slack",
+  title: "Meeting Mouse · find a meeting time without leaving Slack",
   description:
     "Availability polls that live in Slack. Run /when, everyone marks when they're free, and the channel message updates live with a heatmap and the best times.",
-  metadataBase: new URL("https://meetmouse.net"),
+  metadataBase: new URL("https://meetingmouse.net"),
   openGraph: {
-    title: "Meet Mouse · find a meeting time without leaving Slack",
+    title: "Meeting Mouse · find a meeting time without leaving Slack",
     description: "Availability polls with a live heatmap, right in your Slack channel.",
-    url: "https://meetmouse.net",
-    siteName: "Meet Mouse",
+    url: "https://meetingmouse.net",
+    siteName: "Meeting Mouse",
     type: "website",
   },
 };

@@ -1,5 +1,5 @@
 blank_issues_enabled: true
 contact_links:
   - name: Security issue
-    url: https://github.com/masaok/meetmouse/security/policy
+    url: https://github.com/masaok/meetingmouse/security/policy
     about: Report vulnerabilities privately, not as an issue.

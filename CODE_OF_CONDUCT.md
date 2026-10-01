@@ -1,6 +1,6 @@
 # Code of conduct
 
-Meet Mouse is a small project and this is a short document.
+Meeting Mouse is a small project and this is a short document.
 
 - Be kind and assume good faith. Disagree with ideas, not people.
 - Review the work, not the author. Say what is wrong and, where you can, how you would fix it.

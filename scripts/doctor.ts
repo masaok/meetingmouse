@@ -40,7 +40,7 @@ try {
   const body = await res.text();
   report(
     "homepage",
-    res.status === 200 && body.includes("Meet Mouse") ? "PASS" : "FAIL",
+    res.status === 200 && body.includes("Meeting Mouse") ? "PASS" : "FAIL",
     `${res.status} ${url}/`,
   );
 } catch (error) {

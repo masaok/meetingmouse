@@ -1,11 +1,11 @@
 ---
 name: verify-meetmouse
-description: Drive Meet Mouse the way Slack does and prove behavior with evidence. Use before reporting any change as done, before every PR, when the user says "ship it" or "does it work", and as the harness for reproducing bug reports. Sections are Launch, Doctor, Drive, Evidence, Cleanup, Helpers; per-feature recipes live in features/.
+description: Drive Meeting Mouse the way Slack does and prove behavior with evidence. Use before reporting any change as done, before every PR, when the user says "ship it" or "does it work", and as the harness for reproducing bug reports. Sections are Launch, Doctor, Drive, Evidence, Cleanup, Helpers; per-feature recipes live in features/.
 ---
 
-# Verify Meet Mouse
+# Verify Meeting Mouse
 
-Meet Mouse has no browser UI to drive: its surface is Slack. Slack sends signed HTTP POSTs to
+Meeting Mouse has no browser UI to drive: its surface is Slack. Slack sends signed HTTP POSTs to
 `/api/slack/events`; the app answers within 3 s, then calls the Slack Web API in the background.
 So the harness is **signed payloads in, HTTP status + structured log lines + Block Kit JSON out**,
 plus a real Postgres (PGlite in tests, Neon in a workspace). Read `features/README.md` for the

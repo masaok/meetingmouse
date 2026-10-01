@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { Logo, LogoMark, Mascot } from "@/components/brand";
 
-const SLACK_INSTALL_URL = "https://app.meetmouse.net/api/slack/install";
-const SELF_HOST_URL = "https://github.com/masaok/meetmouse#run-it-yourself";
+const SLACK_INSTALL_URL = "https://app.meetingmouse.net/api/slack/install";
+const SELF_HOST_URL = "https://github.com/masaok/meetingmouse#run-it-yourself";
 
 const steps = [
   {
@@ -113,7 +113,7 @@ function MockPoll() {
           <LogoMark className="h-5 w-5" />
         </span>
         <p className="text-sm leading-none font-bold">
-          Meet Mouse{" "}
+          Meeting Mouse{" "}
           <span className="ml-1 rounded bg-stone-100 px-1 py-px text-[10px] font-medium text-stone-500 uppercase dark:bg-stone-800 dark:text-stone-400">
             app
           </span>
@@ -145,7 +145,7 @@ export default function Home() {
   return (
     <div className="flex flex-1 flex-col">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
-        <Link href="/" aria-label="Meet Mouse home">
+        <Link href="/" aria-label="Meeting Mouse home">
           <Logo />
         </Link>
         <nav className="flex items-center gap-6 text-sm">
@@ -184,7 +184,7 @@ export default function Home() {
               <code className="rounded bg-stone-200/70 px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-stone-800">
                 /when
               </code>
-              , let everyone mark when they&apos;re free, and let Meet Mouse turn one
+              , let everyone mark when they&apos;re free, and let Meeting Mouse turn one
               Slack message into a live heatmap with the best times on top.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -282,7 +282,7 @@ export default function Home() {
       </main>
 
       <footer className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 py-8 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between dark:text-stone-500">
-        <p>© {new Date().getFullYear()} Meet Mouse · meetmouse.net</p>
+        <p>© {new Date().getFullYear()} Meeting Mouse · meetingmouse.net</p>
         <p>Not affiliated with Slack Technologies.</p>
       </footer>
     </div>

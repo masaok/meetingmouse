@@ -67,7 +67,7 @@ function list(heading: string, items: HomeItem[], empty: string): KnownBlock[] {
 
 export function homeView(input: HomeInput): HomeView {
   const blocks: KnownBlock[] = [
-    { type: "header", text: plain("Meet Mouse") },
+    { type: "header", text: plain("Meeting Mouse") },
     {
       type: "section",
       text: {

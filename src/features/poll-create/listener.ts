@@ -18,7 +18,7 @@ import { createPollModal } from "./blocks";
 import { parseCreatePollSubmission } from "./schema";
 
 export const INVITE_HINT =
-  "I can't post in that channel yet. Invite me with `/invite @Meet Mouse` and run `/when` again.";
+  "I can't post in that channel yet. Invite me with `/invite @Meeting Mouse` and run `/when` again.";
 
 export function register(app: App): void {
   app.command(COMMAND_WHEN, async ({ ack, command, client }) => {

@@ -10,7 +10,7 @@ its channel message. Phase 6; see `docs/ROADMAP.md`.
 
 ## How to get to it (user POV)
 
-- Click the **Meet Mouse** app in the Slack sidebar → **Home** tab.
+- Click the **Meeting Mouse** app in the Slack sidebar → **Home** tab.
 
 ## Driving it with slack-sign
 

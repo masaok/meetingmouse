@@ -6,7 +6,7 @@ exports[`homeView > renders the empty state 1`] = `
     {
       "text": {
         "emoji": true,
-        "text": "Meet Mouse",
+        "text": "Meeting Mouse",
         "type": "plain_text",
       },
       "type": "header",

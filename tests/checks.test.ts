@@ -148,7 +148,7 @@ describe("check-pack", () => {
   it("reads the file list from npm 11's array and from npm 12's object", () => {
     const entry = { files: [{ path: "LICENSE" }, { path: "dist/index.js" }] };
     expect(filesInReport([entry])).toEqual(["LICENSE", "dist/index.js"]);
-    expect(filesInReport({ meetmouse: entry })).toEqual(["LICENSE", "dist/index.js"]);
+    expect(filesInReport({ meetingmouse: entry })).toEqual(["LICENSE", "dist/index.js"]);
     expect(() => filesInReport([])).toThrow("npm pack reported no package");
   });
 });
@@ -171,7 +171,7 @@ describe("pack-lib", () => {
 
   it("derives the published manifest from the root and refuses an undeclared import", () => {
     const root = {
-      name: "meetmouse",
+      name: "meetingmouse",
       version: "0.1.0",
       license: "MIT",
       type: "module",
@@ -181,7 +181,7 @@ describe("pack-lib", () => {
       exports: { ".": "./dist/index.js" },
     };
     expect(manifestFor(root, ["zod"])).toEqual({
-      name: "meetmouse",
+      name: "meetingmouse",
       version: "0.1.0",
       license: "MIT",
       type: "module",
