@@ -121,7 +121,7 @@ describe("createMeetingMouse", () => {
     await bolt.app.init();
     await bolt.app.processEvent({
       body: {
-        command: "/when",
+        command: "/meet",
         team_id: "T123",
         user_id: "U42",
         channel_id: "C7",
@@ -205,7 +205,7 @@ describe("createMeetingMouse", () => {
       await bolt.app.init();
       await bolt.app.processEvent({
         body: {
-          command: "/when",
+          command: "/meet",
           team_id: "T1",
           user_id: "U9",
           channel_id: "C1",

@@ -34,7 +34,7 @@ Preconditions:
 
 ## Gotchas
 
-- `/meet` is the command the copy names. `/mouse` and `/when` are aliases registered by the same loop over `COMMANDS` in `src/slack/ids.ts`, and the manifest lists all three. Another Slack app that registers `/meet` in the same workspace takes it over if it was installed later; the aliases still work.
+- `/meet` is the command the copy names. `/mouse` is an alias registered by the same loop over `COMMANDS` in `src/slack/ids.ts`, and the manifest lists both. The app shipped with `/when`; it was removed in 0.12.0. Another Slack app that registers `/meet` in the same workspace takes it over if it was installed later; `/mouse` still works.
 - A DM is recognized by a channel id starting with `D`, or the channel name `directmessage` or `mpdm-…`. From a DM, the global shortcut still works: it has no channel and the picker offers only channels.
 - The modal's date labels are in the creator's `users.info` tz (cached in `slack_users`); a stale cache shows yesterday's dates after a tz change.
 - A window that leaves a partial trailing slot (9:00 to 9:45 with 30-min slots) yields one slot; that is by design (`slotsPerDay` floors).
