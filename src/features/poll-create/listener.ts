@@ -20,8 +20,30 @@ import { parseCreatePollSubmission } from "./schema";
 export const INVITE_HINT =
   "I can't post in that channel yet. Invite me with `/invite @Meeting Mouse` and run `/when` again.";
 
+export const DM_HINT =
+  "I can't post a poll in a direct message. Run `/when` in a channel instead.";
+
+/** A 1:1 or group DM. The bot cannot post there and the modal's channel picker excludes both. */
+const isDirectMessage = (command: {
+  channel_id: string;
+  channel_name: string;
+}): boolean =>
+  command.channel_id.startsWith("D") ||
+  command.channel_name === "directmessage" ||
+  command.channel_name.startsWith("mpdm-");
+
 export function register(app: App): void {
   app.command(COMMAND_WHEN, async ({ ack, command, client }) => {
+    if (isDirectMessage(command)) {
+      // The ack itself carries the reply: Slack shows a command's ack text ephemerally.
+      await ack(DM_HINT);
+      log.info({
+        action: "when_command_dm",
+        user_id: command.user_id,
+        channel_id: command.channel_id,
+      });
+      return;
+    }
     await ack();
     const profile = await getUserProfile(db, client, command.team_id, command.user_id);
     await client.views.open({
