@@ -3,6 +3,7 @@ import type { App } from "@slack/bolt";
 import { db } from "@/db/client";
 import { listPollsForUser } from "@/db/queries";
 import type { Poll } from "@/domain/types";
+import type { Feature } from "@/features/types";
 import { log } from "@/lib/log";
 import { slackErrorCode } from "@/lib/respond";
 import { EVENT_APP_HOME_OPENED } from "@/slack/ids";
@@ -74,3 +75,5 @@ export function register(app: App): void {
     }
   });
 }
+
+export const feature: Feature = { name: "app-home", register };

@@ -12,6 +12,7 @@ process.env.DATABASE_URL ??= "postgres://smoke:smoke@localhost:5432/smoke";
 const entryPoints = [
   "src/app/api/slack/events/route.ts",
   "src/bolt/app.ts",
+  "src/bolt/create.ts",
   "src/db/client.ts",
   "src/db/schema.ts",
   "src/features/index.ts",
