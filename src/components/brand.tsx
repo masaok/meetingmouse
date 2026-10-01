@@ -43,7 +43,7 @@ export function Logo({ className = "" }: { className?: string }) {
     <span className={`inline-flex items-center gap-2 font-semibold ${className}`}>
       <LogoMark className="h-8 w-8" />
       <span>
-        Meet <span className="text-accent">Mouse</span>
+        Meeting <span className="text-accent">Mouse</span>
       </span>
     </span>
   );
