@@ -27,7 +27,7 @@ Preconditions:
 
 - **Command opens the modal.** Run `pnpm slack:sign --command /meet --text "Sprint planning"`. Status `200`; dev log has `action: 'when_command'` then (offline) a logged `views.open` failure on the fake token, which proves the listener reached the API call.
 - **DM is refused.** Run `pnpm slack:sign --command /meet --channel D0000TEST`. Status `200`; the body is the hint ("I can't post a poll in a direct message..."); log `action: 'when_command_dm'` and no `views.open` call.
-- **Help answers with usage.** Run `pnpm slack:sign --command /when --text help`. Status `200`; the body is the usage text (`HELP_TEXT` in `listener.ts`); log `action: 'when_command_help'` and no `views.open` call. `--text "Help the new hire settle in"` opens the modal as any title does.
+- **Help answers with usage.** Run `pnpm slack:sign --command /meet --text help`. Status `200`; the body is the usage text (`HELP_TEXT` in `listener.ts`); log `action: 'when_command_help'` and no `views.open` call. `--text "Help the new hire settle in"` opens the modal as any title does.
 - **Shortcut opens the modal.** Run `pnpm slack:sign --payload tests/fixtures/payloads/create_poll_shortcut.json`. Status `200`; log `action: 'create_poll_shortcut'`.
 - **Modal shape.** Run `pnpm test src/features/poll-create/blocks.test.ts`. `Tests 5 passed`; the snapshot in `__snapshots__/` shows 21 date options, 6:00 to 23:00 times, 15/30/60 radios, the channel select with `response_url_enabled`.
 - **Validation.** Run `pnpm test src/features/poll-create/schema.test.ts`. `Tests 7 passed`, one per rule.
@@ -36,7 +36,7 @@ Preconditions:
 
 ## Gotchas
 
-- `/meet` is the command the copy names. `/mouse` and `/when` are aliases registered by the same loop over `COMMANDS` in `src/slack/ids.ts`, and the manifest lists all three. Another Slack app that registers `/meet` in the same workspace takes it over if it was installed later; the aliases still work.
+- `/meet` is the command the copy names. `/mouse` is an alias registered by the same loop over `COMMANDS` in `src/slack/ids.ts`, and the manifest lists both. The app shipped with `/when`; it was removed in 0.12.0. Another Slack app that registers `/meet` in the same workspace takes it over if it was installed later; `/mouse` still works.
 - A DM is recognized by a channel id starting with `D`, or the channel name `directmessage` or `mpdm-…`. From a DM, the global shortcut still works: it has no channel and the picker offers only channels.
 - The modal's date labels are in the creator's `users.info` tz (cached in `slack_users`); a stale cache shows yesterday's dates after a tz change.
 - A window that leaves a partial trailing slot (9:00 to 9:45 with 30-min slots) yields one slot; that is by design (`slotsPerDay` floors).

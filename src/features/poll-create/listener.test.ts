@@ -74,8 +74,8 @@ describe("poll-create listener", () => {
     });
   });
 
-  it("registers /meet and its two aliases, in the order the copy names them", () => {
-    expect(COMMANDS).toEqual(["/meet", "/mouse", "/when"]);
+  it("registers /meet and its alias /mouse, and nothing else", () => {
+    expect(COMMANDS).toEqual(["/meet", "/mouse"]);
   });
 
   it.each(COMMANDS)(
@@ -131,11 +131,11 @@ describe("poll-create listener", () => {
     ["  HeLp \n", "C123", "general"],
     ["help", "D123", "directmessage"],
   ])(
-    "/when %j answers with usage and opens nothing",
+    "/meet %j answers with usage and opens nothing",
     async (text, channel_id, channel_name) => {
       const client = fakeClient();
       const ack = vi.fn();
-      await invoke("command", "/when", {
+      await invoke("command", "/meet", {
         ack,
         client,
         command: {
@@ -158,7 +158,7 @@ describe("poll-create listener", () => {
   it("a title that merely starts with help still opens the form with that title", async () => {
     const client = fakeClient();
     const ack = vi.fn();
-    await invoke("command", "/when", {
+    await invoke("command", "/meet", {
       ack,
       client,
       command: {

@@ -22,7 +22,7 @@ export const DM_HINT =
 /** The answer to `/meet help`. Plain words for what exists today; see README "How it works". */
 export const HELP_TEXT = [
   "*Meeting Mouse finds a time that works for everyone.*",
-  "• `/meet [title]` opens a form to start an availability poll in a channel. The title is optional: `/meet Sprint planning` fills it in, and plain `/meet` leaves it for you to type. `/mouse` and `/when` do the same.",
+  "• `/meet [title]` opens a form to start an availability poll in a channel. The title is optional: `/meet Sprint planning` fills it in, and plain `/meet` leaves it for you to type. `/mouse` does the same.",
   "• The *Find a meeting time* shortcut, in Slack's search bar under Shortcuts, opens the same form.",
   "• I post one poll message in the channel. Each person clicks *Add my availability* and clicks the times that work, shown in their own time zone. Each click saves, and the message updates with who is free when.",
   "• The organizer picks a time from the poll's menu, and the thread gets an Add to Google Calendar link.",
