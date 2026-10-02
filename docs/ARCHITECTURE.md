@@ -96,7 +96,7 @@ src/
                             + opengraph-image.tsx (the social preview)
   blog/                     The blog: post schema, loader, Markdown renderer, feed, content check.
   components/brand.tsx      Logo, mark and mascot for the homepage and the icon
-  components/site.tsx       The header and footer every page shares
+  components/site.tsx       The header and footer every page shares; the footer links every public address
   components/doc-page.tsx   The frame of the privacy policy and the support page
   components/social-image.tsx  The social preview drawing the image routes share
   assets/fonts/             Geist regular and semibold for the social preview, with the license
