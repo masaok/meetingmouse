@@ -1,6 +1,7 @@
+import { AddToSlackButton } from "@/components/add-to-slack";
 import { LogoMark, Mascot } from "@/components/brand";
 import { SiteFooter, SiteHeader } from "@/components/site";
-import { SELF_HOST_URL, SLACK_INSTALL_URL } from "@/lib/site";
+import { SELF_HOST_URL } from "@/lib/site";
 
 const steps = [
   {
@@ -206,12 +207,7 @@ export default function Home() {
               watch the channel message fill in with a grid of who can meet when.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a
-                href={SLACK_INSTALL_URL}
-                className="bg-accent hover:bg-accent-hover inline-flex h-12 items-center justify-center rounded-full px-6 font-medium text-white transition-colors dark:text-stone-950"
-              >
-                Add to Slack
-              </a>
+              <AddToSlackButton className="self-start sm:self-center" />
               <a
                 href={SELF_HOST_URL}
                 className="inline-flex h-12 items-center justify-center rounded-full border border-stone-300 px-6 font-medium transition-colors hover:bg-stone-100 dark:border-stone-700 dark:hover:bg-stone-900"
@@ -289,12 +285,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <a
-              href={SLACK_INSTALL_URL}
-              className="bg-accent hover:bg-accent-hover inline-flex h-12 shrink-0 items-center justify-center rounded-full px-6 font-medium text-white transition-colors dark:text-stone-950"
-            >
-              Add to Slack
-            </a>
+            <AddToSlackButton />
           </div>
         </section>
       </main>

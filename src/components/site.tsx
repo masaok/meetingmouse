@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { BLOG_PATH, FEED_PATH } from "@/blog/paths";
+import { AddToSlackButton } from "@/components/add-to-slack";
 import { Logo } from "@/components/brand";
 import { SUPPORT_EMAIL } from "@/lib/hosted";
 import { POLICIES, type Policy } from "@/lib/policies";
@@ -35,12 +36,7 @@ export function SiteHeader({ home = false }: { home?: boolean }) {
         <Link href={BLOG_PATH} className={NAV_LINK}>
           Blog
         </Link>
-        <a
-          href={SLACK_INSTALL_URL}
-          className="bg-accent hover:bg-accent-hover rounded-full px-4 py-2 font-medium whitespace-nowrap text-white transition-colors dark:text-stone-950"
-        >
-          Add to Slack
-        </a>
+        <AddToSlackButton />
       </nav>
     </header>
   );
