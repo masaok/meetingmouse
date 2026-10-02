@@ -7,8 +7,11 @@ export interface GridClaims {
   userId: string;
 }
 
-/** A link stays good for this long; a fresh one is one click away in Slack. */
-export const GRID_LINK_TTL_SECONDS = 30 * 24 * 60 * 60;
+/**
+ * A link stays good for this long. The page cannot ask Slack whether its holder is still in
+ * the poll's channel, so a short life bounds that gap; a fresh link is one click away in Slack.
+ */
+export const GRID_LINK_TTL_SECONDS = 24 * 60 * 60;
 
 const VERSION = "v1";
 

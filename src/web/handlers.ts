@@ -9,11 +9,22 @@ import type { PollSnapshot } from "@/domain/types";
 import { log } from "@/lib/log";
 import { refreshPollMessage, type ChatUpdater } from "@/lib/refresh";
 import { slackErrorCode } from "@/lib/respond";
-import { getUserProfile, type UserProfile, type UsersClient } from "@/lib/users";
+import {
+  DeactivatedUserError,
+  getUserProfile,
+  type UserProfile,
+  type UsersClient,
+} from "@/lib/users";
 
 import { verifyGridLink, type GridClaims } from "./link";
 import { renderGridPage, renderMessagePage } from "./page";
 import { gridState } from "./state";
+
+/**
+ * How long the page trusts a cached profile before asking Slack again whether the person is
+ * still active. Every request asking would spend users.info's rate limit on the 5 s poll.
+ */
+export const GRID_PROFILE_MAX_AGE_MS = 5 * 60 * 1000;
 
 /** The Slack calls the grid makes as the workspace's bot: the viewer's profile, the message. */
 export type GridClient = UsersClient & ChatUpdater;
@@ -61,17 +72,35 @@ const html = (body: string, status = 200): Response =>
 const wantsJson = (request: Request): boolean =>
   request.method !== "GET" || new URL(request.url).searchParams.get("format") === "json";
 
-const gone = (request: Request, error: "bad_link" | "no_poll"): Response => {
-  if (wantsJson(request)) return json({ error }, 404);
-  return html(
-    error === "bad_link"
-      ? renderMessagePage(
-          "This link has expired",
-          "Click Add my availability on the poll in Slack for a fresh one.",
-        )
-      : renderMessagePage("This poll no longer exists", "Its organizer deleted it."),
-    404,
-  );
+const REFUSALS = {
+  bad_link: {
+    status: 404,
+    heading: "This link has expired",
+    message: "Click Add my availability on the poll in Slack for a fresh one.",
+  },
+  no_poll: {
+    status: 404,
+    heading: "This poll no longer exists",
+    message: "Its organizer deleted it.",
+  },
+  deactivated: {
+    status: 403,
+    heading: "This link no longer works",
+    message: "Your Slack account in this workspace is deactivated.",
+  },
+  slack_unavailable: {
+    status: 503,
+    heading: "Slack could not confirm this link",
+    message:
+      "Try again in a minute, or click Add my availability on the poll in Slack for a fresh link.",
+  },
+} as const;
+
+const refuse = (request: Request, error: keyof typeof REFUSALS): Response => {
+  const { status, heading, message } = REFUSALS[error];
+  return wantsJson(request)
+    ? json({ error }, status)
+    : html(renderMessagePage(heading, message), status);
 };
 
 interface Loaded {
@@ -95,18 +124,34 @@ export function createGridHandlers(options: GridHandlerOptions): GridHandlers {
       new URL(request.url).pathname.split("/").pop() ?? "",
     );
     const claims = verifyGridLink(options.secret, token, now());
-    if (!claims) return gone(request, "bad_link");
+    if (!claims) return refuse(request, "bad_link");
     const snapshot = await getPollSnapshot(database(), claims.pollId).catch(() => null);
     if (!snapshot || snapshot.poll.teamId !== claims.teamId)
-      return gone(request, "no_poll");
-    const client = await options.clientFor(claims.teamId);
-    const profile = await getUserProfile(
-      database(),
-      client,
-      claims.teamId,
-      claims.userId,
-    );
-    return { claims, snapshot, client, profile };
+      return refuse(request, "no_poll");
+    // Fails closed: with no answer from Slack, nobody is shown the poll.
+    try {
+      const client = await options.clientFor(claims.teamId);
+      const profile = await getUserProfile(
+        database(),
+        client,
+        claims.teamId,
+        claims.userId,
+        now(),
+        GRID_PROFILE_MAX_AGE_MS,
+      );
+      return { claims, snapshot, client, profile };
+    } catch (error) {
+      const deactivated = error instanceof DeactivatedUserError;
+      log.warn({
+        action: "grid_link_refused",
+        poll_id: claims.pollId,
+        user_id: claims.userId,
+        reason: deactivated
+          ? "deactivated"
+          : `slack_unavailable:${slackErrorCode(error)}`,
+      });
+      return refuse(request, deactivated ? "deactivated" : "slack_unavailable");
+    }
   }
 
   const stateOf = ({ claims, snapshot, profile }: Loaded) =>
@@ -152,7 +197,7 @@ export function createGridHandlers(options: GridHandlerOptions): GridHandlers {
         refresh,
       });
       const fresh = await getPollSnapshot(database(), claims.pollId);
-      if (!fresh) return gone(request, "no_poll");
+      if (!fresh) return refuse(request, "no_poll");
       return json(stateOf({ ...loaded, snapshot: fresh }));
     },
   };

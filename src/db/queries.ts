@@ -316,13 +316,21 @@ export async function getCachedUser(
 
 export async function upsertCachedUser(
   db: Db,
-  input: { teamId: string; userId: string; tz: string; displayName: string },
+  input: {
+    teamId: string;
+    userId: string;
+    tz: string;
+    displayName: string;
+    /** When Slack was asked. Defaults to the database's clock. */
+    fetchedAt?: Date;
+  },
 ): Promise<void> {
+  const fetchedAt = input.fetchedAt ?? sql`now()`;
   await db
     .insert(slackUsers)
-    .values({ ...input, fetchedAt: sql`now()` })
+    .values({ ...input, fetchedAt })
     .onConflictDoUpdate({
       target: [slackUsers.teamId, slackUsers.userId],
-      set: { tz: input.tz, displayName: input.displayName, fetchedAt: sql`now()` },
+      set: { tz: input.tz, displayName: input.displayName, fetchedAt },
     });
 }
