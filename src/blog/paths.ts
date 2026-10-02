@@ -1,5 +1,5 @@
 import { POLICIES } from "../lib/policies";
-import { PRIVACY_PATH, SITE_URL, SUPPORT_PATH } from "../lib/site";
+import { LEGAL_PATH, PRIVACY_PATH, SITE_URL, SUPPORT_PATH } from "../lib/site";
 
 export const BLOG_PATH = "/blog";
 export const FEED_PATH = "/blog/feed.xml";
@@ -15,5 +15,6 @@ export const SITE_ROUTES: readonly string[] = [
   FEED_PATH,
   PRIVACY_PATH,
   SUPPORT_PATH,
+  LEGAL_PATH,
   ...POLICIES.map((policy) => policy.path),
 ];

@@ -5,6 +5,7 @@ import { Logo } from "@/components/brand";
 import { SUPPORT_EMAIL } from "@/lib/hosted";
 import { POLICIES } from "@/lib/policies";
 import {
+  LEGAL_PATH,
   LICENSE_URL,
   PRIVACY_PATH,
   REPO_URL,
@@ -115,6 +116,7 @@ export function SiteFooter({ home = false }: { home?: boolean }) {
         <FooterColumn
           title="Legal"
           links={[
+            { label: "All legal pages", href: LEGAL_PATH },
             { label: "Privacy policy", href: PRIVACY_PATH },
             ...POLICIES.map((policy) => ({ label: policy.label, href: policy.path })),
             { label: "MIT license", href: LICENSE_URL },
