@@ -3,4 +3,6 @@ export const SITE_URL = "https://www.meetingmouse.net";
 export const SITE_NAME = "Meeting Mouse";
 
 export const SLACK_INSTALL_URL = "https://app.meetingmouse.net/api/slack/install";
+export const PRIVACY_URL = "https://app.meetingmouse.net/privacy";
+export const SUPPORT_URL = "https://app.meetingmouse.net/support";
 export const SELF_HOST_URL = "https://github.com/masaok/meetingmouse#run-it-yourself";

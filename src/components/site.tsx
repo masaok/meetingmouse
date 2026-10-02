@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { BLOG_PATH } from "@/blog/paths";
 import { Logo } from "@/components/brand";
-import { SLACK_INSTALL_URL } from "@/lib/site";
+import { PRIVACY_URL, SLACK_INSTALL_URL, SUPPORT_URL } from "@/lib/site";
 
 const NAV_LINK = "hover:text-foreground text-stone-600 dark:text-stone-400";
 
@@ -42,7 +42,15 @@ export function SiteFooter() {
         © {new Date().getFullYear()} Meeting Mouse · meetingmouse.net ·{" "}
         <Link href={BLOG_PATH} className="underline underline-offset-4">
           Blog
-        </Link>
+        </Link>{" "}
+        ·{" "}
+        <a href={PRIVACY_URL} className="underline underline-offset-4">
+          Privacy
+        </a>{" "}
+        ·{" "}
+        <a href={SUPPORT_URL} className="underline underline-offset-4">
+          Support
+        </a>
       </p>
       <p>Not affiliated with Slack Technologies.</p>
     </footer>
