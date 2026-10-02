@@ -220,7 +220,7 @@ export default function Home() {
               </a>
             </div>
             <p className="mt-4 text-sm text-stone-500 dark:text-stone-500">
-              Free while in beta. No accounts, no calendar access required.
+              Free. No accounts, no calendar access required.
             </p>
           </div>
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-end sm:justify-center md:justify-end">
