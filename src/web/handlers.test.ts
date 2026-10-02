@@ -1,3 +1,5 @@
+import { createHmac } from "node:crypto";
+
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -255,5 +257,52 @@ describe("grid handlers", () => {
     });
 
     expect((await get(url({ userId: "U_UNSURE" }))).status).toBe(503);
+  });
+
+  it("answers 503 within its deadline when Slack never answers", async () => {
+    client.users.info.mockReturnValue(new Promise(() => {}));
+    handlers = createGridHandlers({
+      secret,
+      db,
+      now: () => clock,
+      slackDeadlineMs: 20,
+      clientFor: async () => client as never,
+    });
+    const link = url({ userId: "U_HANG" });
+
+    const started = performance.now();
+    const page = await get(link);
+    const elapsed = performance.now() - started;
+
+    expect(page.status).toBe(503);
+    expect(await page.text()).toContain("Slack could not confirm this link");
+    expect(elapsed).toBeLessThan(1000);
+  });
+
+  it("does not ask Slack again for 30 seconds after a failure", async () => {
+    client.users.info.mockRejectedValueOnce({ data: { error: "ratelimited" } });
+    const link = url({ userId: "U_BACKOFF" }, "?format=json");
+
+    expect((await get(link)).status).toBe(503);
+    clock = after(29_999);
+    expect((await get(link)).status).toBe(503);
+    expect((await post(link, { slots: [seconds(S1)] })).status).toBe(503);
+    expect(client.users.info).toHaveBeenCalledTimes(1);
+
+    clock = after(30_000);
+    expect((await get(link)).status).toBe(200);
+    expect(client.users.info).toHaveBeenCalledTimes(2);
+  });
+
+  it("refuses a link signed before the 24-hour limit, whatever expiry it carries", async () => {
+    const body = Buffer.from(
+      JSON.stringify([pollId, "T1", "U1", seconds(after(30 * 24 * HOUR))]),
+    ).toString("base64url");
+    const signature = createHmac("sha256", secret).update(`v1.${body}`).digest();
+    const old = `https://host.test/grid/v1.${body}.${signature.toString("base64url")}`;
+
+    const res = await get(old);
+    expect(res.status).toBe(404);
+    expect(await res.text()).toContain("This link has expired");
   });
 });

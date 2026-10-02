@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { WebClientOptions } from "@slack/web-api";
 import { z } from "zod";
 
 import { getDb } from "@/db/client";
@@ -26,6 +27,27 @@ import { gridState } from "./state";
  */
 export const GRID_PROFILE_MAX_AGE_MS = 5 * 60 * 1000;
 
+/**
+ * How long a grid request waits for the host's client and Slack before it answers 503. A
+ * default WebClient has no timeout and sleeps through a rate limit, so without this a slow
+ * Slack would hang the request. Kept under the page's 5 s poll.
+ */
+export const GRID_SLACK_DEADLINE_MS = 3000;
+
+/** After a refusal by Slack or a failure to ask, the same person's link is not checked again for this long. */
+export const GRID_RECHECK_AFTER_REFUSAL_MS = 30 * 1000;
+
+/**
+ * Options for the WebClient a host hands to `clientFor`: one attempt, a rate limit rejected
+ * instead of slept through, and a timeout, so a failing call ends and does not pile up
+ * behind the deadline.
+ */
+export const GRID_CLIENT_OPTIONS = {
+  retryConfig: { retries: 0 },
+  rejectRateLimitedCalls: true,
+  timeout: GRID_SLACK_DEADLINE_MS,
+} as const satisfies WebClientOptions;
+
 /** The Slack calls the grid makes as the workspace's bot: the viewer's profile, the message. */
 export type GridClient = UsersClient & ChatUpdater;
 
@@ -37,6 +59,8 @@ export interface GridHandlerOptions {
   /** Defaults to the core's lazy client. */
   db?: Db;
   now?: () => Date;
+  /** Defaults to `GRID_SLACK_DEADLINE_MS`. */
+  slackDeadlineMs?: number;
 }
 
 export interface GridHandlers {
@@ -96,12 +120,22 @@ const REFUSALS = {
   },
 } as const;
 
-const refuse = (request: Request, error: keyof typeof REFUSALS): Response => {
+const refuse = (request: Request, error: Refusal): Response => {
   const { status, heading, message } = REFUSALS[error];
   return wantsJson(request)
     ? json({ error }, status)
     : html(renderMessagePage(heading, message), status);
 };
+
+type Refusal = keyof typeof REFUSALS;
+
+function withDeadline<T>(work: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>;
+  const deadline = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`no answer in ${ms} ms`)), ms);
+  });
+  return Promise.race([work, deadline]).finally(() => clearTimeout(timer));
+}
 
 interface Loaded {
   claims: GridClaims;
@@ -118,6 +152,10 @@ interface Loaded {
 export function createGridHandlers(options: GridHandlerOptions): GridHandlers {
   const now = options.now ?? (() => new Date());
   const database = (): Db => options.db ?? getDb();
+  const deadlineMs = options.slackDeadlineMs ?? GRID_SLACK_DEADLINE_MS;
+  // Per instance and lost on restart: it only keeps one process from asking Slack on every
+  // 5 s poll and 3 s save retry while Slack is failing.
+  const refused = new Map<string, { until: number; refusal: Refusal }>();
 
   async function load(request: Request): Promise<Loaded | Response> {
     const token = decodeURIComponent(
@@ -128,29 +166,41 @@ export function createGridHandlers(options: GridHandlerOptions): GridHandlers {
     const snapshot = await getPollSnapshot(database(), claims.pollId).catch(() => null);
     if (!snapshot || snapshot.poll.teamId !== claims.teamId)
       return refuse(request, "no_poll");
+    const at = now();
+    const person = `${claims.teamId}:${claims.userId}`;
+    const earlier = refused.get(person);
+    if (earlier && at.getTime() < earlier.until) return refuse(request, earlier.refusal);
+    refused.delete(person);
     // Fails closed: with no answer from Slack, nobody is shown the poll.
     try {
-      const client = await options.clientFor(claims.teamId);
-      const profile = await getUserProfile(
-        database(),
-        client,
-        claims.teamId,
-        claims.userId,
-        now(),
-        GRID_PROFILE_MAX_AGE_MS,
-      );
-      return { claims, snapshot, client, profile };
+      const check = async () => {
+        const client = await options.clientFor(claims.teamId);
+        const profile = await getUserProfile(
+          database(),
+          client,
+          claims.teamId,
+          claims.userId,
+          at,
+          GRID_PROFILE_MAX_AGE_MS,
+        );
+        return { client, profile };
+      };
+      return { claims, snapshot, ...(await withDeadline(check(), deadlineMs)) };
     } catch (error) {
-      const deactivated = error instanceof DeactivatedUserError;
+      const refusal: Refusal =
+        error instanceof DeactivatedUserError ? "deactivated" : "slack_unavailable";
+      refused.set(person, {
+        until: at.getTime() + GRID_RECHECK_AFTER_REFUSAL_MS,
+        refusal,
+      });
       log.warn({
         action: "grid_link_refused",
         poll_id: claims.pollId,
         user_id: claims.userId,
-        reason: deactivated
-          ? "deactivated"
-          : `slack_unavailable:${slackErrorCode(error)}`,
+        reason: refusal,
+        error: slackErrorCode(error),
       });
-      return refuse(request, deactivated ? "deactivated" : "slack_unavailable");
+      return refuse(request, refusal);
     }
   }
 

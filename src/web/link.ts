@@ -13,7 +13,8 @@ export interface GridClaims {
  */
 export const GRID_LINK_TTL_SECONDS = 24 * 60 * 60;
 
-const VERSION = "v1";
+/** v1 links carried a 30-day expiry inside the token; the bump ended them all at once. */
+const VERSION = "v2";
 
 /**
  * A key for grid links derived from a secret the host already holds, so the grid needs no

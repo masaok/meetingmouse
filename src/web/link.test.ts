@@ -48,7 +48,7 @@ describe("grid links", () => {
 
   it("builds a URL under /grid on the host's origin", () => {
     const url = gridLinks({ baseUrl: "https://app.example.com/", secret }).urlFor(claims);
-    expect(url.startsWith("https://app.example.com/grid/v1.")).toBe(true);
+    expect(url.startsWith("https://app.example.com/grid/v2.")).toBe(true);
     expect(verifyGridLink(secret, url.split("/grid/")[1])).toEqual(claims);
   });
 });

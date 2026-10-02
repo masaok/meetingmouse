@@ -69,10 +69,13 @@ see in Slack. The link is checked three ways on every `GET` and `POST`:
 | -------------------------- | -------------------------------------------------------- | ---------------------------------------- |
 | Signature and expiry       | `verifyGridLink`; a link lives 24 hours                  | 404, "This link has expired"             |
 | The person is still active | `users.info`, refused when Slack answers `deleted: true` | 403, "This link no longer works"         |
-| Slack answered the check   | any failure of `clientFor` or `users.info`               | 503, "Slack could not confirm this link" |
+| Slack answered the check   | `clientFor` or `users.info` fails or takes over 3 s      | 503, "Slack could not confirm this link" |
 
 - **24 hours, not 30 days.** Add my availability hands out a fresh link on every click, so a
   short life costs the person one click and bounds how long a link outlives their access.
+  The token version went from `v1` to `v2` with this change, because a `v1` link carries its
+  30-day expiry inside the token. Every `v1` link is refused as expired, so the 24 hours hold
+  for every link there is.
 - **Deactivation uses the scope the app already has.** `users:read` covers `users.info`. The
   answer is cached in `slack_users`, and the grid trusts a cached profile for 5 minutes
   (`GRID_PROFILE_MAX_AGE_MS`), not the 7 days the modals do. Asking on every request would
@@ -85,6 +88,16 @@ see in Slack. The link is checked three ways on every `GET` and `POST`:
   saved" and retries every 3 s, so it goes through once Slack answers. The cost is that a
   Slack outage takes the page down with it; the alternative was showing a poll to someone the
   app could not vouch for.
+- **A slow Slack is a failed Slack.** The check has a 3 s deadline (`GRID_SLACK_DEADLINE_MS`),
+  under the page's 5 s poll. A `WebClient` built with defaults has no timeout, retries about
+  ten times over half an hour and sleeps through a rate limit, so without the deadline the
+  request would hang and the 503 would never be sent. The deadline cannot cancel the call
+  behind it; `GRID_CLIENT_OPTIONS` on the host's client does that.
+- **A refusal is remembered for 30 seconds.** After a deactivation or a failure, that
+  person's links answer the same refusal without asking Slack again
+  (`GRID_RECHECK_AFTER_REFUSAL_MS`), so open pages do not prolong a rate limit with a call per
+  poll and per save retry. The memory is a map in the process: it is per instance and lost on
+  restart, so several instances each ask once per 30 seconds.
 - **An open page ends too.** On a 403 or 404 the browser script reloads, so the person sees the
   refusal instead of a grid that silently stopped saving.
 
@@ -133,7 +146,9 @@ createMeetingMouse({
 // src/app/grid/[token]/route.ts
 const handlers = createGridHandlers({
   secret: deriveGridSecret(someSecret),
-  clientFor: async (teamId) => new WebClient(await botTokenFor(teamId)),
+  // one attempt, no sleeping through a rate limit, a timeout
+  clientFor: async (teamId) =>
+    new WebClient(await botTokenFor(teamId), GRID_CLIENT_OPTIONS),
 });
 export const GET = handlers.GET;
 export const POST = handlers.POST;
@@ -163,8 +178,8 @@ zone under the title. There is no zone picker.
 ## Verifying
 
 - `pnpm test src/web src/domain/grid.test.ts` covers links, state and the handlers against an
-  in-process Postgres, including a link refused after 24 hours, after a deactivation, and when
-  Slack cannot be asked.
+  in-process Postgres, including a link refused after 24 hours, after a deactivation, when
+  Slack cannot be asked and when Slack never answers.
 - `pnpm grid:preview` serves a fixture poll on `http://localhost:4010` and prints one link per
   fixture person. Open two of them side by side. Drag on the left grid, watch "Saved" appear
   and the right grid darken, and watch the other window follow within 5 s.
