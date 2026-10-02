@@ -1,6 +1,6 @@
 /**
  * The blog's content rules: post shape, one owner per keyword, keyword placement, links,
- * alt text, dates, drafts. `docs/BLOG.md` lists each rule. Read-only.
+ * alt text, length, sections, dates, drafts. `docs/BLOG.md` lists each rule. Read-only.
  *
  *   pnpm blog:check
  */

@@ -47,3 +47,15 @@ export function firstParagraph(body: string): string {
   const first = new Marked({ gfm: true }).lexer(body).find((t) => t.type === "paragraph");
   return first ? (first as Tokens.Paragraph).text : "";
 }
+
+/** Token types that hold no prose: code is not counted, and neither is raw HTML. */
+const NOT_PROSE = new Set(["code", "html", "space", "hr"]);
+
+/** Words of prose in the body. Code blocks, link targets and table rules are left out. */
+export function wordCount(body: string): number {
+  return new Marked({ gfm: true })
+    .lexer(body)
+    .filter((token) => !NOT_PROSE.has(token.type))
+    .map((token) => token.raw.replace(/\]\([^)]*\)/g, "]"))
+    .reduce((n, text) => n + (text.match(/[A-Za-z0-9][A-Za-z0-9'-]*/g)?.length ?? 0), 0);
+}

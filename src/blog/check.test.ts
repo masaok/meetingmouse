@@ -120,6 +120,39 @@ describe("checkBlog", () => {
     ]);
   });
 
+  it("minimum length: rejects a published post under the word floor, and allows a draft", () => {
+    const short = GOOD_POST.replace(
+      /## Filler section 4[\s\S]*$/,
+      "## Filler section 4\n\nShort.\n",
+    );
+    expect(checkBlog(input([short]))).toEqual([
+      "when-to-meet-with-a-grid: the body has 1198 words; write at least 1500",
+    ]);
+    expect(checkBlog(input([short.replace("draft: false", "draft: true")]))).toEqual([]);
+  });
+
+  it("minimum length: does not count code blocks or link targets", () => {
+    const code = `\n\n\`\`\`\n${"word ".repeat(400)}\n\`\`\`\n\n[a](https://example.com/${"x/".repeat(400)})\n`;
+    const short = GOOD_POST.replace(
+      /## Filler section 4[\s\S]*$/,
+      `## Filler section 4${code}`,
+    );
+    expect(checkBlog(input([short]))).toEqual([
+      "when-to-meet-with-a-grid: the body has 1198 words; write at least 1500",
+    ]);
+  });
+
+  it("sections for the sidebar: rejects too few sections and a repeated heading", () => {
+    const merged = GOOD_POST.replace(/## Filler section [234]\n/g, "");
+    expect(checkBlog(input([merged]))).toEqual([
+      "when-to-meet-with-a-grid: the body has 2 sections; the table of contents needs at least 4 second-level headings",
+    ]);
+    const twins = GOOD_POST.replace("## Filler section 2", "## Filler section 1");
+    expect(checkBlog(input([twins]))).toEqual([
+      'when-to-meet-with-a-grid: two sections share the heading "Filler section 1"',
+    ]);
+  });
+
   it("links resolve: rejects a missing page, a missing post and a relative link", () => {
     const broken = GOOD_POST.replace(
       "More text.",
