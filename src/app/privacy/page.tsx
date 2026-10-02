@@ -5,6 +5,7 @@ import { SOCIAL_IMAGE } from "@/app/opengraph-image";
 import { absoluteUrl } from "@/blog/paths";
 import { DocPage } from "@/components/doc-page";
 import {
+  DELETION_REQUEST_DAYS,
   PRIVACY_UPDATED,
   RETENTION_MONTHS,
   STORED_DATA,
@@ -165,10 +166,11 @@ export default function Privacy() {
       <p>
         You can ask for a copy of the data stored about you, for a correction, or for
         deletion. Write to <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a> and
-        name your Slack workspace and your name in it. We answer within 30 days. A
-        deletion request removes your answers on every poll in that workspace and the copy
-        of your name and time zone. A poll you organized holds other people&apos;s answers
-        too, so you delete it yourself from the menu on its message.
+        name your Slack workspace and your name in it. We answer within{" "}
+        {DELETION_REQUEST_DAYS} days. A deletion request removes your answers on every
+        poll in that workspace and the copy of your name and time zone. A poll you
+        organized holds other people&apos;s answers too, so you delete it yourself from
+        the menu on its message.
       </p>
       <p>
         An admin can remove the app from the workspace at any time in Slack, which deletes

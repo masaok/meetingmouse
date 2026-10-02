@@ -1,3 +1,4 @@
+import { POLICIES } from "../lib/policies";
 import { PRIVACY_PATH, SITE_URL, SUPPORT_PATH } from "../lib/site";
 
 export const BLOG_PATH = "/blog";
@@ -14,4 +15,5 @@ export const SITE_ROUTES: readonly string[] = [
   FEED_PATH,
   PRIVACY_PATH,
   SUPPORT_PATH,
+  ...POLICIES.map((policy) => policy.path),
 ];

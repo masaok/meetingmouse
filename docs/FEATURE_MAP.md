@@ -32,12 +32,21 @@ Every id is a constant in `src/slack/ids.ts`. The poll message itself is rendere
 The homepage, the web grid and the blog are routes, not Slack surfaces, so the id check does
 not cover them. The blog's routes and reproduce commands are in [Blog](./BLOG.md#surfaces).
 
-| Page           | Route      | File                       | Reproduce                        |
-| -------------- | ---------- | -------------------------- | -------------------------------- |
-| Privacy policy | `/privacy` | `src/app/privacy/page.tsx` | `curl -s localhost:3000/privacy` |
-| Support        | `/support` | `src/app/support/page.tsx` | `curl -s localhost:3000/support` |
+| Page                             | Route                       | File                                        | Reproduce                                         |
+| -------------------------------- | --------------------------- | ------------------------------------------- | ------------------------------------------------- |
+| Privacy policy                   | `/privacy`                  | `src/app/privacy/page.tsx`                  | `curl -s localhost:3000/privacy`                  |
+| Support                          | `/support`                  | `src/app/support/page.tsx`                  | `curl -s localhost:3000/support`                  |
+| Terms of service                 | `/terms`                    | `src/app/terms/page.tsx`                    | `curl -s localhost:3000/terms`                    |
+| Data retention policy            | `/data-retention`           | `src/app/data-retention/page.tsx`           | `curl -s localhost:3000/data-retention`           |
+| Data archival and removal policy | `/data-archival-removal`    | `src/app/data-archival-removal/page.tsx`    | `curl -s localhost:3000/data-archival-removal`    |
+| Data storage policy              | `/data-storage`             | `src/app/data-storage/page.tsx`             | `curl -s localhost:3000/data-storage`             |
+| Data deletion request procedure  | `/data-deletion-requests`   | `src/app/data-deletion-requests/page.tsx`   | `curl -s localhost:3000/data-deletion-requests`   |
+| Vulnerability disclosure program | `/vulnerability-disclosure` | `src/app/vulnerability-disclosure/page.tsx` | `curl -s localhost:3000/vulnerability-disclosure` |
 
-Both describe the hosted service at app.meetingmouse.net, not a self-hosted copy. The facts
+All of them describe the hosted service at app.meetingmouse.net, not a self-hosted copy. The
+six pages after Support are drawn from one list, `POLICIES` in `src/lib/policies.ts`, by
+`src/components/policy-page.tsx`; the footer, the sitemap and the links a blog post may use read
+the same list. The facts
 they state (support address, retention period, plan limit, every stored column) are in
 `src/lib/hosted.ts`. `src/lib/hosted.test.ts` fails when a column is added to the core's tables
 without a line there. The hosted app's own table and its retention and plan limit are not in
