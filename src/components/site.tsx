@@ -48,30 +48,42 @@ export function SiteHeader({ home = false }: { home?: boolean }) {
 interface FooterLink {
   label: string;
   href: string;
+  /** Keep the label on one line. For an address, which reads wrong when it breaks. */
+  nowrap?: boolean;
 }
 
 const FOOTER_LINK =
   "hover:text-foreground underline-offset-4 [overflow-wrap:anywhere] hover:underline";
+const FOOTER_LINK_NOWRAP =
+  "hover:text-foreground underline-offset-4 whitespace-nowrap hover:underline";
 
 /** A page of this site. The feed is a file and a section link is an anchor: both get a plain link. */
 const isPage = (href: string): boolean =>
   href.startsWith("/") && !href.startsWith("/#") && href !== FEED_PATH;
 
-function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {
+function FooterColumn({
+  title,
+  links,
+  className,
+}: {
+  title: string;
+  links: FooterLink[];
+  className?: string;
+}) {
   return (
-    <nav aria-label={title}>
+    <nav aria-label={title} className={className}>
       <h2 className="text-foreground text-xs font-semibold tracking-wider uppercase">
         {title}
       </h2>
       <ul className="mt-3 space-y-2">
-        {links.map(({ label, href }) => (
+        {links.map(({ label, href, nowrap }) => (
           <li key={href}>
             {isPage(href) ? (
               <Link href={href} className={FOOTER_LINK}>
                 {label}
               </Link>
             ) : (
-              <a href={href} className={FOOTER_LINK}>
+              <a href={href} className={nowrap ? FOOTER_LINK_NOWRAP : FOOTER_LINK}>
                 {label}
               </a>
             )}
@@ -87,8 +99,9 @@ export function SiteFooter({ home = false }: { home?: boolean }) {
   const section = (id: string) => (home ? `#${id}` : `/#${id}`);
   return (
     <footer className="mt-8 border-t border-stone-200 text-sm text-stone-600 dark:border-stone-800 dark:text-stone-400">
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-6">
-        <div className="col-span-2">
+      {/* The Contact column is the widest of the four so the support address fits on one line. */}
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-[1fr_1fr_1.3fr_1.6fr] lg:grid-cols-[2fr_1fr_1fr_1.3fr_1.6fr]">
+        <div className="col-span-2 md:col-span-4 lg:col-span-1">
           <Link href="/" aria-label="Meeting Mouse home">
             <Logo />
           </Link>
@@ -124,8 +137,9 @@ export function SiteFooter({ home = false }: { home?: boolean }) {
         />
         <FooterColumn
           title="Contact"
+          className="col-span-2 md:col-span-1"
           links={[
-            { label: SUPPORT_EMAIL, href: `mailto:${SUPPORT_EMAIL}` },
+            { label: SUPPORT_EMAIL, href: `mailto:${SUPPORT_EMAIL}`, nowrap: true },
             { label: "GitHub", href: REPO_URL },
           ]}
         />
