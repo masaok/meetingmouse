@@ -19,4 +19,5 @@ it("the privacy policy names every column of the core's tables, and none they do
     .flatMap((group) => group.columns.map((c) => `${c.table}.${c.column}`))
     .sort();
   expect(named).toEqual(real.rows.map((r) => r.name));
-});
+  // Migrating a fresh in-process Postgres can pass the 5 s default when the suite runs in parallel.
+}, 20_000);

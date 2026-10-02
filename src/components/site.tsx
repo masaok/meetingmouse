@@ -3,8 +3,9 @@ import Link from "next/link";
 import { BLOG_PATH, FEED_PATH } from "@/blog/paths";
 import { Logo } from "@/components/brand";
 import { SUPPORT_EMAIL } from "@/lib/hosted";
-import { POLICIES } from "@/lib/policies";
+import { POLICIES, type Policy } from "@/lib/policies";
 import {
+  INSTALLATION_PATH,
   LEGAL_PATH,
   LICENSE_URL,
   PRIVACY_PATH,
@@ -48,12 +49,11 @@ export function SiteHeader({ home = false }: { home?: boolean }) {
 interface FooterLink {
   label: string;
   href: string;
-  /** Keep the label on one line. For an address, which reads wrong when it breaks. */
-  nowrap?: boolean;
 }
 
 const FOOTER_LINK =
   "hover:text-foreground underline-offset-4 [overflow-wrap:anywhere] hover:underline";
+/** For the support address, which reads wrong when it breaks across lines. */
 const FOOTER_LINK_NOWRAP =
   "hover:text-foreground underline-offset-4 whitespace-nowrap hover:underline";
 
@@ -61,29 +61,21 @@ const FOOTER_LINK_NOWRAP =
 const isPage = (href: string): boolean =>
   href.startsWith("/") && !href.startsWith("/#") && href !== FEED_PATH;
 
-function FooterColumn({
-  title,
-  links,
-  className,
-}: {
-  title: string;
-  links: FooterLink[];
-  className?: string;
-}) {
+function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {
   return (
-    <nav aria-label={title} className={className}>
+    <nav aria-label={title}>
       <h2 className="text-foreground text-xs font-semibold tracking-wider uppercase">
         {title}
       </h2>
       <ul className="mt-3 space-y-2">
-        {links.map(({ label, href, nowrap }) => (
+        {links.map(({ label, href }) => (
           <li key={href}>
             {isPage(href) ? (
               <Link href={href} className={FOOTER_LINK}>
                 {label}
               </Link>
             ) : (
-              <a href={href} className={nowrap ? FOOTER_LINK_NOWRAP : FOOTER_LINK}>
+              <a href={href} className={FOOTER_LINK}>
                 {label}
               </a>
             )}
@@ -94,13 +86,19 @@ function FooterColumn({
   );
 }
 
+const policyLinks = (group: Policy["group"]): FooterLink[] =>
+  POLICIES.filter((policy) => policy.group === group).map((policy) => ({
+    label: policy.label,
+    href: policy.path,
+  }));
+
 /** The footer every page shares: every public address of the site and the project, by column. */
 export function SiteFooter({ home = false }: { home?: boolean }) {
   const section = (id: string) => (home ? `#${id}` : `/#${id}`);
   return (
     <footer className="mt-8 border-t border-stone-200 text-sm text-stone-600 dark:border-stone-800 dark:text-stone-400">
-      {/* The Contact column is the widest of the four so the support address fits on one line. */}
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-[1fr_1fr_1.3fr_1.6fr] lg:grid-cols-[2fr_1fr_1fr_1.3fr_1.6fr]">
+      {/* Four link columns of four or five links each. The address sits under the tagline, on one line. */}
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-4 lg:grid-cols-[2fr_1fr_1fr_1fr_1.3fr]">
         <div className="col-span-2 md:col-span-4 lg:col-span-1">
           <Link href="/" aria-label="Meeting Mouse home">
             <Logo />
@@ -108,12 +106,18 @@ export function SiteFooter({ home = false }: { home?: boolean }) {
           <p className="mt-3 max-w-xs">
             Find the time everyone is free, right from Slack. Free and open source.
           </p>
+          <p className="mt-3">
+            <a href={`mailto:${SUPPORT_EMAIL}`} className={FOOTER_LINK_NOWRAP}>
+              {SUPPORT_EMAIL}
+            </a>
+          </p>
         </div>
         <FooterColumn
           title="Product"
           links={[
             { label: "How it works", href: section("how") },
             { label: "Features", href: section("features") },
+            { label: "Installation", href: INSTALLATION_PATH },
             { label: "Add to Slack", href: SLACK_INSTALL_URL },
           ]}
         />
@@ -124,6 +128,7 @@ export function SiteFooter({ home = false }: { home?: boolean }) {
             { label: "RSS feed", href: FEED_PATH },
             { label: "Support", href: SUPPORT_PATH },
             { label: "Run it yourself", href: SELF_HOST_URL },
+            { label: "GitHub", href: REPO_URL },
           ]}
         />
         <FooterColumn
@@ -131,18 +136,11 @@ export function SiteFooter({ home = false }: { home?: boolean }) {
           links={[
             { label: "All legal pages", href: LEGAL_PATH },
             { label: "Privacy policy", href: PRIVACY_PATH },
-            ...POLICIES.map((policy) => ({ label: policy.label, href: policy.path })),
+            ...policyLinks("legal"),
             { label: "MIT license", href: LICENSE_URL },
           ]}
         />
-        <FooterColumn
-          title="Contact"
-          className="col-span-2 md:col-span-1"
-          links={[
-            { label: SUPPORT_EMAIL, href: `mailto:${SUPPORT_EMAIL}`, nowrap: true },
-            { label: "GitHub", href: REPO_URL },
-          ]}
-        />
+        <FooterColumn title="Data and security" links={policyLinks("data")} />
       </div>
       <div className="border-t border-stone-200 dark:border-stone-800">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-6 py-5 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between">

@@ -30,6 +30,8 @@ export interface Policy {
   title: string;
   /** The short name used in the footer. */
   label: string;
+  /** The footer column it is listed in. */
+  group: "legal" | "data";
   /** One line for the meta description. */
   summary: string;
   sections: PolicySection[];
@@ -62,6 +64,7 @@ const terms: Policy = {
   path: "/terms",
   title: "Terms of service",
   label: "Terms of service",
+  group: "legal",
   summary: "The terms for using the hosted Meeting Mouse app for Slack and this website.",
   sections: [
     {
@@ -179,6 +182,7 @@ const retention: Policy = {
   path: "/data-retention",
   title: "Data retention policy",
   label: "Data retention",
+  group: "data",
   summary: "How long the hosted Meeting Mouse app keeps each kind of data.",
   sections: [
     {
@@ -251,6 +255,7 @@ const removal: Policy = {
   path: "/data-archival-removal",
   title: "Data archival and removal policy",
   label: "Data archival and removal",
+  group: "data",
   summary:
     "How the hosted Meeting Mouse app removes data, what triggers a removal, and what we do about archives.",
   sections: [
@@ -343,6 +348,7 @@ const storage: Policy = {
   path: "/data-storage",
   title: "Data storage policy",
   label: "Data storage",
+  group: "data",
   summary:
     "What data the hosted Meeting Mouse app stores, where it is stored, how it is protected and who can reach it.",
   sections: [
@@ -445,6 +451,7 @@ const deletionRequests: Policy = {
   path: "/data-deletion-requests",
   title: "Data deletion request procedure",
   label: "Data deletion requests",
+  group: "data",
   summary:
     "The steps we follow when someone asks us to delete their Meeting Mouse data, and the ways to delete it without asking.",
   sections: [
@@ -545,6 +552,7 @@ const disclosure: Policy = {
   path: "/vulnerability-disclosure",
   title: "Vulnerability disclosure program",
   label: "Vulnerability disclosure",
+  group: "data",
   summary:
     "How to report a security problem in Meeting Mouse, what is in scope, and what you can expect from us.",
   sections: [
