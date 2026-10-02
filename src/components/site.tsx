@@ -23,7 +23,7 @@ export function SiteHeader({ home = false }: { home?: boolean }) {
       <Link href="/" aria-label="Meeting Mouse home">
         <Logo />
       </Link>
-      <nav className="flex items-center gap-4 text-sm sm:gap-6">
+      <nav aria-label="Main" className="flex items-center gap-4 text-sm sm:gap-6">
         <a href={section("how")} className={`${NAV_LINK} hidden sm:inline`}>
           How it works
         </a>
@@ -52,6 +52,10 @@ interface FooterLink {
 const FOOTER_LINK =
   "hover:text-foreground underline-offset-4 [overflow-wrap:anywhere] hover:underline";
 
+/** A page of this site. The feed is a file and a section link is an anchor: both get a plain link. */
+const isPage = (href: string): boolean =>
+  href.startsWith("/") && !href.startsWith("/#") && href !== FEED_PATH;
+
 function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {
   return (
     <nav aria-label={title}>
@@ -61,7 +65,7 @@ function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) 
       <ul className="mt-3 space-y-2">
         {links.map(({ label, href }) => (
           <li key={href}>
-            {href.startsWith("/") ? (
+            {isPage(href) ? (
               <Link href={href} className={FOOTER_LINK}>
                 {label}
               </Link>
