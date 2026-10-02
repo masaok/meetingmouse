@@ -13,6 +13,8 @@ export interface HomeItem {
 export interface HomeInput {
   organized: HomeItem[];
   responded: HomeItem[];
+  /** Where a person gets help, when the host names a place. Already validated as http(s). */
+  supportUrl?: string;
 }
 
 /** Each list shows at most this many polls, so the view stays far under the block cap. */
@@ -72,14 +74,14 @@ export function homeView(input: HomeInput): HomeView {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: "Run `/when` in any channel to start an availability poll. Everyone marks when they're free in their own time zone, and the message updates live.",
+        text: "Run `/meet` in any channel to start an availability poll. Everyone marks when they're free in their own time zone, and the message updates live.",
       },
     },
     { type: "divider" },
     ...list(
       "Polls you organized",
       input.organized,
-      "You haven't started a poll yet. Try `/when Sprint planning`.",
+      "You haven't started a poll yet. Try `/meet Sprint planning`.",
     ),
     { type: "divider" },
     ...list(
@@ -88,6 +90,17 @@ export function homeView(input: HomeInput): HomeView {
       "Nothing yet. When someone posts a poll, click *Add my availability*.",
     ),
   ];
+  if (input.supportUrl) {
+    blocks.push(
+      { type: "divider" },
+      {
+        type: "context",
+        elements: [
+          { type: "mrkdwn", text: `Need help? <${input.supportUrl}|Get support>.` },
+        ],
+      },
+    );
+  }
   if (blocks.length > SLACK_LIMITS.BLOCKS_PER_MODAL) {
     throw new Error(
       `home view has ${blocks.length} blocks; limit is ${SLACK_LIMITS.BLOCKS_PER_MODAL}`,

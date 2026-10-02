@@ -228,6 +228,6 @@ Take them at their word and count them as free for every slot. Then confirm the 
 
 ## In Slack, the ask and the answer can be one message
 
-If the group shares a Slack channel, Meeting Mouse turns the ask into a poll. `/when Billing kickoff` posts one message with an Add my availability button, each person marks their free slots in their own time zone, and the message lists the best times by headcount. A person who is free at none of the times can say so with an "I can't make any of these" button, which is an answer you can count.
+If the group shares a Slack channel, Meeting Mouse turns the ask into a poll. `/meet Billing kickoff` posts one message with an Add my availability button, each person marks their free slots in their own time zone, and the message lists the best times by headcount. A person who is free at none of the times can say so with an "I can't make any of these" button, which is an answer you can count.
 
 The poll has no deadline setting, so write the deadline in the channel yourself. When it passes, the organizer picks the final time from a menu on the message, and a thread reply carries an Add to Google Calendar link. See [how Meeting Mouse works](/#how).

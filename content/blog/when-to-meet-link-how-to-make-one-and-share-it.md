@@ -151,6 +151,6 @@ Often not. With two or three people, a direct question with a few offered times 
 
 A link asks people to leave the conversation, open a page and come back. If everyone is in one Slack channel, the poll can be a message in that channel.
 
-Meeting Mouse works this way. Running `/when` with a title posts the poll as one message, and each person clicks Add my availability to answer in a form in Slack, in their own time zone. Nobody types a name, because people answer as their Slack user. Nobody has to paste a shared URL, and the channel message shows the result.
+Meeting Mouse works this way. Running `/meet` with a title posts the poll as one message, and each person clicks Add my availability to answer in a form in Slack, in their own time zone. Nobody types a name, because people answer as their Slack user. Nobody has to paste a shared URL, and the channel message shows the result.
 
-The form can also link to a grid page for dragging across the slots. That grid link is not a link to share. It is personal. It is signed for one person and one poll, it works for 30 days, and whoever holds it can change that person's answer, so do not forward it. A person who wants the page again clicks Add my availability and gets a fresh link. [How Meeting Mouse works](/#how) walks through it.
+The form can also link to a grid page for dragging across the slots. That grid link is not a link to share. It is personal. It is signed for one person and one poll, it works for 24 hours, and whoever holds it can change that person's answer, so do not forward it. A person who wants the page again clicks Add my availability and gets a fresh link. [How Meeting Mouse works](/#how) walks through it.

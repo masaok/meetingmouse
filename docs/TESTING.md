@@ -52,7 +52,9 @@ Cleanup contract and one recipe file per feature under `.claude/skills/verify-me
 Everything after `ack()` runs under `waitUntil`. A thrown error there is logged by Bolt but
 invisible to the user. Feature listeners therefore wrap their work and post an ephemeral
 "Something went wrong" with the error code when the Slack API rejects a call. `message_not_found`
-on `chat.update` (message deleted manually) is handled, not fatal.
+on `chat.update` (message deleted manually) is handled, not fatal. So is `not_found` on
+`views.update` after a click in the respond form (the form was closed first): the click is
+already saved, and the channel message is still refreshed.
 
 ## Manual QA checklist (dev workspace)
 

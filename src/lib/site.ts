@@ -3,4 +3,9 @@ export const SITE_URL = "https://www.meetingmouse.net";
 export const SITE_NAME = "Meeting Mouse";
 
 export const SLACK_INSTALL_URL = "https://app.meetingmouse.net/api/slack/install";
-export const SELF_HOST_URL = "https://github.com/masaok/meetingmouse#run-it-yourself";
+export const PRIVACY_PATH = "/privacy";
+export const SUPPORT_PATH = "/support";
+export const REPO_URL = "https://github.com/masaok/meetingmouse";
+export const SELF_HOST_URL = `${REPO_URL}#run-it-yourself`;
+export const SECURITY_URL = `${REPO_URL}/blob/main/SECURITY.md`;
+export const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;

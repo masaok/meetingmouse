@@ -106,6 +106,20 @@ describe("renderPollMessage", () => {
     expect(grid[3][1]).toBe("white_large_square");
   });
 
+  it("starts every square at the same edge, with or without a count beside it", () => {
+    const table = renderPollMessage(fixture("three-day")).blocks.find(
+      (b) => b.type === "table",
+    );
+    if (table?.type !== "table") throw new Error("the message has no table");
+    // Centering puts a lone square to the right of a square that has a count next to it.
+    expect(table.column_settings).toEqual([
+      { align: "right" },
+      { align: "left" },
+      { align: "left" },
+      { align: "left" },
+    ]);
+  });
+
   it("grades a slot by how much of the group is free", () => {
     expect(heatLevel(0, 4)).toBe("none");
     expect(heatLevel(1, 4)).toBe("few");

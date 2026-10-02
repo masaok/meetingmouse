@@ -31,9 +31,9 @@ work replace the three `https://www.meetingmouse.net/...` URLs with your tunnel 
 `scripts/slack-sign.ts` signs a payload the way Slack does and POSTs it:
 
 ```bash
-pnpm slack:sign --command /when --text "Sprint planning"
+pnpm slack:sign --command /meet --text "Sprint planning"
 pnpm slack:sign --payload tests/fixtures/payloads/respond_button.json
-pnpm slack:sign --url https://<preview>.vercel.app/api/slack/events --command /when
+pnpm slack:sign --url https://<preview>.vercel.app/api/slack/events --command /meet
 ```
 
 With a real bot token this exercises the listener end to end. Without one, set

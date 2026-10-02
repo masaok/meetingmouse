@@ -228,7 +228,8 @@ function gridTable(
     type: "table",
     column_settings: [
       { align: "right" },
-      ...days.map(() => ({ align: "center" as const })),
+      // Left, not center: a centered square shifts when a count sits beside it.
+      ...days.map(() => ({ align: "left" as const })),
     ],
     rows: [[blank, ...header], ...body],
   };

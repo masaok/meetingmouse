@@ -78,7 +78,7 @@ This matters here because the two choices are separate. Where the poll lives, on
 
 Meeting Mouse is a Slack app that uses the grid model.
 
-1. Run `/when Sprint planning` in a channel. A form asks for the dates, a daily window and a slot length of 15, 30 or 60 minutes.
+1. Run `/meet Sprint planning` in a channel. A form asks for the dates, a daily window and a slot length of 15, 30 or 60 minutes.
 2. The app posts one poll message.
 3. Each person clicks Add my availability and clicks the times that work in a form in Slack, shown in their own time zone. Each click saves. A link in the form opens a page for dragging across the same slots.
 4. The message updates after every answer with a grid of who is free when and the three best times by headcount.
@@ -100,7 +100,7 @@ A team of six needs 60 minutes for sprint planning next week. All six are in the
 
 **With a linked poll.** The organizer opens Doodle, creates the poll and picks five candidate times. She pastes the link in the channel with a deadline. Over the next day, four people follow the link and vote. One replies "any afternoon" in the thread and does not vote. One misses the message. She reminds both by name. When the votes are in, she opens the poll page, reads the count, and posts the winning time in the thread. Then she sends the calendar invite, unless the tool did it for her.
 
-**With a channel poll.** The organizer runs `/when Sprint planning` and picks Monday to Friday, 9:00 to 17:00, in 60-minute slots. One message appears in the channel. Each person clicks the button on it and marks their free hours. The message redraws after each answer, so anyone who scrolls past sees the current best times. She still has to remind the person who missed it. When the answers are in, she picks the top slot from the menu on the message, and the thread reply carries the calendar link.
+**With a channel poll.** The organizer runs `/meet Sprint planning` and picks Monday to Friday, 9:00 to 17:00, in 60-minute slots. One message appears in the channel. Each person clicks the button on it and marks their free hours. The message redraws after each answer, so anyone who scrolls past sees the current best times. She still has to remind the person who missed it. When the answers are in, she picks the top slot from the menu on the message, and the thread reply carries the calendar link.
 
 The second run has fewer steps for everyone, and the count never leaves the channel. The first run would be the only choice if one of the six were a contractor outside the workspace.
 
@@ -124,7 +124,7 @@ Scheduling tools add and remove integrations over time, so this post does not st
 
 ### Is a channel poll free?
 
-Meeting Mouse is free while in beta, and the code is open source, so you can run your own copy. For how that compares with a free tier on a web tool, read [Doodle free plan or a free Slack poll](/blog/doodle-free-plan-or-a-free-slack-poll).
+Meeting Mouse is free, with up to 10 polls open at once per workspace, and the code is open source, so you can run your own copy. For how that compares with a free tier on a web tool, read [Doodle free plan or a free Slack poll](/blog/doodle-free-plan-or-a-free-slack-poll).
 
 ### Does a channel poll read my calendar?
 

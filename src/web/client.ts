@@ -87,6 +87,7 @@ export const CLIENT_SCRIPT = String.raw`(function () {
         return res.json().then(function (data) { return { status: res.status, data: data }; });
       })
       .then(function (result) {
+        if (result.status === 403 || result.status === 404) return location.reload();
         saving = false;
         if (result.status === 409) {
           dirty = false;
@@ -193,7 +194,10 @@ export const CLIENT_SCRIPT = String.raw`(function () {
   setInterval(function () {
     if (document.hidden || drag || dirty || saving) return;
     fetch(endpoint + "?format=json")
-      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (res) {
+        if (res.status === 403 || res.status === 404) location.reload();
+        return res.ok ? res.json() : null;
+      })
       .then(function (next) {
         if (!next || drag || dirty || saving) return;
         adopt(next, true);

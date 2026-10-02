@@ -3,7 +3,12 @@
  * and menus; listeners reference them when they subscribe. docs/FEATURE_MAP.md must list
  * each one (CI: `pnpm featuremap:check`).
  */
-export const COMMAND_WHEN = "/when";
+/** The command the copy leads with. */
+export const COMMAND_MEET = "/meet";
+/** An alias of `/meet`: the app's own name. */
+export const COMMAND_MOUSE = "/mouse";
+/** Every command that opens the create form. The manifest registers the same two. */
+export const COMMANDS = [COMMAND_MEET, COMMAND_MOUSE] as const;
 export const SHORTCUT_CREATE_POLL = "create_poll";
 
 export const CALLBACK_CREATE_POLL_MODAL = "create_poll_modal";

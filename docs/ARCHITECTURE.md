@@ -47,7 +47,7 @@ surface errors to the user ephemerally (see [Testing](./TESTING.md#error-surfaci
 
 ## Embedding in another app
 
-`createMeetingMouse({ features, signingSecret, auth, logLevel })` in `src/bolt/create.ts` builds
+`createMeetingMouse({ features, signingSecret, auth, grid, supportUrl, logLevel })` in `src/bolt/create.ts` builds
 the Bolt app and the Vercel receiver from a list of features and nothing else. It never reads
 the environment. The reference app in this repo calls it from `getBolt()` with `coreFeatures`
 and the three env vars; a host that embeds Meeting Mouse calls it with `coreFeatures` plus its own
@@ -59,7 +59,11 @@ secret, a state secret, the scopes (`CORE_BOT_SCOPES` plus the host's own) and a
 store: the receiver then serves the install path (`receiver.handleInstall`) and the callback
 (`receiver.handleCallback`), and tokens come from the store per workspace. Self-hosting stays a
 three-variable setup because the reference app uses the token form. Feature names must be
-unique, and the factory throws on a duplicate. The host
+unique, and the factory throws on a duplicate. Two options are optional and reach every feature
+through its `FeatureContext`: `grid` turns on the [web grid](./WEB_GRID.md), and `supportUrl`, an
+http(s) URL, ends the App Home tab with the line "Need help? Get support." linked to it. The
+factory throws on a `supportUrl` that is not http(s). The reference app sets no `supportUrl`, so
+its Home tab has no help line. The host
 owns its route handler, its env preflight and its migrations. The core's database client asks the
 environment for `DATABASE_URL` and nothing else, so a host with no bot token in its environment
 works.
@@ -87,12 +91,15 @@ Modules that import `server-only` (`createMeetingMouse`, the db client) need a h
 ```
 src/
   app/                      Next.js routes: homepage + api/slack/events/route.ts + grid/[token]/route.ts
+                            + privacy/ and support/ (pages about the hosted service)
                             + blog/ (index, post page, feed) + sitemap.ts + robots.ts
                             + opengraph-image.tsx (the social preview)
   blog/                     The blog: post schema, loader, Markdown renderer, feed, content check.
   components/brand.tsx      Logo, mark and mascot for the homepage and the icon
-  components/site.tsx       The header and footer every page shares
+  components/site.tsx       The header and footer every page shares; the footer links every public address
+  components/doc-page.tsx   The frame of the privacy policy and the support page
   components/social-image.tsx  The social preview drawing the image routes share
+  assets/fonts/             Geist regular and semibold for the social preview, with the license
   bolt/create.ts            createMeetingMouse(features, credentials): App + receiver for any host. server-only.
   bolt/app.ts               Reference wiring: env in, coreFeatures, built on first request. server-only.
   features/                 One directory per Slack surface, colocated:
@@ -109,9 +116,12 @@ src/
   lib/                      env.ts (preflight), users.ts (users.info cache), log.ts,
                             refresh.ts (re-render the poll message from fresh reads),
                             respond.ts (response_url replies, Slack error codes),
-                            site.ts (site URL, name, call-to-action links)
+                            site.ts (site URL, name, call-to-action links),
+                            hosted.ts (what the privacy and support pages state about the hosted service)
 content/blog/               Blog posts, one Markdown file each. See docs/BLOG.md.
 drizzle/                    Numbered SQL migrations generated from schema.ts
+public/                     Static files the site serves: the logo mark, and under slack/ the Slack app
+                            icon (app_icons/) and the six Marketplace listing images (app_images/)
 scripts/                    doctor, slack-sign, render-fixture, smoke-imports, check-docs,
                             check-feature-map, check-prose, check-blog, check-dev-env, dev.tunnel
 tests/                      Cross-cutting tests + proof-of-failure fixtures

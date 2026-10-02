@@ -120,7 +120,9 @@ There are no tag pages and no pagination. The sitemap exists at `/sitemap.xml` a
 ## Social preview and robots
 
 Preview images are drawn at build time by `socialImage` in `src/components/social-image.tsx`:
-the logo, a headline, one line under it and the mascot.
+the logo, a headline, one line under it and the mascot. The text is set in Geist, the site's
+typeface, from the two font files in `src/assets/fonts/` (regular and semibold, with their
+license beside them). The image renderer cannot use the web fonts the pages load.
 
 | Page       | Image route                               | Headline       |
 | ---------- | ----------------------------------------- | -------------- |

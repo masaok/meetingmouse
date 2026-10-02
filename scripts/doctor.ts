@@ -56,7 +56,7 @@ try {
   const res = await fetch(`${url}/api/slack/events`, {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
-    body: "command=%2Fwhen",
+    body: "command=%2Fmeet",
   });
   const hint =
     res.status === 401

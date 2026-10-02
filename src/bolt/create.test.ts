@@ -37,9 +37,41 @@ describe("createMeetingMouse", () => {
     });
 
     const url = contexts[0].grid?.urlFor({ pollId: "p", teamId: "T", userId: "U" });
-    expect(url?.startsWith("https://app.example.com/grid/v1.")).toBe(true);
+    expect(url?.startsWith("https://app.example.com/grid/v2.")).toBe(true);
     expect(contexts[1].grid).toBeUndefined();
   });
+
+  it("hands every feature the support URL when the host sets one", () => {
+    const contexts: FeatureContext[] = [];
+    const feature: Feature = {
+      name: "a",
+      register: (_app, context) => contexts.push(context),
+    };
+    const base = {
+      features: [feature],
+      signingSecret: "secret",
+      auth: { token: "xoxb-test" },
+    };
+    createMeetingMouse({ ...base, supportUrl: "https://example.com/help?a=1|2" });
+    createMeetingMouse(base);
+
+    expect(contexts[0].supportUrl).toBe("https://example.com/help?a=1%7C2");
+    expect(contexts[1].supportUrl).toBeUndefined();
+  });
+
+  it.each(["", "example.com/help", "mailto:help@example.com", "javascript:alert(1)"])(
+    "rejects the support URL %j, which is not http(s)",
+    (supportUrl) => {
+      expect(() =>
+        createMeetingMouse({
+          features: [],
+          signingSecret: "secret",
+          auth: { token: "xoxb-test" },
+          supportUrl,
+        }),
+      ).toThrow(`supportUrl must be an http(s) URL, got "${supportUrl}"`);
+    },
+  );
 
   it("registers every feature once, in order, on the app it returns", () => {
     const seen: unknown[][] = [];
@@ -89,7 +121,7 @@ describe("createMeetingMouse", () => {
     await bolt.app.init();
     await bolt.app.processEvent({
       body: {
-        command: "/when",
+        command: "/meet",
         team_id: "T123",
         user_id: "U42",
         channel_id: "C7",
@@ -173,7 +205,7 @@ describe("createMeetingMouse", () => {
       await bolt.app.init();
       await bolt.app.processEvent({
         body: {
-          command: "/when",
+          command: "/meet",
           team_id: "T1",
           user_id: "U9",
           channel_id: "C1",

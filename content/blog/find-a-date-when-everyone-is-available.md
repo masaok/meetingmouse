@@ -165,7 +165,7 @@ Open answers are quicker and let people adjust. "I could move my dentist if that
 
 ## Doing both rounds in Slack
 
-Meeting Mouse is built for the second round and can cover both when the candidate dates fall within the next three weeks, which is as far ahead as its date list goes. It is a Slack app. Running `/when` with a title opens a form for the dates, a daily window of hours and a slot length. A poll offers up to 14 dates, so people mark the hours they are free on each candidate date, in their own time zone. The channel message then shows who is free when and ranks the best times by headcount. A date whose slots show everyone free is a date when the group is available.
+Meeting Mouse is built for the second round and can cover both when the candidate dates fall within the next three weeks, which is as far ahead as its date list goes. It is a Slack app. Running `/meet` with a title opens a form for the dates, a daily window of hours and a slot length. A poll offers up to 14 dates, so people mark the hours they are free on each candidate date, in their own time zone. The channel message then shows who is free when and ranks the best times by headcount. A date whose slots show everyone free is a date when the group is available.
 
 The answer form also has an "I can't make any of these" choice, so a firm no is recorded as an answer and not left as silence.
 

@@ -6,7 +6,7 @@ const steps = [
   {
     n: "1",
     title: "Start a poll",
-    body: "Run /when Sprint planning in any channel. Pick the dates, a daily window, and a slot length.",
+    body: "Run /meet Sprint planning in any channel. Pick the dates, a daily window, and a slot length.",
   },
   {
     n: "2",
@@ -200,7 +200,7 @@ export default function Home() {
             <p className="mt-5 max-w-lg text-lg leading-8 text-stone-600 dark:text-stone-400">
               Run{" "}
               <code className="rounded bg-stone-200/70 px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-stone-800">
-                /when
+                /meet
               </code>
               , let everyone click the times they&apos;re free without leaving Slack, and
               watch the channel message fill in with a grid of who can meet when.
@@ -220,7 +220,7 @@ export default function Home() {
               </a>
             </div>
             <p className="mt-4 text-sm text-stone-500 dark:text-stone-500">
-              Free while in beta. No accounts, no calendar access required.
+              Free. No accounts, no calendar access required.
             </p>
           </div>
           <div className="flex flex-col items-center gap-2 sm:flex-row sm:items-end sm:justify-center md:justify-end">
@@ -299,7 +299,7 @@ export default function Home() {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter home />
     </div>
   );
 }

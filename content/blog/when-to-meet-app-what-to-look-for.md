@@ -129,6 +129,6 @@ Meeting Mouse is the first row of the matching table. It is a Slack app, and aga
 - **Where the result appears.** In the channel, in the same message, which updates in place.
 - **Calendar access.** None. It does not read calendars. The final announcement includes an Add to Google Calendar link.
 - **People who are not in the channel.** This is the gap. A person who is not in the Slack channel cannot answer the poll, so a group that spans organizations is better served by a web grid.
-- **Cost.** The hosted app is free while in beta, and the code is open source if you want to run your own copy.
+- **Cost.** The hosted app is free, with up to 10 polls open at once per workspace, and the code is open source if you want to run your own copy.
 
 A poll offers up to 14 dates and slots of 15, 30 or 60 minutes. It uses the grid model, so it is not the tool for a vote on three fixed options. [See how Meeting Mouse works](/#how).

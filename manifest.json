@@ -1,9 +1,12 @@
 {
-  "_metadata": { "major_version": 1, "minor_version": 1 },
+  "_metadata": {
+    "major_version": 1,
+    "minor_version": 1
+  },
   "display_information": {
     "name": "Meeting Mouse",
     "description": "Find a meeting time without leaving Slack.",
-    "long_description": "Start an availability poll in a channel with /when. Everyone marks when they're free in their own time zone, the message updates live with a heatmap and the best times, and the organizer locks in a final time with an Add to Google Calendar link.",
+    "long_description": "Start an availability poll in a channel with /meet. Everyone clicks the times they're free, shown in their own time zone. The message updates live with a grid of who is free when and the best times, and the organizer locks in a final time with an Add to Google Calendar link.",
     "background_color": "#4a154b"
   },
   "features": {
@@ -12,7 +15,10 @@
       "messages_tab_enabled": false,
       "messages_tab_read_only_enabled": true
     },
-    "bot_user": { "display_name": "Meeting Mouse", "always_online": true },
+    "bot_user": {
+      "display_name": "Meeting Mouse",
+      "always_online": true
+    },
     "shortcuts": [
       {
         "name": "Find a meeting time",
@@ -23,8 +29,15 @@
     ],
     "slash_commands": [
       {
-        "command": "/when",
+        "command": "/meet",
         "description": "Start an availability poll in this channel",
+        "usage_hint": "[title]",
+        "should_escape": false,
+        "url": "https://www.meetingmouse.net/api/slack/events"
+      },
+      {
+        "command": "/mouse",
+        "description": "Start an availability poll in this channel (same as /meet)",
         "usage_hint": "[title]",
         "should_escape": false,
         "url": "https://www.meetingmouse.net/api/slack/events"
@@ -32,7 +45,9 @@
     ]
   },
   "oauth_config": {
-    "scopes": { "bot": ["commands", "chat:write", "chat:write.public", "users:read"] }
+    "scopes": {
+      "bot": ["commands", "chat:write", "chat:write.public", "users:read"]
+    }
   },
   "settings": {
     "event_subscriptions": {

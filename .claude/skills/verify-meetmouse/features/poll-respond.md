@@ -31,12 +31,14 @@ Preconditions:
 - **None, and withdrawing it.** `pnpm test src/features/poll-respond/listener.test.ts -t "none"` and `-t "withdraws"`.
 - **Grid link.** `pnpm test src/features/poll-respond/listener.test.ts -t "web grid"` → the form opens with the viewer's own URL on the link button above it, and keeps it after a click.
 - **The grid page.** `pnpm grid:preview`, open two of the printed links, drag on the left grid: "Saved" appears, the right grid darkens, the other window follows within 5 s, and the terminal prints `chat.update`.
+- **A link that lost access.** `pnpm test src/web/handlers.test.ts -t "refuses"` → 404 after 24 hours, 403 for a person Slack says is deactivated, 503 when Slack cannot be asked; nothing is saved in any of them.
 - **Closed mid-flight.** `pnpm test src/features/poll-respond/listener.test.ts -t "closed meanwhile"` → the closed view, no write.
 
 ## Gotchas
 
 - Each button's `action_id` is `toggle_slot:<epoch seconds>`, because Slack wants the ids in one block to differ. The listener subscribes with a pattern, and reads the slot from the button's `value`.
 - A click on a slot that is not in the poll is ignored (a form left open after the poll was recreated).
+- A click followed at once by closing the form is saved and the channel message is refreshed; Slack answers the redraw with `not_found`, and the log line is `response_saved` with `form: "closed"`.
 - Two fast clicks both reach the database. The form can show the earlier of the two until the next click or until it is reopened.
 - Unticking the last chosen time leaves an answer with no times, which reads as "none of these". The button at the bottom withdraws it.
 - The payload fixture's slot value is epoch seconds for 2026-10-06 16:00Z; a different poll needs a different value.

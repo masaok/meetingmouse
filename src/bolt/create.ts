@@ -53,7 +53,22 @@ export interface CreateMeetingMouseOptions {
    * with the same secret.
    */
   grid?: GridOptions;
+  /**
+   * Where a person gets help with this deployment: an http(s) URL. When set, the App Home tab ends
+   * with a line that links to it; when not, the tab says nothing about support.
+   */
+  supportUrl?: string;
   logLevel?: LogLevel;
+}
+
+/** The URL as Slack mrkdwn can link it, or a throw that names the option. */
+function supportLink(supportUrl: string): string {
+  const url = URL.canParse(supportUrl) ? new URL(supportUrl) : undefined;
+  if (url?.protocol !== "http:" && url?.protocol !== "https:") {
+    throw new Error(`supportUrl must be an http(s) URL, got "${supportUrl}"`);
+  }
+  // A bare pipe would end the URL half of a `<url|label>` link.
+  return url.href.replaceAll("|", "%7C");
 }
 
 /**
@@ -63,7 +78,14 @@ export interface CreateMeetingMouseOptions {
  */
 
 export function createMeetingMouse(options: CreateMeetingMouseOptions): Bolt {
-  const { features, signingSecret, auth, grid, logLevel = LogLevel.INFO } = options;
+  const {
+    features,
+    signingSecret,
+    auth,
+    grid,
+    supportUrl,
+    logLevel = LogLevel.INFO,
+  } = options;
   const names = new Set<string>();
   for (const { name } of features) {
     if (names.has(name)) throw new Error(`duplicate feature name "${name}"`);
@@ -92,7 +114,10 @@ export function createMeetingMouse(options: CreateMeetingMouseOptions): Bolt {
         ? { authorize: auth.authorize }
         : {};
   const app = new App({ ...appAuth, signingSecret, receiver, deferInitialization: true });
-  const context = { grid: grid && gridLinks(grid) };
+  const context = {
+    grid: grid && gridLinks(grid),
+    supportUrl: supportUrl === undefined ? undefined : supportLink(supportUrl),
+  };
   for (const feature of features) feature.register(app, context);
   return { app, receiver };
 }

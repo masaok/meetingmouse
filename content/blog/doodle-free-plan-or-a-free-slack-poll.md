@@ -67,7 +67,7 @@ A free Slack poll removes the trip, because people answer where the question was
 
 Meeting Mouse is a Slack app for availability polls, and it is free in two ways.
 
-- **The hosted app is free while in beta.** You add it to your workspace and run `/when` in a channel. "While in beta" means that may change.
+- **The hosted app is free.** You add it to your workspace and run `/meet` in a channel. There is no paid plan. A workspace can have 10 polls open at once.
 - **The code is open source under the MIT license.** You can run your own copy. That needs a Slack app you create, a host for the web app and a Postgres database, so it costs setup time and whatever your host charges.
 
 It needs no account for participants and no calendar access. People answer as their Slack user. A poll offers up to 14 dates, with slots of 15, 30 or 60 minutes. [See how Meeting Mouse works](/#how).
@@ -78,7 +78,7 @@ Hold it to the same checks as any other free tool. These are the limits that mat
 - **It does not read calendars.** Each person checks their own calendar and clicks the times that work. [Doodle calendar polls: do you need calendar access?](/blog/doodle-calendar-polls-and-calendar-access) covers what that trade means.
 - **It collects free time on a grid.** It does not run a vote on a short list of named options, and it offers no booking pages.
 - **The calendar step is a link.** When the organizer picks the final time, a thread reply carries an Add to Google Calendar link. Each person adds the event with one click.
-- **The price of the hosted app is settled only for the beta.** If a fixed price matters to you, the code is MIT licensed, so a copy you run yourself costs only what your host and database charge.
+- **Self-hosting has a known cost.** If a fixed price matters to you, the code is MIT licensed, so a copy you run yourself costs only what your host and database charge.
 
 ## Is running your own copy really free?
 
@@ -89,13 +89,13 @@ The license costs nothing. The work and the hosting are yours. Running your own 
 - Deploy the web app to a host and point the Slack app at it.
 - Keep it running, and update it when you want new features.
 
-For a team with a developer who is comfortable with those steps, the cost is setup time and a running cost that depends on the host. For a team without one, the hosted app is the realistic free option, and the beta caveat applies.
+For a team with a developer who is comfortable with those steps, the cost is setup time and a running cost that depends on the host. For a team without one, the hosted app is the realistic free option, and its limit of 10 open polls per workspace applies.
 
 ## A worked example: two meetings, two answers
 
 A design team of eight shares one Slack channel. This month it has two meetings to schedule.
 
-**The weekly review.** All eight people are in the channel. The week is open, and nobody knows which hours suit the group. A poll in the channel fits. The organizer runs `/when Weekly review`, picks five dates and a daily window, and the team answers from the message. The best times appear at the top of that message, so nobody has to announce the count. No link leaves Slack, and no plan limit is in play.
+**The weekly review.** All eight people are in the channel. The week is open, and nobody knows which hours suit the group. A poll in the channel fits. The organizer runs `/meet Weekly review`, picks five dates and a daily window, and the team answers from the message. The best times appear at the top of that message, so nobody has to announce the count. No link leaves Slack, and no plan limit is in play.
 
 **A portfolio session with two outside reviewers.** The reviewers work at other companies and are not in the team's Slack. A channel poll cannot reach them. A web tool with a link can, and Doodle is a common choice. Before sending the link, the organizer runs the six-step test above. The things to confirm are that the reviewers can answer without an account, and that ten participants fit within the free plan.
 
@@ -121,7 +121,7 @@ The grid and the poll of options are different questions. [When 2 Meet vs Doodle
 - **Reading the limits after the poll is out.** Check first. Changing tools while six people are halfway through answering costs you their goodwill.
 - **Testing only as the organizer.** The organizer's view is the polished one. The participant's view decides whether people answer.
 - **Trusting an old article.** A comparison written last year can describe a plan that no longer exists. The tool's own pricing page is the only current source. That applies to this post too.
-- **Treating free as permanent.** Plans change, and a beta ends. Keep the decision cheap to reverse: do not build a process that depends on one free feature.
+- **Treating free as permanent.** Plans change. Keep the decision cheap to reverse: do not build a process that depends on one free feature.
 - **Using one tool for every group.** The team in Slack and the committee spread across four organizations have different needs. Nothing stops you from using two tools.
 
 ## Questions people ask about free scheduling polls

@@ -135,6 +135,6 @@ Plan to. In both models the organizer makes the final call. Say the chosen time 
 
 Both tools send people to another site. If everyone in the group shares a Slack channel, the poll can stay in the channel.
 
-Meeting Mouse uses the grid model. `/when` with a title posts one message, each person marks every slot they are free in their own time zone, and the message shows who is free when with the three best times on top. The organizer picks the final time from a menu on the message, and a thread reply announces it with an Add to Google Calendar link. It needs no account and no calendar access.
+Meeting Mouse uses the grid model. `/meet` with a title posts one message, each person marks every slot they are free in their own time zone, and the message shows who is free when with the three best times on top. The organizer picks the final time from a menu on the message, and a thread reply announces it with an Add to Google Calendar link. It needs no account and no calendar access.
 
 It only reaches people in the Slack channel. For a group that includes people who are not in your Slack, use one of the two web tools. [See how Meeting Mouse works](/#how), or read [Doodle scheduling in Slack](/blog/doodle-scheduling-in-slack) for a step-by-step comparison of a linked poll and a channel poll.
