@@ -36,6 +36,7 @@ not cover them. The blog's routes and reproduce commands are in [Blog](./BLOG.md
 | -------------------------------- | --------------------------- | ------------------------------------------- | ------------------------------------------------- |
 | Privacy policy                   | `/privacy`                  | `src/app/privacy/page.tsx`                  | `curl -s localhost:3000/privacy`                  |
 | Support                          | `/support`                  | `src/app/support/page.tsx`                  | `curl -s localhost:3000/support`                  |
+| Legal (lists every legal page)   | `/legal`                    | `src/app/legal/page.tsx`                    | `curl -s localhost:3000/legal`                    |
 | Terms of service                 | `/terms`                    | `src/app/terms/page.tsx`                    | `curl -s localhost:3000/terms`                    |
 | Data retention policy            | `/data-retention`           | `src/app/data-retention/page.tsx`           | `curl -s localhost:3000/data-retention`           |
 | Data archival and removal policy | `/data-archival-removal`    | `src/app/data-archival-removal/page.tsx`    | `curl -s localhost:3000/data-archival-removal`    |

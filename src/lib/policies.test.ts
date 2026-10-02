@@ -20,7 +20,7 @@ import {
   VULNERABILITY_DISCLOSURE,
   type Policy,
 } from "./policies";
-import { SITE_URL } from "./site";
+import { LEGAL_PATH, SITE_URL } from "./site";
 
 const textOf = (policy: Policy): string =>
   policy.sections
@@ -48,6 +48,11 @@ describe("the terms and data policies", () => {
       expect(urls).toContain(`${SITE_URL}${policy.path}`);
       expect(SITE_ROUTES).toContain(policy.path);
     }
+  });
+
+  it("are listed on one legal page, which is in the sitemap too", () => {
+    expect(sitemap().map((entry) => entry.url)).toContain(`${SITE_URL}${LEGAL_PATH}`);
+    expect(SITE_ROUTES).toContain(LEGAL_PATH);
   });
 
   it("each end with how to reach us", () => {
