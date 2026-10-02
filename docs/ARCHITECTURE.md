@@ -120,6 +120,8 @@ src/
                             hosted.ts (what the privacy and support pages state about the hosted service)
 content/blog/               Blog posts, one Markdown file each. See docs/BLOG.md.
 drizzle/                    Numbered SQL migrations generated from schema.ts
+public/                     Static files the site serves: the logo mark, and under slack/ the Slack app
+                            icon (app_icons/) and the six Marketplace listing images (app_images/)
 scripts/                    doctor, slack-sign, render-fixture, smoke-imports, check-docs,
                             check-feature-map, check-prose, check-blog, check-dev-env, dev.tunnel
 tests/                      Cross-cutting tests + proof-of-failure fixtures
