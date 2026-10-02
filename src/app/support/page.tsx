@@ -5,7 +5,13 @@ import { SOCIAL_IMAGE } from "@/app/opengraph-image";
 import { absoluteUrl } from "@/blog/paths";
 import { DocPage } from "@/components/doc-page";
 import { FREE_PLAN_OPEN_POLLS, SUPPORT_EMAIL, SUPPORT_REPLY_DAYS } from "@/lib/hosted";
-import { PRIVACY_PATH, SITE_NAME, SLACK_INSTALL_URL, SUPPORT_PATH } from "@/lib/site";
+import {
+  INSTALLATION_PATH,
+  PRIVACY_PATH,
+  SITE_NAME,
+  SLACK_INSTALL_URL,
+  SUPPORT_PATH,
+} from "@/lib/site";
 
 import manifest from "../../../manifest.json";
 
@@ -45,7 +51,8 @@ export default function Support() {
       <p>
         Open <a href={SLACK_INSTALL_URL}>Add to Slack</a>, choose the workspace and click
         Allow. The page that follows confirms the install. If your workspace requires
-        approval for apps, Slack sends the request to an admin first.
+        approval for apps, Slack sends the request to an admin first. The{" "}
+        <Link href={INSTALLATION_PATH}>installation page</Link> shows each step.
       </p>
 
       <h2>Start a poll</h2>

@@ -32,17 +32,18 @@ Every id is a constant in `src/slack/ids.ts`. The poll message itself is rendere
 The homepage, the web grid and the blog are routes, not Slack surfaces, so the id check does
 not cover them. The blog's routes and reproduce commands are in [Blog](./BLOG.md#surfaces).
 
-| Page                             | Route                       | File                                        | Reproduce                                         |
-| -------------------------------- | --------------------------- | ------------------------------------------- | ------------------------------------------------- |
-| Privacy policy                   | `/privacy`                  | `src/app/privacy/page.tsx`                  | `curl -s localhost:3000/privacy`                  |
-| Support                          | `/support`                  | `src/app/support/page.tsx`                  | `curl -s localhost:3000/support`                  |
-| Legal (lists every legal page)   | `/legal`                    | `src/app/legal/page.tsx`                    | `curl -s localhost:3000/legal`                    |
-| Terms of service                 | `/terms`                    | `src/app/terms/page.tsx`                    | `curl -s localhost:3000/terms`                    |
-| Data retention policy            | `/data-retention`           | `src/app/data-retention/page.tsx`           | `curl -s localhost:3000/data-retention`           |
-| Data archival and removal policy | `/data-archival-removal`    | `src/app/data-archival-removal/page.tsx`    | `curl -s localhost:3000/data-archival-removal`    |
-| Data storage policy              | `/data-storage`             | `src/app/data-storage/page.tsx`             | `curl -s localhost:3000/data-storage`             |
-| Data deletion request procedure  | `/data-deletion-requests`   | `src/app/data-deletion-requests/page.tsx`   | `curl -s localhost:3000/data-deletion-requests`   |
-| Vulnerability disclosure program | `/vulnerability-disclosure` | `src/app/vulnerability-disclosure/page.tsx` | `curl -s localhost:3000/vulnerability-disclosure` |
+| Page                                                                      | Route                       | File                                        | Reproduce                                         |
+| ------------------------------------------------------------------------- | --------------------------- | ------------------------------------------- | ------------------------------------------------- |
+| Privacy policy                                                            | `/privacy`                  | `src/app/privacy/page.tsx`                  | `curl -s localhost:3000/privacy`                  |
+| Support                                                                   | `/support`                  | `src/app/support/page.tsx`                  | `curl -s localhost:3000/support`                  |
+| Installation (the install steps, with screenshots from `public/install/`) | `/installation`             | `src/app/installation/page.tsx`             | `curl -s localhost:3000/installation`             |
+| Legal (lists every legal page)                                            | `/legal`                    | `src/app/legal/page.tsx`                    | `curl -s localhost:3000/legal`                    |
+| Terms of service                                                          | `/terms`                    | `src/app/terms/page.tsx`                    | `curl -s localhost:3000/terms`                    |
+| Data retention policy                                                     | `/data-retention`           | `src/app/data-retention/page.tsx`           | `curl -s localhost:3000/data-retention`           |
+| Data archival and removal policy                                          | `/data-archival-removal`    | `src/app/data-archival-removal/page.tsx`    | `curl -s localhost:3000/data-archival-removal`    |
+| Data storage policy                                                       | `/data-storage`             | `src/app/data-storage/page.tsx`             | `curl -s localhost:3000/data-storage`             |
+| Data deletion request procedure                                           | `/data-deletion-requests`   | `src/app/data-deletion-requests/page.tsx`   | `curl -s localhost:3000/data-deletion-requests`   |
+| Vulnerability disclosure program                                          | `/vulnerability-disclosure` | `src/app/vulnerability-disclosure/page.tsx` | `curl -s localhost:3000/vulnerability-disclosure` |
 
 All of them describe the hosted service at app.meetingmouse.net, not a self-hosted copy. The
 six pages after Support are drawn from one list, `POLICIES` in `src/lib/policies.ts`, by
