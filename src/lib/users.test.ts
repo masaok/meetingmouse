@@ -3,7 +3,12 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import type { Db } from "@/db/queries";
 
 import { testDb } from "../../tests/db/pglite";
-import { getUserProfile, USER_CACHE_TTL_MS, type UsersClient } from "./users";
+import {
+  DeactivatedUserError,
+  getUserProfile,
+  USER_CACHE_TTL_MS,
+  type UsersClient,
+} from "./users";
 
 let db: Db;
 beforeAll(async () => {
@@ -54,5 +59,26 @@ describe("getUserProfile", () => {
   it("throws when Slack returns no user", async () => {
     const { client } = fakeClient(undefined);
     await expect(getUserProfile(db, client, "T1", "U4")).rejects.toThrow(/no user/);
+  });
+
+  it("refetches sooner for a caller that asks for a fresher profile", async () => {
+    const { client, info } = fakeClient({ id: "U5", tz: "UTC", real_name: "Five" });
+    const at = new Date("2026-10-06T16:00:00Z");
+    await getUserProfile(db, client, "T1", "U5", at);
+    await getUserProfile(db, client, "T1", "U5", new Date(at.getTime() + 59_999), 60_000);
+    expect(info).toHaveBeenCalledTimes(1);
+    await getUserProfile(db, client, "T1", "U5", new Date(at.getTime() + 60_000), 60_000);
+    expect(info).toHaveBeenCalledTimes(2);
+  });
+
+  it("throws for a deactivated person and caches nothing", async () => {
+    const { client, info } = fakeClient({ id: "U6", deleted: true, name: "six" });
+    await expect(getUserProfile(db, client, "T1", "U6")).rejects.toBeInstanceOf(
+      DeactivatedUserError,
+    );
+    await expect(getUserProfile(db, client, "T1", "U6")).rejects.toBeInstanceOf(
+      DeactivatedUserError,
+    );
+    expect(info).toHaveBeenCalledTimes(2);
   });
 });

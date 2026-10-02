@@ -31,6 +31,7 @@ Preconditions:
 - **None, and withdrawing it.** `pnpm test src/features/poll-respond/listener.test.ts -t "none"` and `-t "withdraws"`.
 - **Grid link.** `pnpm test src/features/poll-respond/listener.test.ts -t "web grid"` → the form opens with the viewer's own URL on the link button above it, and keeps it after a click.
 - **The grid page.** `pnpm grid:preview`, open two of the printed links, drag on the left grid: "Saved" appears, the right grid darkens, the other window follows within 5 s, and the terminal prints `chat.update`.
+- **A link that lost access.** `pnpm test src/web/handlers.test.ts -t "refuses"` → 404 after 24 hours, 403 for a person Slack says is deactivated, 503 when Slack cannot be asked; nothing is saved in any of them.
 - **Closed mid-flight.** `pnpm test src/features/poll-respond/listener.test.ts -t "closed meanwhile"` → the closed view, no write.
 
 ## Gotchas

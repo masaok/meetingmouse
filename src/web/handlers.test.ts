@@ -1,3 +1,5 @@
+import { createHmac } from "node:crypto";
+
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -29,6 +31,10 @@ let db: Db;
 let pollId: string;
 let client: ReturnType<typeof fakeClient>;
 let handlers: ReturnType<typeof createGridHandlers>;
+let clock: Date;
+const after = (ms: number) => new Date(NOW.getTime() + ms);
+const MINUTE = 60_000;
+const HOUR = 60 * MINUTE;
 
 beforeAll(async () => {
   db = await testDb();
@@ -47,10 +53,11 @@ beforeEach(async () => {
   pollId = poll.id;
   await setMessageTs(db, pollId, "1700000000.000100");
   client = fakeClient();
+  clock = NOW;
   handlers = createGridHandlers({
     secret,
     db,
-    now: () => NOW,
+    now: () => clock,
     clientFor: async () => client as never,
   });
 });
@@ -163,5 +170,139 @@ describe("grid handlers", () => {
     expect((await post(forged, { slots: [seconds(S1)] })).status).toBe(404);
     expect(await getUserAvailability(db, pollId, "U1")).toEqual([]);
     expect(await (await get(expired)).text()).toContain("This link has expired");
+  });
+
+  it("refuses a link 24 hours after it was made", async () => {
+    const link = url({ userId: "U_DAY" });
+
+    clock = after(24 * HOUR - 1000);
+    expect((await get(link)).status).toBe(200);
+
+    clock = after(24 * HOUR);
+    const res = await get(link);
+    expect(res.status).toBe(404);
+    expect(await res.text()).toContain("This link has expired");
+    expect((await post(link, { slots: [seconds(S1)] })).status).toBe(404);
+    expect(await getUserAvailability(db, pollId, "U_DAY")).toEqual([]);
+  });
+
+  it("refuses the link of a person Slack says is deactivated", async () => {
+    client.users.info.mockResolvedValue({
+      ok: true,
+      user: { id: "U_GONE", deleted: true, name: "gone" },
+    });
+    const link = url({ userId: "U_GONE" });
+
+    const page = await get(link);
+    expect(page.status).toBe(403);
+    expect(page.headers.get("cache-control")).toBe("no-store");
+    const text = await page.text();
+    expect(text).toContain("This link no longer works");
+    expect(text).not.toContain("Lunch");
+
+    const state = await get(`${link}?format=json`);
+    expect(state.status).toBe(403);
+    expect(await state.json()).toEqual({ error: "deactivated" });
+
+    const save = await post(link, { slots: [seconds(S1)] });
+    expect(save.status).toBe(403);
+    expect(await save.json()).toEqual({ error: "deactivated" });
+    expect(await getUserAvailability(db, pollId, "U_GONE")).toEqual([]);
+    expect(client.chat.update).not.toHaveBeenCalled();
+  });
+
+  it("asks Slack again after 5 minutes, so a deactivation ends an open page", async () => {
+    const link = url({ userId: "U_LEAVER" }, "?format=json");
+    expect((await get(link)).status).toBe(200);
+
+    client.users.info.mockResolvedValue({
+      ok: true,
+      user: { id: "U_LEAVER", deleted: true, name: "leaver" },
+    });
+    clock = after(5 * MINUTE - 1000);
+    expect((await get(link)).status).toBe(200);
+    expect(client.users.info).toHaveBeenCalledTimes(1);
+
+    clock = after(5 * MINUTE);
+    expect((await get(link)).status).toBe(403);
+    expect((await post(link, { slots: [seconds(S1)] })).status).toBe(403);
+    expect(await getUserAvailability(db, pollId, "U_LEAVER")).toEqual([]);
+  });
+
+  it("refuses the link when Slack cannot say whether the person is active", async () => {
+    client.users.info.mockRejectedValue({ data: { error: "ratelimited" } });
+    const link = url({ userId: "U_UNSURE" });
+
+    const page = await get(link);
+    expect(page.status).toBe(503);
+    const text = await page.text();
+    expect(text).toContain("Slack could not confirm this link");
+    expect(text).toContain("Add my availability");
+    expect(text).not.toContain("Lunch");
+
+    const save = await post(link, { slots: [seconds(S1)] });
+    expect(save.status).toBe(503);
+    expect(await save.json()).toEqual({ error: "slack_unavailable" });
+    expect(await getUserAvailability(db, pollId, "U_UNSURE")).toEqual([]);
+  });
+
+  it("refuses the link when the workspace has no bot token to ask with", async () => {
+    handlers = createGridHandlers({
+      secret,
+      db,
+      now: () => clock,
+      clientFor: async () => {
+        throw new Error("no installation for T1");
+      },
+    });
+
+    expect((await get(url({ userId: "U_UNSURE" }))).status).toBe(503);
+  });
+
+  it("answers 503 within its deadline when Slack never answers", async () => {
+    client.users.info.mockReturnValue(new Promise(() => {}));
+    handlers = createGridHandlers({
+      secret,
+      db,
+      now: () => clock,
+      slackDeadlineMs: 20,
+      clientFor: async () => client as never,
+    });
+    const link = url({ userId: "U_HANG" });
+
+    const started = performance.now();
+    const page = await get(link);
+    const elapsed = performance.now() - started;
+
+    expect(page.status).toBe(503);
+    expect(await page.text()).toContain("Slack could not confirm this link");
+    expect(elapsed).toBeLessThan(1000);
+  });
+
+  it("does not ask Slack again for 30 seconds after a failure", async () => {
+    client.users.info.mockRejectedValueOnce({ data: { error: "ratelimited" } });
+    const link = url({ userId: "U_BACKOFF" }, "?format=json");
+
+    expect((await get(link)).status).toBe(503);
+    clock = after(29_999);
+    expect((await get(link)).status).toBe(503);
+    expect((await post(link, { slots: [seconds(S1)] })).status).toBe(503);
+    expect(client.users.info).toHaveBeenCalledTimes(1);
+
+    clock = after(30_000);
+    expect((await get(link)).status).toBe(200);
+    expect(client.users.info).toHaveBeenCalledTimes(2);
+  });
+
+  it("refuses a link signed before the 24-hour limit, whatever expiry it carries", async () => {
+    const body = Buffer.from(
+      JSON.stringify([pollId, "T1", "U1", seconds(after(30 * 24 * HOUR))]),
+    ).toString("base64url");
+    const signature = createHmac("sha256", secret).update(`v1.${body}`).digest();
+    const old = `https://host.test/grid/v1.${body}.${signature.toString("base64url")}`;
+
+    const res = await get(old);
+    expect(res.status).toBe(404);
+    expect(await res.text()).toContain("This link has expired");
   });
 });

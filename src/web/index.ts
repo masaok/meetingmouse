@@ -1,4 +1,4 @@
-export { createGridHandlers } from "./handlers";
+export { createGridHandlers, GRID_CLIENT_OPTIONS } from "./handlers";
 export type { GridClient, GridHandlerOptions, GridHandlers } from "./handlers";
 export {
   deriveGridSecret,

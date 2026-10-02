@@ -37,7 +37,7 @@ describe("createMeetingMouse", () => {
     });
 
     const url = contexts[0].grid?.urlFor({ pollId: "p", teamId: "T", userId: "U" });
-    expect(url?.startsWith("https://app.example.com/grid/v1.")).toBe(true);
+    expect(url?.startsWith("https://app.example.com/grid/v2.")).toBe(true);
     expect(contexts[1].grid).toBeUndefined();
   });
 
