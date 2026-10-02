@@ -32,6 +32,17 @@ Every id is a constant in `src/slack/ids.ts`. The poll message itself is rendere
 The homepage, the web grid and the blog are routes, not Slack surfaces, so the id check does
 not cover them. The blog's routes and reproduce commands are in [Blog](./BLOG.md#surfaces).
 
+| Page           | Route      | File                       | Reproduce                        |
+| -------------- | ---------- | -------------------------- | -------------------------------- |
+| Privacy policy | `/privacy` | `src/app/privacy/page.tsx` | `curl -s localhost:3000/privacy` |
+| Support        | `/support` | `src/app/support/page.tsx` | `curl -s localhost:3000/support` |
+
+Both describe the hosted service at app.meetingmouse.net, not a self-hosted copy. The facts
+they state (support address, retention period, plan limit, every stored column) are in
+`src/lib/hosted.ts`. `src/lib/hosted.test.ts` fails when a column is added to the core's tables
+without a line there. The hosted app's own table and its retention and plan limit are not in
+this repository, so a change to them has to be copied here by hand.
+
 ## Reproducing a report
 
 1. Find the surface above from the words in the report ("the button", "the modal that lists times").
