@@ -1,8 +1,17 @@
 import Link from "next/link";
 
-import { BLOG_PATH } from "@/blog/paths";
+import { BLOG_PATH, FEED_PATH } from "@/blog/paths";
 import { Logo } from "@/components/brand";
-import { PRIVACY_PATH, SLACK_INSTALL_URL, SUPPORT_PATH } from "@/lib/site";
+import { SUPPORT_EMAIL } from "@/lib/hosted";
+import {
+  LICENSE_URL,
+  PRIVACY_PATH,
+  REPO_URL,
+  SECURITY_URL,
+  SELF_HOST_URL,
+  SLACK_INSTALL_URL,
+  SUPPORT_PATH,
+} from "@/lib/site";
 
 const NAV_LINK = "hover:text-foreground text-stone-600 dark:text-stone-400";
 
@@ -35,24 +44,92 @@ export function SiteHeader({ home = false }: { home?: boolean }) {
   );
 }
 
-export function SiteFooter() {
+interface FooterLink {
+  label: string;
+  href: string;
+}
+
+const FOOTER_LINK =
+  "hover:text-foreground underline-offset-4 [overflow-wrap:anywhere] hover:underline";
+
+function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {
   return (
-    <footer className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-6 py-8 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between dark:text-stone-500">
-      <p>
-        © {new Date().getFullYear()} Meeting Mouse · meetingmouse.net ·{" "}
-        <Link href={BLOG_PATH} className="underline underline-offset-4">
-          Blog
-        </Link>{" "}
-        ·{" "}
-        <Link href={PRIVACY_PATH} className="underline underline-offset-4">
-          Privacy
-        </Link>{" "}
-        ·{" "}
-        <Link href={SUPPORT_PATH} className="underline underline-offset-4">
-          Support
-        </Link>
-      </p>
-      <p>Not affiliated with Slack Technologies.</p>
+    <nav aria-label={title}>
+      <h2 className="text-foreground text-xs font-semibold tracking-wider uppercase">
+        {title}
+      </h2>
+      <ul className="mt-3 space-y-2">
+        {links.map(({ label, href }) => (
+          <li key={href}>
+            {href.startsWith("/") ? (
+              <Link href={href} className={FOOTER_LINK}>
+                {label}
+              </Link>
+            ) : (
+              <a href={href} className={FOOTER_LINK}>
+                {label}
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+/** The footer every page shares: every public address of the site and the project, by column. */
+export function SiteFooter({ home = false }: { home?: boolean }) {
+  const section = (id: string) => (home ? `#${id}` : `/#${id}`);
+  return (
+    <footer className="mt-8 border-t border-stone-200 text-sm text-stone-600 dark:border-stone-800 dark:text-stone-400">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-6">
+        <div className="col-span-2">
+          <Link href="/" aria-label="Meeting Mouse home">
+            <Logo />
+          </Link>
+          <p className="mt-3 max-w-xs">
+            Find the time everyone is free, right from Slack. Free and open source.
+          </p>
+        </div>
+        <FooterColumn
+          title="Product"
+          links={[
+            { label: "How it works", href: section("how") },
+            { label: "Features", href: section("features") },
+            { label: "Add to Slack", href: SLACK_INSTALL_URL },
+          ]}
+        />
+        <FooterColumn
+          title="Resources"
+          links={[
+            { label: "Blog", href: BLOG_PATH },
+            { label: "RSS feed", href: FEED_PATH },
+            { label: "Support", href: SUPPORT_PATH },
+            { label: "Run it yourself", href: SELF_HOST_URL },
+          ]}
+        />
+        <FooterColumn
+          title="Legal"
+          links={[
+            { label: "Privacy policy", href: PRIVACY_PATH },
+            { label: "Security", href: SECURITY_URL },
+            { label: "MIT license", href: LICENSE_URL },
+          ]}
+        />
+        <FooterColumn
+          title="Contact"
+          links={[
+            { label: SUPPORT_EMAIL, href: `mailto:${SUPPORT_EMAIL}` },
+            { label: "GitHub", href: REPO_URL },
+          ]}
+        />
+      </div>
+      <div className="border-t border-stone-200 dark:border-stone-800">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-6 py-5 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Meeting Mouse · meetingmouse.net</p>
+          <p>Not affiliated with Slack Technologies.</p>
+        </div>
+      </div>
     </footer>
   );
 }
