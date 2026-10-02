@@ -1,12 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  deriveGridSecret,
-  GRID_LINK_TTL_SECONDS,
-  gridLinks,
-  signGridLink,
-  verifyGridLink,
-} from "./link";
+import { deriveGridSecret, gridLinks, signGridLink, verifyGridLink } from "./link";
 
 const secret = deriveGridSecret("parent-secret");
 const claims = { pollId: "poll-1", teamId: "T1", userId: "U1" };
@@ -33,12 +27,10 @@ describe("grid links", () => {
     expect(verifyGridLink(secret, `${version}.${forged}.${signature}`, now)).toBeNull();
   });
 
-  it("expires", () => {
+  it("expires 24 hours after it was signed", () => {
     const token = signGridLink(secret, claims, now);
-    expect(verifyGridLink(secret, token, later(GRID_LINK_TTL_SECONDS - 1))).toEqual(
-      claims,
-    );
-    expect(verifyGridLink(secret, token, later(GRID_LINK_TTL_SECONDS))).toBeNull();
+    expect(verifyGridLink(secret, token, later(86_399))).toEqual(claims);
+    expect(verifyGridLink(secret, token, later(86_400))).toBeNull();
   });
 
   it("rejects garbage", () => {
@@ -56,7 +48,7 @@ describe("grid links", () => {
 
   it("builds a URL under /grid on the host's origin", () => {
     const url = gridLinks({ baseUrl: "https://app.example.com/", secret }).urlFor(claims);
-    expect(url.startsWith("https://app.example.com/grid/v1.")).toBe(true);
+    expect(url.startsWith("https://app.example.com/grid/v2.")).toBe(true);
     expect(verifyGridLink(secret, url.split("/grid/")[1])).toEqual(claims);
   });
 });

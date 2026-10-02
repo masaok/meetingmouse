@@ -1,7 +1,11 @@
 import { WebClient } from "@slack/web-api";
 
 import { assertEnv, env } from "@/lib/env";
-import { createGridHandlers, type GridHandlers } from "@/web/handlers";
+import {
+  createGridHandlers,
+  GRID_CLIENT_OPTIONS,
+  type GridHandlers,
+} from "@/web/handlers";
 import { deriveGridSecret } from "@/web/link";
 
 let handlers: GridHandlers | undefined;
@@ -11,7 +15,7 @@ function getHandlers(): GridHandlers {
   if (handlers) return handlers;
   assertEnv();
   const { SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET } = env();
-  const client = new WebClient(SLACK_BOT_TOKEN);
+  const client = new WebClient(SLACK_BOT_TOKEN, GRID_CLIENT_OPTIONS);
   handlers = createGridHandlers({
     secret: deriveGridSecret(SLACK_SIGNING_SECRET),
     clientFor: async () => client,
