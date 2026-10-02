@@ -2,6 +2,10 @@
 
 ## Reporting a vulnerability
 
+The vulnerability disclosure program for the hosted app is at
+https://www.meetingmouse.net/vulnerability-disclosure. It says what to expect and the rules for
+testing.
+
 Please do not report security problems through public issues. Use GitHub's private
 vulnerability reporting on this repository (Security tab, "Report a vulnerability"). Include
 the surface affected, a reproduce command (`pnpm slack:sign …` or a payload fixture) and what

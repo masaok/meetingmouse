@@ -3,11 +3,11 @@ import Link from "next/link";
 import { BLOG_PATH, FEED_PATH } from "@/blog/paths";
 import { Logo } from "@/components/brand";
 import { SUPPORT_EMAIL } from "@/lib/hosted";
+import { POLICIES } from "@/lib/policies";
 import {
   LICENSE_URL,
   PRIVACY_PATH,
   REPO_URL,
-  SECURITY_URL,
   SELF_HOST_URL,
   SLACK_INSTALL_URL,
   SUPPORT_PATH,
@@ -116,7 +116,7 @@ export function SiteFooter({ home = false }: { home?: boolean }) {
           title="Legal"
           links={[
             { label: "Privacy policy", href: PRIVACY_PATH },
-            { label: "Security", href: SECURITY_URL },
+            ...POLICIES.map((policy) => ({ label: policy.label, href: policy.path })),
             { label: "MIT license", href: LICENSE_URL },
           ]}
         />

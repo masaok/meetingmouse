@@ -92,12 +92,14 @@ Modules that import `server-only` (`createMeetingMouse`, the db client) need a h
 src/
   app/                      Next.js routes: homepage + api/slack/events/route.ts + grid/[token]/route.ts
                             + privacy/ and support/ (pages about the hosted service)
+                            + terms/ and five data and security policy pages, from lib/policies.ts
                             + blog/ (index, post page, feed) + sitemap.ts + robots.ts
                             + opengraph-image.tsx (the social preview)
   blog/                     The blog: post schema, loader, Markdown renderer, feed, content check.
   components/brand.tsx      Logo, mark and mascot for the homepage and the icon
   components/site.tsx       The header and footer every page shares; the footer links every public address
   components/doc-page.tsx   The frame of the privacy policy and the support page
+  components/policy-page.tsx  One policy page, rendered from a Policy in lib/policies.ts
   components/social-image.tsx  The social preview drawing the image routes share
   assets/fonts/             Geist regular and semibold for the social preview, with the license
   bolt/create.ts            createMeetingMouse(features, credentials): App + receiver for any host. server-only.

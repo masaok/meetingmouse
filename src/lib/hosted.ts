@@ -13,6 +13,18 @@ export const RETENTION_MONTHS = 12;
 export const FREE_PLAN_OPEN_POLLS = 10;
 /** The date shown on the privacy policy. Change it with the text. */
 export const PRIVACY_UPDATED = "October 1, 2026";
+/** The date shown on the terms and the data policies in `policies.ts`. Change it with the text. */
+export const POLICIES_UPDATED = "October 1, 2026";
+/** A request to delete, copy or correct a person's data is answered within this many days. */
+export const DELETION_REQUEST_DAYS = 30;
+/** A vulnerability report is acknowledged within this many days, as SECURITY.md says. */
+export const DISCLOSURE_ACK_DAYS = 7;
+/** The longest restore history the database provider keeps on any of its plans. */
+export const RESTORE_HISTORY_MAX_DAYS = 30;
+/** How long a personal link to the web grid works. */
+export const GRID_LINK_HOURS = 24;
+/** How long the cookie that protects an install lasts. */
+export const INSTALL_COOKIE_MINUTES = 10;
 
 /** Every column the hosted app stores, in the words the privacy policy uses. */
 export interface StoredColumn {
