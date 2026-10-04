@@ -14,7 +14,7 @@
 | Docs links                  | `pnpm docs:check` `pnpm featuremap:check` `pnpm prose:check` `pnpm blog:check` | No broken links or anchors; every surface id documented; prose rules; blog content rules |
 | Package                     | `pnpm pack:check` `pnpm smoke:pack`                                            | Tarball holds only the library; a scratch host installs and runs it                      |
 
-Hooks are deliberately small: pre-commit formats staged files (~1 s); pre-push typechecks.
+The commit hook is deliberately small: pre-commit formats staged files (~1 s). Pre-push runs `pnpm verify`, the script CI runs, which ends with the production build.
 Read-only variants only in automation (`lint`, `format:check`); `lint:fix` and `format` are for humans.
 
 ## Guardrails (hard, not advisory)
