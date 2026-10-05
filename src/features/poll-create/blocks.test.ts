@@ -1,7 +1,12 @@
-import type { InputBlock, ModalView, MultiStaticSelect } from "@slack/types";
+import type {
+  InputBlock,
+  ModalView,
+  MultiStaticSelect,
+  StaticSelect,
+} from "@slack/types";
 import { describe, expect, it } from "vitest";
 
-import { POLL_LIMITS } from "@/domain/constants";
+import { DEFAULT_SLOT_MINUTES, POLL_LIMITS, SLOT_MINUTES } from "@/domain/constants";
 import { FIXTURE_NOW, FIXTURE_TZ } from "@/slack/fixtures";
 import { CALLBACK_CREATE_POLL_MODAL } from "@/slack/ids";
 import { SLACK_LIMITS } from "@/slack/limits";
@@ -48,6 +53,16 @@ describe("createPollModal", () => {
     for (const o of el?.options ?? []) {
       expect(o.text.text.length).toBeLessThanOrEqual(SLACK_LIMITS.OPTION_TEXT_CHARS);
     }
+  });
+
+  it("offers slot length as a dropdown of the stored lengths, defaulting to 30 min", () => {
+    const block = view.blocks.find(
+      (b) => b.type === "input" && b.block_id === INPUT.SLOT.block,
+    ) as InputBlock | undefined;
+    const el = block?.element as StaticSelect | undefined;
+    expect(el?.type).toBe("static_select");
+    expect(el?.options?.map((o) => o.value)).toEqual(SLOT_MINUTES.map(String));
+    expect(el?.initial_option?.value).toBe(String(DEFAULT_SLOT_MINUTES));
   });
 
   it("labels times as wall-clock, independent of zone", () => {
