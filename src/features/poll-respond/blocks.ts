@@ -9,7 +9,7 @@ import {
   ACTION_TOGGLE_NONE,
   CALLBACK_RESPOND_MODAL,
 } from "@/slack/ids";
-import { SLACK_LIMITS } from "@/slack/limits";
+import { timeButtonsPerRow } from "@/slack/limits";
 
 import { dayBlockId, slotActionId } from "./schema";
 
@@ -73,7 +73,7 @@ const chipLabel = (slot: Date, tz: string): string =>
   ).toLowerCase();
 
 /**
- * One heading per responder-local date, then a button per slot, flowing across. A chosen time
+ * One heading per responder-local date, then the time buttons in rows of three. A chosen time
  * is green with a tick. Each click is its own save, so the view has no Save button: the
  * listener flips the slot and redraws this view. A slot can land on a different calendar day
  * than the organizer's; grouping by the responder's date is the point.
@@ -107,20 +107,20 @@ export function respondModal(input: RespondModalInput): ModalView {
       },
     });
 
-  for (const [localDate, daySlots] of groupByLocalDate(slots, tz)) {
+  const grouped = [...groupByLocalDate(slots, tz)];
+  const perRow = timeButtonsPerRow({
+    dayCount: grouped.length,
+    maxSlotsInDay: Math.max(0, ...grouped.map(([, daySlots]) => daySlots.length)),
+    hasGridLink: Boolean(gridUrl),
+  });
+
+  for (const [localDate, daySlots] of grouped) {
     blocks.push({
       type: "section",
       text: { type: "mrkdwn", text: `*${formatInTz(daySlots[0], tz, "EEEE, MMMM d")}*` },
     });
-    for (
-      let chunk = 0;
-      chunk * SLACK_LIMITS.ACTIONS_ELEMENTS < daySlots.length;
-      chunk++
-    ) {
-      const part = daySlots.slice(
-        chunk * SLACK_LIMITS.ACTIONS_ELEMENTS,
-        (chunk + 1) * SLACK_LIMITS.ACTIONS_ELEMENTS,
-      );
+    for (let chunk = 0; chunk * perRow < daySlots.length; chunk++) {
+      const part = daySlots.slice(chunk * perRow, (chunk + 1) * perRow);
       const row: ActionsBlock = {
         type: "actions",
         block_id: dayBlockId(localDate, chunk),

@@ -39,3 +39,27 @@ export const SLACK_LIMITS = {
   /** Ack deadline for every interaction. */
   ACK_MS: 3000,
 } as const;
+
+/**
+ * Time buttons aim for this many per row. Slack keeps three short buttons on one line.
+ * Four in one actions block is what renders as two columns.
+ */
+export const PREFERRED_TIME_COLUMNS = 3;
+
+/**
+ * Widen the row only when three columns would push the modal past Slack's block cap.
+ * A 14-day poll seen from another zone is the case that has to widen.
+ */
+export function timeButtonsPerRow(input: {
+  dayCount: number;
+  maxSlotsInDay: number;
+  hasGridLink: boolean;
+}): number {
+  if (input.dayCount === 0 || input.maxSlotsInDay === 0) return PREFERRED_TIME_COLUMNS;
+  const fixed = 4 + (input.hasGridLink ? 1 : 0);
+  for (let n = PREFERRED_TIME_COLUMNS; n <= SLACK_LIMITS.ACTIONS_ELEMENTS; n++) {
+    const rows = Math.ceil(input.maxSlotsInDay / n);
+    if (input.dayCount * (1 + rows) + fixed <= SLACK_LIMITS.BLOCKS_PER_MODAL) return n;
+  }
+  return SLACK_LIMITS.ACTIONS_ELEMENTS;
+}

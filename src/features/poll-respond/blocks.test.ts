@@ -62,7 +62,9 @@ describe("respondModal", () => {
       "*Wednesday, October 7*",
       "*Thursday, October 8*",
     ]);
-    expect(rows.map((r) => r.buttons.length)).toEqual([16, 16, 16]);
+    expect(rows.map((r) => r.buttons.length)).toEqual([
+      3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 1,
+    ]);
     expect(rows[0].buttons.slice(0, 3).map((b) => b.text.text)).toEqual([
       "9am",
       "9:30am",
@@ -77,12 +79,29 @@ describe("respondModal", () => {
     expect(view.blocks.filter((b) => b.type === "input")).toEqual([]);
   });
 
+  it("lays four evening times as three columns and one leftover", () => {
+    const slots = generateSlots({
+      dates: ["2026-10-09"],
+      fromMinutes: 18 * 60,
+      toMinutes: 22 * 60,
+      slotMinutes: 60,
+      tz: FIXTURE_TZ,
+    });
+    const view = form({ poll: fixture("empty").poll, slots });
+    expect(dayRows(view).map((r) => r.buttons.map((b) => b.text.text))).toEqual([
+      ["6pm", "7pm", "8pm"],
+      ["9pm"],
+    ]);
+  });
+
   it("marks the chosen times green with a tick and counts them", () => {
     const s = fixture("three-day");
     const view = form({ selected: [s.slots[1], s.slots[2]] });
-    const [first] = dayRows(view);
+    const firstFour = dayRows(view)
+      .flatMap((r) => r.buttons)
+      .slice(0, 4);
 
-    expect(first.buttons.slice(0, 4).map((b) => [b.text.text, b.style])).toEqual([
+    expect(firstFour.map((b) => [b.text.text, b.style])).toEqual([
       ["9am", undefined],
       ["✓ 9:30am", "primary"],
       ["✓ 10am", "primary"],
@@ -120,10 +139,20 @@ describe("respondModal", () => {
 
     expect(dayHeadings(view)).toEqual(["*Tuesday, October 6*", "*Wednesday, October 7*"]);
     expect(dayRows(view).map((r) => [r.block_id, r.buttons.length])).toEqual([
-      [dayBlockId("2026-10-06", 0), 4],
-      [dayBlockId("2026-10-07", 0), 20],
+      [dayBlockId("2026-10-06", 0), 3],
+      [dayBlockId("2026-10-06", 1), 1],
+      [dayBlockId("2026-10-07", 0), 3],
+      [dayBlockId("2026-10-07", 1), 3],
+      [dayBlockId("2026-10-07", 2), 3],
+      [dayBlockId("2026-10-07", 3), 3],
+      [dayBlockId("2026-10-07", 4), 3],
+      [dayBlockId("2026-10-07", 5), 3],
+      [dayBlockId("2026-10-07", 6), 2],
     ]);
-    expect(dayRows(view)[1].buttons[0].text.text).toBe("12am");
+    expect(
+      dayRows(view).find((r) => r.block_id === dayBlockId("2026-10-07", 0))?.buttons[0]
+        .text.text,
+    ).toBe("12am");
   });
 
   it("stays inside Slack limits for the 14-day × 24-slot worst case in another zone", () => {
