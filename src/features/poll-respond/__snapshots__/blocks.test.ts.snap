@@ -53,6 +53,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791306000",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-07_1",
+      "elements": [
         {
           "action_id": "toggle_slot:1791307800",
           "style": "primary",
@@ -84,6 +90,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791311400",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-07_2",
+      "elements": [
         {
           "action_id": "toggle_slot:1791313200",
           "text": {
@@ -114,6 +126,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791316800",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-07_3",
+      "elements": [
         {
           "action_id": "toggle_slot:1791318600",
           "text": {
@@ -144,6 +162,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791322200",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-07_4",
+      "elements": [
         {
           "action_id": "toggle_slot:1791324000",
           "text": {
@@ -174,6 +198,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791327600",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-07_5",
+      "elements": [
         {
           "action_id": "toggle_slot:1791329400",
           "text": {
@@ -227,6 +257,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791392400",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-08_1",
+      "elements": [
         {
           "action_id": "toggle_slot:1791394200",
           "text": {
@@ -257,6 +293,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791397800",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-08_2",
+      "elements": [
         {
           "action_id": "toggle_slot:1791399600",
           "text": {
@@ -287,6 +329,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791403200",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-08_3",
+      "elements": [
         {
           "action_id": "toggle_slot:1791405000",
           "text": {
@@ -317,6 +365,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791408600",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-08_4",
+      "elements": [
         {
           "action_id": "toggle_slot:1791410400",
           "text": {
@@ -347,6 +401,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791414000",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-08_5",
+      "elements": [
         {
           "action_id": "toggle_slot:1791415800",
           "text": {
@@ -400,6 +460,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791478800",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-09_1",
+      "elements": [
         {
           "action_id": "toggle_slot:1791480600",
           "text": {
@@ -430,6 +496,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791484200",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-09_2",
+      "elements": [
         {
           "action_id": "toggle_slot:1791486000",
           "text": {
@@ -460,6 +532,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791489600",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-09_3",
+      "elements": [
         {
           "action_id": "toggle_slot:1791491400",
           "text": {
@@ -490,6 +568,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791495000",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-09_4",
+      "elements": [
         {
           "action_id": "toggle_slot:1791496800",
           "text": {
@@ -520,6 +604,12 @@ exports[`respondModal > matches the snapshot for a three-day poll viewed from To
           "type": "button",
           "value": "1791500400",
         },
+      ],
+      "type": "actions",
+    },
+    {
+      "block_id": "day_2026-10-09_5",
+      "elements": [
         {
           "action_id": "toggle_slot:1791502200",
           "text": {
