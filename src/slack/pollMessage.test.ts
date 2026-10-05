@@ -54,6 +54,15 @@ describe("renderPollMessage", () => {
   it("lays the poll out as a grid: a column per day, a row per time", () => {
     const grid = gridText(renderPollMessage(fixture("empty")).blocks);
     expect(grid[0]).toEqual([" ", "Tue, Oct 6", "Wed, Oct 7", "Thu, Oct 8"]);
+    const table = renderPollMessage(fixture("empty")).blocks.find(
+      (b) => b.type === "table",
+    );
+    if (table?.type !== "table") throw new Error("the message has no table");
+    const header = table.rows[0][1];
+    if (header.type !== "rich_text") throw new Error("header is not rich text");
+    const date = header.elements[0];
+    if (date?.type !== "rich_text_section") throw new Error("header has no section");
+    expect(date.elements[0]).toMatchObject({ type: "date", format: "{date_long}" });
     expect(grid.map((row) => row[0])).toEqual([
       " ",
       "9:00 AM",
