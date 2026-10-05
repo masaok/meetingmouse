@@ -110,7 +110,7 @@ export function createPollModal(input: CreatePollModalInput): ModalView {
       block_id: INPUT.SLOT.block,
       label: plain("Slot length"),
       element: {
-        type: "radio_buttons",
+        type: "static_select",
         action_id: INPUT.SLOT.action,
         options: SLOT_MINUTES.map((m) => opt(`${m} min`, String(m))),
         initial_option: opt(`${DEFAULT_SLOT_MINUTES} min`, String(DEFAULT_SLOT_MINUTES)),

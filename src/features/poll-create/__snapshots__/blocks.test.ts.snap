@@ -861,7 +861,7 @@ exports[`createPollModal > matches the snapshot 1`] = `
             "value": "60",
           },
         ],
-        "type": "radio_buttons",
+        "type": "static_select",
       },
       "label": {
         "emoji": true,
