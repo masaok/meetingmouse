@@ -184,7 +184,8 @@ const cell = (...elements: RichTextElement[]): RichTextBlock => ({
  * The group's availability as one table: a column per day, a row per time of day, and in each
  * cell a square for how much of the group is free plus the headcount. Days and times are
  * grouped in the organizer's zone; the labels are date elements, so each viewer reads them in
- * their own. A day that lacks a time (a daylight-saving change) gets a blank cell.
+ * their own. The day header uses `{date_long}` so the weekday is in the cell. `{date_short}`
+ * renders as "Oct 9". A day that lacks a time (a daylight-saving change) gets a blank cell.
  */
 function gridTable(
   slots: Date[],
@@ -200,7 +201,7 @@ function gridTable(
     cell({
       type: "date",
       timestamp: epochSeconds(first),
-      format: "{date_short}",
+      format: "{date_long}",
       fallback: formatInTz(first, tz, "EEE, MMM d"),
       style: { bold: true },
     }),
