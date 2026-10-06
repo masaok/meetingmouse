@@ -69,8 +69,15 @@ exports[`renderPollMessage > matches the snapshot for a three-day poll with resp
               {
                 "elements": [
                   {
-                    "fallback": "Tue, Oct 6",
-                    "format": "{date_long}",
+                    "style": {
+                      "bold": true,
+                    },
+                    "text": "Tue ",
+                    "type": "text",
+                  },
+                  {
+                    "fallback": "Oct 6",
+                    "format": "{date_short}",
                     "style": {
                       "bold": true,
                     },
@@ -88,8 +95,15 @@ exports[`renderPollMessage > matches the snapshot for a three-day poll with resp
               {
                 "elements": [
                   {
-                    "fallback": "Wed, Oct 7",
-                    "format": "{date_long}",
+                    "style": {
+                      "bold": true,
+                    },
+                    "text": "Wed ",
+                    "type": "text",
+                  },
+                  {
+                    "fallback": "Oct 7",
+                    "format": "{date_short}",
                     "style": {
                       "bold": true,
                     },
@@ -107,8 +121,15 @@ exports[`renderPollMessage > matches the snapshot for a three-day poll with resp
               {
                 "elements": [
                   {
-                    "fallback": "Thu, Oct 8",
-                    "format": "{date_long}",
+                    "style": {
+                      "bold": true,
+                    },
+                    "text": "Thu ",
+                    "type": "text",
+                  },
+                  {
+                    "fallback": "Oct 8",
+                    "format": "{date_short}",
                     "style": {
                       "bold": true,
                     },
