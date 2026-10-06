@@ -2,24 +2,20 @@ import { describe, expect, it } from "vitest";
 
 import { POLL_LIMITS, SLOT_MINUTES } from "@/domain/constants";
 
-import { SLACK_LIMITS, timeButtonsPerRow } from "./limits";
+import { SLACK_LIMITS } from "./limits";
 
 /** The poll limits are derived from the Slack limits. These tests are the derivation. */
 describe("poll limits fit inside Slack limits", () => {
   it("worst-case respond modal stays under the block cap", () => {
     // A responder in another zone can see one more local day than the organizer picked.
+    // Each day is one heading plus one actions block holding every slot.
     const days = POLL_LIMITS.MAX_DAYS + 1;
-    const perRow = timeButtonsPerRow({
-      dayCount: days,
-      maxSlotsInDay: POLL_LIMITS.MAX_SLOTS_PER_DAY,
-      hasGridLink: true,
-    });
-    const rowsPerDay = Math.ceil(POLL_LIMITS.MAX_SLOTS_PER_DAY / perRow);
-    const perDay = 1 /* day heading */ + rowsPerDay;
+    const perDay = 2;
     const fixed = 5; // context line, web grid link, divider, "can't make any" button, status line
     expect(days * perDay + fixed).toBeLessThanOrEqual(SLACK_LIMITS.BLOCKS_PER_MODAL);
-    expect(perRow).toBeGreaterThanOrEqual(3);
-    expect(perRow).toBeLessThanOrEqual(SLACK_LIMITS.ACTIONS_ELEMENTS);
+    expect(POLL_LIMITS.MAX_SLOTS_PER_DAY).toBeLessThanOrEqual(
+      SLACK_LIMITS.ACTIONS_ELEMENTS,
+    );
   });
 
   it("worst-case poll message stays under the block cap", () => {
