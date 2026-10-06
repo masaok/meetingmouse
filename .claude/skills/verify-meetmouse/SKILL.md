@@ -52,7 +52,7 @@ Every command below is literal. The harness is `scripts/slack-sign.ts`:
 pnpm slack:sign --command /meet --text "Sprint planning"          # slash command (form body)
 pnpm slack:sign --payload tests/fixtures/payloads/<name>.json     # interactivity (payload=…)
 pnpm slack:sign --json tests/fixtures/payloads/app_home_opened.json  # Events API (JSON body)
-pnpm render:fixture <empty|three-day|worst-case|closed|scheduled|many-participants> [--stats]
+pnpm render:fixture <empty|three-day|worst-case|closed|scheduled|many-participants> [--stats | --modal <respond|create>]
 pnpm test <path>                                                  # PGlite-backed DB tests, renderers, parsers
 ```
 

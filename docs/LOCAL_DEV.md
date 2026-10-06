@@ -48,6 +48,11 @@ request must return `401`.
 [Block Kit Builder](https://app.slack.com/block-kit-builder) to see it. Snapshot tests
 cover the same renders.
 
+`pnpm render:fixture <name> --modal respond` prints the availability form for that poll, and
+`--modal create` prints the create form with that poll's title filled in. Both print the whole
+view; switch the builder's preview to Modal before pasting. The snapshot files are not JSON
+(trailing commas, unescaped quotes), so the builder rejects them.
+
 ## Database
 
 ```bash
