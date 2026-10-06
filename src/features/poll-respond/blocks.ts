@@ -9,7 +9,6 @@ import {
   ACTION_TOGGLE_NONE,
   CALLBACK_RESPOND_MODAL,
 } from "@/slack/ids";
-import { timeButtonsPerRow } from "@/slack/limits";
 
 import { dayBlockId, slotActionId } from "./schema";
 
@@ -73,10 +72,11 @@ const chipLabel = (slot: Date, tz: string): string =>
   ).toLowerCase();
 
 /**
- * One heading per responder-local date, then the time buttons in rows of three. A chosen time
- * is green with a tick. Each click is its own save, so the view has no Save button: the
- * listener flips the slot and redraws this view. A slot can land on a different calendar day
- * than the organizer's; grouping by the responder's date is the point.
+ * One heading per responder-local date ("Mon 10/5"), then that day's times in a single actions block.
+ * The modal wraps those buttons two across, so the day reads as one even grid. A chosen
+ * time is green with a tick. Each click is its own save, so the view has no Save button:
+ * the listener flips the slot and redraws this view. A slot can land on a different
+ * calendar day than the organizer's; grouping by the responder's date is the point.
  */
 export function respondModal(input: RespondModalInput): ModalView {
   const { poll, slots, tz, selected, noneSelected, gridUrl } = input;
@@ -107,37 +107,27 @@ export function respondModal(input: RespondModalInput): ModalView {
       },
     });
 
-  const grouped = [...groupByLocalDate(slots, tz)];
-  const perRow = timeButtonsPerRow({
-    dayCount: grouped.length,
-    maxSlotsInDay: Math.max(0, ...grouped.map(([, daySlots]) => daySlots.length)),
-    hasGridLink: Boolean(gridUrl),
-  });
-
-  for (const [localDate, daySlots] of grouped) {
+  for (const [localDate, daySlots] of groupByLocalDate(slots, tz)) {
     blocks.push({
       type: "section",
-      text: { type: "mrkdwn", text: `*${formatInTz(daySlots[0], tz, "EEEE, MMMM d")}*` },
+      text: { type: "mrkdwn", text: `*${formatInTz(daySlots[0], tz, "EEE M/d")}*` },
     });
-    for (let chunk = 0; chunk * perRow < daySlots.length; chunk++) {
-      const part = daySlots.slice(chunk * perRow, (chunk + 1) * perRow);
-      const row: ActionsBlock = {
-        type: "actions",
-        block_id: dayBlockId(localDate, chunk),
-        elements: part.map((slot): Button => {
-          const seconds = epochSeconds(slot);
-          const on = chosen.has(seconds);
-          return {
-            type: "button",
-            action_id: slotActionId(seconds),
-            text: plain(`${on ? "✓ " : ""}${chipLabel(slot, tz)}`),
-            value: String(seconds),
-            ...(on ? { style: "primary" } : {}),
-          };
-        }),
-      };
-      blocks.push(row);
-    }
+    const row: ActionsBlock = {
+      type: "actions",
+      block_id: dayBlockId(localDate, 0),
+      elements: daySlots.map((slot): Button => {
+        const seconds = epochSeconds(slot);
+        const on = chosen.has(seconds);
+        return {
+          type: "button",
+          action_id: slotActionId(seconds),
+          text: plain(`${on ? "✓ " : ""}${chipLabel(slot, tz)}`),
+          value: String(seconds),
+          ...(on ? { style: "primary" } : {}),
+        };
+      }),
+    };
+    blocks.push(row);
   }
 
   const status =
