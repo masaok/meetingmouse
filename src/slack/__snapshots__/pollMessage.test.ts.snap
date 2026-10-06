@@ -72,17 +72,8 @@ exports[`renderPollMessage > matches the snapshot for a three-day poll with resp
                     "style": {
                       "bold": true,
                     },
-                    "text": "Tue ",
+                    "text": "Tue 10/6",
                     "type": "text",
-                  },
-                  {
-                    "fallback": "Oct 6",
-                    "format": "{date_short}",
-                    "style": {
-                      "bold": true,
-                    },
-                    "timestamp": 1791302400,
-                    "type": "date",
                   },
                 ],
                 "type": "rich_text_section",
@@ -98,17 +89,8 @@ exports[`renderPollMessage > matches the snapshot for a three-day poll with resp
                     "style": {
                       "bold": true,
                     },
-                    "text": "Wed ",
+                    "text": "Wed 10/7",
                     "type": "text",
-                  },
-                  {
-                    "fallback": "Oct 7",
-                    "format": "{date_short}",
-                    "style": {
-                      "bold": true,
-                    },
-                    "timestamp": 1791388800,
-                    "type": "date",
                   },
                 ],
                 "type": "rich_text_section",
@@ -124,17 +106,8 @@ exports[`renderPollMessage > matches the snapshot for a three-day poll with resp
                     "style": {
                       "bold": true,
                     },
-                    "text": "Thu ",
+                    "text": "Thu 10/8",
                     "type": "text",
-                  },
-                  {
-                    "fallback": "Oct 8",
-                    "format": "{date_short}",
-                    "style": {
-                      "bold": true,
-                    },
-                    "timestamp": 1791475200,
-                    "type": "date",
                   },
                 ],
                 "type": "rich_text_section",

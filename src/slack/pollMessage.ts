@@ -183,11 +183,10 @@ const cell = (...elements: RichTextElement[]): RichTextBlock => ({
 /**
  * The group's availability as one table: a column per day, a row per time of day, and in each
  * cell a square for how much of the group is free plus the headcount. Days and times are
- * grouped in the organizer's zone; the labels are date elements, so each viewer reads them in
- * their own. The day header reads "Mon Oct 5": Slack has no short weekday token, so the weekday
- * is text in the organizer's zone and `{date_short}` supplies the viewer's date. `{date_long}`
- * spells out "Monday, October 5th". A day that lacks a time (a daylight-saving change) gets a
- * blank cell.
+ * grouped in the organizer's zone. The time labels are date elements, so each viewer reads them
+ * in their own. The day header is text in the organizer's zone, "Mon 10/5" like the availability
+ * form: Slack has no date token for a short weekday or a month/day without the year. A day that
+ * lacks a time (a daylight-saving change) gets a blank cell.
  */
 function gridTable(
   slots: Date[],
@@ -200,16 +199,11 @@ function gridTable(
   const blank = cell({ type: "text", text: " " });
 
   const header = days.map(({ first }) =>
-    cell(
-      { type: "text", text: `${formatInTz(first, tz, "EEE")} `, style: { bold: true } },
-      {
-        type: "date",
-        timestamp: epochSeconds(first),
-        format: "{date_short}",
-        fallback: formatInTz(first, tz, "MMM d"),
-        style: { bold: true },
-      },
-    ),
+    cell({
+      type: "text",
+      text: formatInTz(first, tz, "EEE M/d"),
+      style: { bold: true },
+    }),
   );
   const body = rows.map(({ sample }, r) => {
     const label = cell({
