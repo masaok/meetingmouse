@@ -1,11 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { absoluteUrl } from "@/blog/paths";
-
-/** Pages are open to crawlers. The Slack endpoints and personal grid links are not pages. */
+/** The Slack endpoints and personal grid links are not pages; nothing else is worth indexing. */
 export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/grid/"] },
-    sitemap: absoluteUrl("/sitemap.xml"),
-  };
+  return { rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/grid/"] } };
 }

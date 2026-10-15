@@ -29,30 +29,16 @@ Every id is a constant in `src/slack/ids.ts`. The poll message itself is rendere
 
 ## Web pages
 
-The homepage, the web grid and the blog are routes, not Slack surfaces, so the id check does
-not cover them. The blog's routes and reproduce commands are in [Blog](./BLOG.md#surfaces).
+The pages are routes, not Slack surfaces, so the id check does not cover them.
 
-| Page                                                                      | Route                       | File                                        | Reproduce                                         |
-| ------------------------------------------------------------------------- | --------------------------- | ------------------------------------------- | ------------------------------------------------- |
-| Privacy policy                                                            | `/privacy`                  | `src/app/privacy/page.tsx`                  | `curl -s localhost:3000/privacy`                  |
-| Support                                                                   | `/support`                  | `src/app/support/page.tsx`                  | `curl -s localhost:3000/support`                  |
-| Installation (the install steps, with screenshots from `public/install/`) | `/installation`             | `src/app/installation/page.tsx`             | `curl -s localhost:3000/installation`             |
-| Legal (lists every legal page)                                            | `/legal`                    | `src/app/legal/page.tsx`                    | `curl -s localhost:3000/legal`                    |
-| Terms of service                                                          | `/terms`                    | `src/app/terms/page.tsx`                    | `curl -s localhost:3000/terms`                    |
-| Data retention policy                                                     | `/data-retention`           | `src/app/data-retention/page.tsx`           | `curl -s localhost:3000/data-retention`           |
-| Data archival and removal policy                                          | `/data-archival-removal`    | `src/app/data-archival-removal/page.tsx`    | `curl -s localhost:3000/data-archival-removal`    |
-| Data storage policy                                                       | `/data-storage`             | `src/app/data-storage/page.tsx`             | `curl -s localhost:3000/data-storage`             |
-| Data deletion request procedure                                           | `/data-deletion-requests`   | `src/app/data-deletion-requests/page.tsx`   | `curl -s localhost:3000/data-deletion-requests`   |
-| Vulnerability disclosure program                                          | `/vulnerability-disclosure` | `src/app/vulnerability-disclosure/page.tsx` | `curl -s localhost:3000/vulnerability-disclosure` |
+| Page           | Route           | File                            | Reproduce                                           |
+| -------------- | --------------- | ------------------------------- | --------------------------------------------------- |
+| Self-host page | `/`             | `src/app/page.tsx`              | `curl -s localhost:3000/`                           |
+| Web grid       | `/grid/<token>` | `src/app/grid/[token]/route.ts` | `pnpm grid:preview` (see [Web grid](./WEB_GRID.md)) |
 
-All of them describe the hosted service at app.meetingmouse.net, not a self-hosted copy. The
-six pages after Support are drawn from one list, `POLICIES` in `src/lib/policies.ts`, by
-`src/components/policy-page.tsx`; the footer, the sitemap and the links a blog post may use read
-the same list. The facts
-they state (support address, retention period, plan limit, every stored column) are in
-`src/lib/hosted.ts`. `src/lib/hosted.test.ts` fails when a column is added to the core's tables
-without a line there. The hosted app's own table and its retention and plan limit are not in
-this repository, so a change to them has to be copied here by hand.
+The self-host page says what the app is, that this copy is running, and links to the README and
+to the hosted version. The marketing site at www.meetingmouse.net is not in this repository;
+see [The hosted service](./DEPLOYMENT.md#the-hosted-service).
 
 ## Reproducing a report
 

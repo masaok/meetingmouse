@@ -16,6 +16,10 @@ and the organizer locks one in with an Add to Google Calendar link.
 4. **Live results.** The channel message re-renders after every response: a grid of who is free when, and the best times.
 5. **Lock it in.** The organizer picks a time and the thread gets an Add to Google Calendar link.
 
+Don't want to run it? The hosted version is at [meetingmouse.net](https://www.meetingmouse.net).
+Its marketing site and its policies are not in this repository; they live in the hosted
+service's private repo and deploy from the Vercel project `meetmouse-cloud`.
+
 ## Run it yourself
 
 You need Node from `.nvmrc`, pnpm, a Slack workspace where you can create an app, and a
@@ -67,15 +71,15 @@ app; see [Embedding in another app](./docs/ARCHITECTURE.md#embedding-in-another-
 
 ## Development
 
-| Command                           | What it does                                                                                         |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `pnpm verify`                     | Typecheck, lint, format, tests, docs links, feature map, blog check, smoke imports, production build |
-| `pnpm test`                       | Unit tests (vitest; PGlite stands in for Postgres)                                                   |
-| `pnpm slack:sign --command /meet` | Sign and POST a payload the way Slack does                                                           |
-| `pnpm render:fixture <name>`      | Print Block Kit JSON for a fixture poll                                                              |
-| `pnpm health`                     | Check whether a running instance is worth driving                                                    |
-| `pnpm db:generate`                | Regenerate SQL migrations from `src/db/schema.ts`                                                    |
-| `pnpm pack:check`                 | Build the library and check the tarball holds only what a host needs                                 |
+| Command                           | What it does                                                                                             |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `pnpm verify`                     | Typecheck, lint, format, tests, docs links, feature map, prose, smoke imports, production build, package |
+| `pnpm test`                       | Unit tests (vitest; PGlite stands in for Postgres)                                                       |
+| `pnpm slack:sign --command /meet` | Sign and POST a payload the way Slack does                                                               |
+| `pnpm render:fixture <name>`      | Print Block Kit JSON for a fixture poll                                                                  |
+| `pnpm health`                     | Check whether a running instance is worth driving                                                        |
+| `pnpm db:generate`                | Regenerate SQL migrations from `src/db/schema.ts`                                                        |
+| `pnpm pack:check`                 | Build the library and check the tarball holds only what a host needs                                     |
 
 ## Contributing
 

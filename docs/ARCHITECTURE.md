@@ -1,9 +1,10 @@
 # Architecture
 
 Meeting Mouse is a Slack app: an availability poll that lives in one channel message and
-updates in place. The web app at meetingmouse.net is a static homepage, a route handler that
-receives every Slack request, and one optional page outside Slack, the
-[web grid](./WEB_GRID.md), where a person paints their availability by dragging.
+updates in place. The web app is a static self-host page, a route handler that receives every
+Slack request, and one optional page outside Slack, the [web grid](./WEB_GRID.md), where a person
+paints their availability by dragging. The hosted service's marketing site is not part of it; see
+[The hosted service](./DEPLOYMENT.md#the-hosted-service).
 
 ## Request path
 
@@ -90,18 +91,8 @@ Modules that import `server-only` (`createMeetingMouse`, the db client) need a h
 
 ```
 src/
-  app/                      Next.js routes: homepage + api/slack/events/route.ts + grid/[token]/route.ts
-                            + privacy/ and support/ (pages about the hosted service)
-                            + terms/ and five data and security policy pages, from lib/policies.ts
-                            + blog/ (index, post page, feed) + sitemap.ts + robots.ts
-                            + opengraph-image.tsx (the social preview)
-  blog/                     The blog: post schema, loader, Markdown renderer, feed, content check.
-  components/brand.tsx      Logo, mark and mascot for the homepage and the icon
-  components/site.tsx       The header and footer every page shares; the footer links every public address
-  components/doc-page.tsx   The frame of the privacy policy and the support page
-  components/policy-page.tsx  One policy page, rendered from a Policy in lib/policies.ts
-  components/social-image.tsx  The social preview drawing the image routes share
-  assets/fonts/             Geist regular and semibold for the social preview, with the license
+  app/                      Next.js routes: the self-host page (page.tsx) + api/slack/events/route.ts
+                            + grid/[token]/route.ts + robots.ts + icon.svg
   bolt/create.ts            createMeetingMouse(features, credentials): App + receiver for any host. server-only.
   bolt/app.ts               Reference wiring: env in, coreFeatures, built on first request. server-only.
   features/                 One directory per Slack surface, colocated:
@@ -117,15 +108,10 @@ src/
   db/                       schema.ts (Drizzle), client.ts (server-only), queries.ts
   lib/                      env.ts (preflight), users.ts (users.info cache), log.ts,
                             refresh.ts (re-render the poll message from fresh reads),
-                            respond.ts (response_url replies, Slack error codes),
-                            site.ts (site URL, name, call-to-action links),
-                            hosted.ts (what the privacy and support pages state about the hosted service)
-content/blog/               Blog posts, one Markdown file each. See docs/BLOG.md.
+                            respond.ts (response_url replies, Slack error codes)
 drizzle/                    Numbered SQL migrations generated from schema.ts
-public/                     Static files the site serves: the logo mark, and under slack/ the Slack app
-                            icon (app_icons/) and the six Marketplace listing images (app_images/)
-scripts/                    doctor, slack-sign, render-fixture, smoke-imports, check-docs,
-                            check-feature-map, check-prose, check-blog, check-dev-env, dev.tunnel
+scripts/                    doctor, slack-sign, render-fixture, grid-preview, smoke-imports, check-docs,
+                            check-feature-map, check-prose, check-dev-env, dev.tunnel, pack-lib, check-pack
 tests/                      Cross-cutting tests + proof-of-failure fixtures
 docs/                       These living documents
 ```
@@ -139,12 +125,12 @@ across four directories.
 
 Enforced by `no-restricted-imports` in `eslint.config.mjs`; a violation fails `pnpm lint` and CI.
 
-| From                             | May not import                                                         | Why                                                     |
-| -------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------- |
-| `src/domain/**`                  | `@slack/*`, `next`, `@/db`, `@/bolt`, `@/slack`, `@/features`, `@/lib` | Pure functions: dates in, data out. Trivially testable. |
-| `src/slack/**`                   | `@/db`, `@/bolt`, `@/features`                                         | Renders what it is handed; never fetches.               |
-| `src/features/**/blocks*.ts`     | `@/db`, `@/bolt`                                                       | Same: block builders are renderers.                     |
-| `src/app/**/*.tsx`, `components` | `@/db`, `@/bolt`, `@/lib/env`                                          | UI never reaches credentials.                           |
+| From                         | May not import                                                         | Why                                                     |
+| ---------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------- |
+| `src/domain/**`              | `@slack/*`, `next`, `@/db`, `@/bolt`, `@/slack`, `@/features`, `@/lib` | Pure functions: dates in, data out. Trivially testable. |
+| `src/slack/**`               | `@/db`, `@/bolt`, `@/features`                                         | Renders what it is handed; never fetches.               |
+| `src/features/**/blocks*.ts` | `@/db`, `@/bolt`                                                       | Same: block builders are renderers.                     |
+| `src/app/**/*.tsx`           | `@/db`, `@/bolt`, `@/lib/env`                                          | UI never reaches credentials.                           |
 
 `src/db/client.ts` and `src/bolt/app.ts` start with `import "server-only"`, so an accidental
 client import is a build error, not a review comment.
@@ -189,7 +175,7 @@ the day flicker is observed; see [Data model](./DATA_MODEL.md).
 
 **Why Next.js for one webhook and a page.** `@vercel/slack-bolt` ships `VercelReceiver` and
 `createHandler` for a Next.js route handler and relies on `waitUntil` for the work after the ack.
-The homepage and the webhook deploy as one project with one set of env vars, and `next typegen`
+The self-host page and the webhook deploy as one project with one set of env vars, and `next typegen`
 types the route. A bare function would drop the page and the typegen to save one framework.
 
 **Where the in-Slack design stops.** The 100-block modal and 25 buttons per row cap a poll at 14 days of 24 slots and
