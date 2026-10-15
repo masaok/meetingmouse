@@ -22,13 +22,24 @@ production domain, or `APP_BASE_URL` to name another one. See [Web grid](./WEB_G
 3. The production build must succeed with no variables at all; the CI build job runs with none
    on purpose. Env is read lazily at request time, never at import time.
 
+A deployment serves the Slack route at `/api/slack/events`, the web grid at `/grid/<token>`,
+and a self-host page at `/` that links to the README and to the hosted version.
+
+## The hosted service
+
+The hosted Meeting Mouse is not deployed from this repository. Its app at
+`app.meetingmouse.net` and its marketing site at `www.meetingmouse.net` (home page, blog,
+privacy policy, support, terms and data policies) live in a private repository that imports this
+one as a library, and deploy from the Vercel project `meetmouse-cloud`.
+
 ## Slack app URLs
 
-`manifest.json` points every URL at `https://www.meetingmouse.net/api/slack/events`, the hosted
-instance. For your own deployment, replace the three URLs with your host before creating the
-app from the manifest. After the first production deploy, confirm in api.slack.com/apps that
-Slash Commands, Interactivity and Event Subscriptions all show that URL and that Event
-Subscriptions verified (green check).
+`manifest.json` points every URL at `https://www.meetingmouse.net/api/slack/events`, an address
+of the hosted service, which registers its Slack app from its own manifest. For your own
+deployment, replace the four URLs (both slash commands, events, interactivity) with your host before creating the app from the manifest.
+After the first production deploy, confirm in api.slack.com/apps that Slash Commands,
+Interactivity and Event Subscriptions all show that URL and that Event Subscriptions verified
+(green check).
 
 ## Migrations in production
 

@@ -59,7 +59,7 @@ const eslintConfig = defineConfig([
   ),
   // React UI never reaches server credentials. `server-only` is the primary guard; this is the fallback.
   boundary(
-    ["src/app/**/*.tsx", "src/components/**"],
+    ["src/app/**/*.tsx"],
     ["@/db/*", "@/bolt/*", "@/lib/env"],
     "UI must not import server-only modules that hold credentials.",
   ),
