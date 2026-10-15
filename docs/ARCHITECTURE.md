@@ -111,7 +111,7 @@ src/
                             respond.ts (response_url replies, Slack error codes)
 drizzle/                    Numbered SQL migrations generated from schema.ts
 scripts/                    doctor, slack-sign, render-fixture, grid-preview, smoke-imports, check-docs,
-                            check-feature-map, check-prose, check-dev-env, dev.tunnel, pack-lib, check-pack
+                            check-feature-map, check-prose, check-dev-env, dev.tunnel, pack-lib, check-pack, smoke-pack
 tests/                      Cross-cutting tests + proof-of-failure fixtures
 docs/                       These living documents
 ```

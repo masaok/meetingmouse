@@ -17,8 +17,7 @@ and the organizer locks one in with an Add to Google Calendar link.
 5. **Lock it in.** The organizer picks a time and the thread gets an Add to Google Calendar link.
 
 Don't want to run it? The hosted version is at [meetingmouse.net](https://www.meetingmouse.net).
-Its marketing site and its policies are not in this repository; they live in the hosted
-service's private repo and deploy from the Vercel project `meetmouse-cloud`.
+Its marketing site is not in this repository; see [The hosted service](./docs/DEPLOYMENT.md#the-hosted-service).
 
 ## Run it yourself
 

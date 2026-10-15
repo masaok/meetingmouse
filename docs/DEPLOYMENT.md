@@ -34,9 +34,9 @@ one as a library, and deploy from the Vercel project `meetmouse-cloud`.
 
 ## Slack app URLs
 
-`manifest.json` points every URL at `https://www.meetingmouse.net/api/slack/events`, a
-placeholder: the hosted service has its own manifest and its own deployment. For your own
-deployment, replace the three URLs with your host before creating the app from the manifest.
+`manifest.json` points every URL at `https://www.meetingmouse.net/api/slack/events`, an address
+of the hosted service, which registers its Slack app from its own manifest. For your own
+deployment, replace the four URLs (both slash commands, events, interactivity) with your host before creating the app from the manifest.
 After the first production deploy, confirm in api.slack.com/apps that Slash Commands,
 Interactivity and Event Subscriptions all show that URL and that Event Subscriptions verified
 (green check).

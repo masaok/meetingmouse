@@ -39,7 +39,7 @@ src/db/                             schema · client (server-only) · queries
 src/lib/                            env · users · log · refresh (re-render the poll message) · respond (response_url, error codes)
 src/app/page.tsx                    the self-host page at /: what the app is, links to the README and the hosted version
 src/web/                            the web grid: signed links, page state, the HTML page, its handlers
-scripts/                            doctor · slack-sign · render-fixture · grid-preview · smoke-imports · check-docs · check-feature-map · check-prose · check-dev-env · dev.tunnel · pack-lib · check-pack
+scripts/                            doctor · slack-sign · render-fixture · grid-preview · smoke-imports · check-docs · check-feature-map · check-prose · check-dev-env · dev.tunnel · pack-lib · check-pack · smoke-pack
 docs/                               living docs (link-checked)
 ```
 
@@ -54,7 +54,7 @@ Use the `add-slack-surface` skill, or by hand (and add a recipe file under `.cla
 
 ## No marketing site here
 
-This repo is the open-source app and nothing else. The marketing site at `www.meetingmouse.net` (home page, blog, privacy policy, support, terms, data policies) lives in the private repo of the hosted service and deploys from the Vercel project `meetmouse-cloud`. Do not add marketing pages, policies, blog posts or listing assets here; `/` stays a self-host page. When the app needs to send someone to a hosted page, link the absolute `https://www.meetingmouse.net/...` URL.
+This repo is the open-source app and nothing else. The marketing site at `www.meetingmouse.net` lives elsewhere; see [The hosted service](./docs/DEPLOYMENT.md#the-hosted-service). Do not add marketing pages, policies, blog posts or listing assets here; `/` stays a self-host page. When the app needs to send someone to a hosted page, link the absolute `https://www.meetingmouse.net/...` URL.
 
 ## Verification commands
 
