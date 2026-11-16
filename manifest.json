@@ -6,7 +6,7 @@
   "display_information": {
     "name": "Meeting Mouse",
     "description": "Find a meeting time without leaving Slack.",
-    "long_description": "Start an availability poll in a channel with /meet. Everyone clicks the times they're free, shown in their own time zone. The message updates live with a grid of who is free when and the best times, and the organizer locks in a final time with an Add to Google Calendar link.",
+    "long_description": "Scheduling a meeting in Slack usually means a long thread of \"does Tuesday at 3 work?\", people converting time zones in their heads, and someone tallying replies by hand, and it only gets slower as more people and time zones join in. Meeting Mouse replaces that back-and-forth with one poll message in your channel, so everyone can answer in a few clicks and the whole team sees who is free when, with no new accounts and no calendar access. Start a poll in a channel with /meet and pick the dates, hours and slot length. Everyone clicks the times they're free, shown in their own time zone. The message updates live with a grid of who is free when and the three best times, and the organizer locks in a final time with an Add to Google Calendar link.",
     "background_color": "#4a154b"
   },
   "features": {
